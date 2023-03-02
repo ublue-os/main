@@ -110,7 +110,7 @@ jobs:
         with:
           containerfiles: |
             ./Containerfile
-          image: ${{ env.IMAGE_NAME }}
+          image: ${{ format('{0}-main', matrix.image_name) }}
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
