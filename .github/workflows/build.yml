@@ -161,7 +161,7 @@ jobs:
           echo "${{ steps.build_image.outputs.tags }}" >> output/tags
       
       - name: Publish Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: github.event_name == 'pull_request'
         with:
           name: output
