@@ -46,20 +46,3 @@ body:
       label: System packaging status
       description: Please run `rpm-ostree status -v` and paste the output here.
       render: shell
-  - type: textarea
-    id: policy
-    attributes:
-      label: Policy
-      description: Please copy and paste the policy you are trying to run if applicable. Please exclude any account/sensitive information. Your response will be automatically formatted into YAML, so code-formatting markdown is not necessary.
-      render: shell
-  - type: textarea
-    id: logs
-    attributes:
-      label: Relevant log/traceback output
-      description: Please copy and paste any relevant log output. Please exclude any account/sensitive information. Your response will be automatically formatted into YAML, so code-formatting markdown is not necessary.
-      render: shell
-  - type: textarea
-    id: extra-context
-    attributes:
-      label: Extra information or context
-      description: Add any other context about the problem here.
