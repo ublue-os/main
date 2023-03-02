@@ -143,7 +143,7 @@ jobs:
             --disable-content-trust
 
       # Sign container
-      - uses: sigstore/cosign-installer@main
+      - uses: sigstore/cosign-installer@v3.0.1
         if: github.event_name != 'pull_request'
 
       # Only needed when running `cosign sign` using a key
@@ -167,7 +167,7 @@ jobs:
       - name: Sign container image
         if: github.event_name != 'pull_request'
         run: |
-          cosign sign --key cosign.key ${{ steps.registry_case.outputs.lowercase }}/${{ env.IMAGE_NAME }}@${TAGS}
+          cosign sign -y --key cosign.key ${{ steps.registry_case.outputs.lowercase }}/${{ env.IMAGE_NAME }}@${TAGS}
         env:
           TAGS: ${{ steps.push.outputs.digest }}
           COSIGN_EXPERIMENTAL: false
