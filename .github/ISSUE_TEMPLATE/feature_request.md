@@ -28,5 +28,6 @@ body:
         - Mate
         - Silverblue
         - Ubuntu
+        - Vauxite
     validations:
       required: true
