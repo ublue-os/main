@@ -1,8 +1,6 @@
 name: build-ublue
 on:
   pull_request:
-    types:
-      - labeled
     branches:
       - main
     paths-ignore:
@@ -24,7 +22,6 @@ jobs:
   push-ghcr:
     name: Build and push image
     runs-on: ubuntu-22.04
-    if: contains(github.event.pull_request.labels.*.name, 'ok-to-build') || github.event_name != 'pull_request'
     permissions:
       contents: read
       packages: write
@@ -179,19 +176,4 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           echo "${{ toJSON(steps.push.outputs) }}"
-
-      - name: Upload Container Export
-        if: github.event_name == 'pull_request'
-        run: |
-          mkdir -p output
-          podman save -o output/image.tar ${{ steps.build_image.outputs.image }}
-          echo "${{ steps.build_image.outputs.image }}" >> output/image
-          echo "${{ steps.build_image.outputs.tags }}" >> output/tags
-      
-      - name: Publish Artifact
-        uses: actions/upload-artifact@v3
-        if: github.event_name == 'pull_request'
-        with:
-          name: output
-          path: output
 
