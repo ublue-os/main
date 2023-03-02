@@ -22,7 +22,11 @@ body:
       label: Image
       description: Which specific image do you want?
       options:
-        - main
-        - nvidia
+        - Bazzite
+        - Kinoite
+        - LXQt
+        - Mate
+        - Silverblue
+        - Ubuntu
     validations:
       required: true
