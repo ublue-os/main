@@ -17,7 +17,7 @@ on:
       - '**.md'
       - '**.txt'
 env:
-    IMAGE_NAME: base
+    IMAGE_NAME: main
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
 jobs:
@@ -32,11 +32,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        major_version: [37]
+        image_name: [silverblue, kinoite, vauxite, sericea, base]
+        major_version: [37, 38]
         include:
           - major_version: 37
-            is_latest: true
-            is_stable: true
+            is_latest_version: true
+            is_stable_version: true
+          - major_version: 38
+            is_latest_version: true
+            is_stable_version: false
+        exclude:
+          # There is no Fedora 37 version of sericea
+          # When F38 is added, sericea will automatically be built too
+          - image_name: sericea
+            major_version: 37
     steps: 
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
@@ -46,24 +55,44 @@ jobs:
         id: generate-tags
         shell: bash
         run: |
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          alias_tags=()
-          # Only perform the follow code when the action is spawned from a Pull Request
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            alias_tags+=("pr-${{ github.event.number }}")
-          else
-            # The following is run when the timer is triggered or a merge/push to main
-            echo "date=$(date +%Y%m%d)" >> $GITHUB_OUTPUT
-            alias_tags+=("${{ matrix.major_version }}")
-            if [[ "${{ matrix.is_latest }}" == "true" ]]; then
-              alias_tags+=("latest")
-            fi
-            if [[ "${{ matrix.is_stable }}" == "true" ]]; then
-              alias_tags+=("stable")
-            fi
+          # Generate a timestamp for creating an image version history
+          TIMESTAMP="$(date +%Y%m%d)"
+          MAJOR_VERSION="${{ matrix.major_version }}"
+          COMMIT_TAGS=()
+          BUILD_TAGS=()
+          # Have tags for tracking builds during pull request
+          SHA_SHORT="$(git rev-parse --short HEAD)"
+          COMMIT_TAGS+=("pr-${{ github.event.number }}-${MAJOR_VERSION}")
+          COMMIT_TAGS+=("${SHA_SHORT}-${MAJOR_VERSION}")
+          if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
+             [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
+              COMMIT_TAGS+=("pr-${{ github.event.number }}")
+              COMMIT_TAGS+=("${SHA_SHORT}")
           fi
+
+          BUILD_TAGS=("${MAJOR_VERSION}" "${MAJOR_VERSION}-${TIMESTAMP}")
+
+          if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
+             [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
+              BUILD_TAGS+=("${TIMESTAMP}")
+              BUILD_TAGS+=("latest")
+          fi
+
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+              echo "Generated the following commit tags: "
+              for TAG in "${COMMIT_TAGS[@]}"; do
+                  echo "${TAG}"
+              done
+              alias_tags=("${COMMIT_TAGS[@]}")
+          else
+              alias_tags=("${BUILD_TAGS[@]}")
+          fi
+          echo "Generated the following build tags: "
+          for TAG in "${BUILD_TAGS[@]}"; do
+              echo "${TAG}"
+          done
           echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
-        
+ 
       # Build metadata
       - name: Image Metadata
         uses: docker/metadata-action@v4
@@ -85,9 +114,8 @@ jobs:
           image: ${{ env.IMAGE_NAME }}
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
-            ${{ steps.generate-tags.outputs.date }}
-            ${{ steps.generate-tags.outputs.sha_short }}
           build-args: |
+            IMAGE_NAME=${{ matrix.image_name }}
             FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
