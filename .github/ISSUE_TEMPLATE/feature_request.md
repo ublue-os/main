@@ -1,20 +1,28 @@
----
-name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
+name: Request a Package
+description: Request an RPM package to be included in the base image
+labels: [package-request]
 
----
-
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
-
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
-
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
-
-**Additional context**
-Add any other context or screenshots about the feature request here.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to fill out this request!
+  - type: textarea
+    id: describe-bug
+    attributes:
+      label: Describe the package
+      description: Include why you feel this should be on the image
+      placeholder: Tell us what you need
+      value: "I'd like to request the package `vim` on the main image"
+    validations:
+      required: true
+  - type: dropdown
+    id: image
+    attributes:
+      label: Image
+      description: Which specific image do you want?
+      options:
+        - main
+        - nvidia
+    validations:
+      required: true
