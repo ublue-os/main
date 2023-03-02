@@ -1,0 +1,169 @@
+name: build-ublue
+on:
+  pull_request:
+    types:
+      - labeled
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+  schedule:
+    - cron: '20 20 * * *'  # 8:20pm everyday
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+env:
+    IMAGE_NAME: base
+    IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+
+jobs:
+  push-ghcr:
+    name: Build and push image
+    runs-on: ubuntu-22.04
+    if: contains(github.event.pull_request.labels.*.name, 'ok-to-build') || github.event_name != 'pull_request'
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        major_version: [37]
+        include:
+          - major_version: 37
+            is_latest: true
+            is_stable: true
+    steps: 
+      # Checkout push-to-registry action GitHub repository
+      - name: Checkout Push to Registry action
+        uses: actions/checkout@v3
+
+      - name: Generate tags
+        id: generate-tags
+        shell: bash
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          alias_tags=()
+          # Only perform the follow code when the action is spawned from a Pull Request
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            alias_tags+=("pr-${{ github.event.number }}")
+          else
+            # The following is run when the timer is triggered or a merge/push to main
+            echo "date=$(date +%Y%m%d)" >> $GITHUB_OUTPUT
+            alias_tags+=("${{ matrix.major_version }}")
+            if [[ "${{ matrix.is_latest }}" == "true" ]]; then
+              alias_tags+=("latest")
+            fi
+            if [[ "${{ matrix.is_stable }}" == "true" ]]; then
+              alias_tags+=("stable")
+            fi
+          fi
+          echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
+        
+      # Build metadata
+      - name: Image Metadata
+        uses: docker/metadata-action@v4
+        id: meta
+        with:
+          images: |
+            ${{ env.IMAGE_NAME }}
+          labels: |
+            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/ublue-os/base/main/README.md
+            io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/120078124?s=200&v=4
+      
+      # Build image using Buildah action
+      - name: Build Image
+        id: build_image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          containerfiles: |
+            ./Containerfile
+          image: ${{ env.IMAGE_NAME }}
+          tags: |
+            ${{ steps.generate-tags.outputs.alias_tags }}
+            ${{ steps.generate-tags.outputs.date }}
+            ${{ steps.generate-tags.outputs.sha_short }}
+          build-args: |
+            FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
+          labels: ${{ steps.meta.outputs.labels }}
+          oci: false
+
+      # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
+      # https://github.com/macbre/push-to-ghcr/issues/12
+      - name: Lowercase Registry
+        id: registry_case
+        uses: ASzc/change-string-case-action@v5
+        with:
+          string: ${{ env.IMAGE_REGISTRY }}
+
+      # Push the image to GHCR (Image Registry)
+      - name: Push To GHCR
+        uses: redhat-actions/push-to-registry@v2
+        id: push
+        if: github.event_name != 'pull_request'
+        env:
+          REGISTRY_USER: ${{ github.actor }}
+          REGISTRY_PASSWORD: ${{ github.token }}
+        with:
+          image: ${{ steps.build_image.outputs.image }}
+          tags: ${{ steps.build_image.outputs.tags }}
+          registry: ${{ steps.registry_case.outputs.lowercase }}
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+          extra-args: |
+            --disable-content-trust
+
+      # Sign container
+      - uses: sigstore/cosign-installer@main
+        if: github.event_name != 'pull_request'
+
+      # Only needed when running `cosign sign` using a key
+      - name: Write signing key to disk
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "${{ env.COSIGN_PRIVATE_KEY }}" > cosign.key
+          # DEBUG: get character count of key
+          wc -c cosign.key
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        if: github.event_name != 'pull_request'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sign container image
+        if: github.event_name != 'pull_request'
+        run: |
+          cosign sign --key cosign.key ${{ steps.registry_case.outputs.lowercase }}/${{ env.IMAGE_NAME }}@${TAGS}
+        env:
+          TAGS: ${{ steps.push.outputs.digest }}
+          COSIGN_EXPERIMENTAL: false
+
+      - name: Echo outputs
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "${{ toJSON(steps.push.outputs) }}"
+
+      - name: Upload Container Export
+        if: github.event_name == 'pull_request'
+        run: |
+          mkdir -p output
+          podman save -o output/image.tar ${{ steps.build_image.outputs.image }}
+          echo "${{ steps.build_image.outputs.image }}" >> output/image
+          echo "${{ steps.build_image.outputs.tags }}" >> output/tags
+      
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v2
+        if: github.event_name == 'pull_request'
+        with:
+          name: output
+          path: output
+
