@@ -43,7 +43,7 @@ body:
   - type: textarea
     id: status
     attributes:
-      label: Cloud Custodian version and dependency information
+      label: System packaging status
       description: Please run `rpm-ostree status -v` and paste the output here.
       render: shell
   - type: textarea
