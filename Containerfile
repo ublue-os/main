@@ -1,31 +1,17 @@
-# Multi-stage build
-ARG FEDORA_MAJOR_VERSION=37
+ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
+ARG BASE_IMAGE="quay.io/fedora-ostree-desktops/${IMAGE_NAME}"
+ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-37}"
 
-## Build ublue-os-base
-FROM quay.io/fedora-ostree-desktops/silverblue:${FEDORA_MAJOR_VERSION}
-# See https://pagure.io/releng/issue/11047 for final location
+FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS builder
 
-COPY etc /etc
-COPY usr /usr
+ARG IMAGE_NAME="${IMAGE_NAME}"
 
-COPY ublue-firstboot /usr/bin
-COPY recipe.yml /etc/ublue-recipe.yml
+ADD build.sh /tmp/build.sh
+ADD packages.json /tmp/packages.json
 
-COPY --from=docker.io/mikefarah/yq /usr/bin/yq /usr/bin/yq
+COPY --from=ghcr.io/ublue-os/udev-rules:latest /ublue-os-udev-rules.noarch.rpm /tmp/ublue-os-udev-rules.noarch.rpm
 
-RUN rpm-ostree override remove firefox firefox-langpacks && \
-    echo "-- Installing RPMs defined in recipe.yml --" && \
-    rpm_packages=$(yq '.rpms[]' < /etc/ublue-recipe.yml) && \
-    for pkg in $rpm_packages; do \
-        echo "Installing: ${pkg}" && \
-        rpm-ostree install $pkg; \
-    done && \ 
-    echo "---" && \
-
-    sed -i 's/#AutomaticUpdatePolicy.*/AutomaticUpdatePolicy=stage/' /etc/rpm-ostreed.conf && \
-    systemctl enable rpm-ostreed-automatic.timer && \
-    systemctl enable flatpak-system-update.timer && \
-    rm -rf \
-        /tmp/* \
-        /var/* && \
-    ostree container commit
+RUN /tmp/build.sh
+RUN rm -rf /tmp/*
+RUN ostree container commit
+RUN mkdir -p /var/tmp && chmod -R 1777 /var/tmp
