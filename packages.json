@@ -1,7 +1,9 @@
 {
     "all": {
         "include": {
-            "all": []
+            "all": [
+                "kernel-devel-matched"
+            ]
         },
         "exclude": {
             "all": []
