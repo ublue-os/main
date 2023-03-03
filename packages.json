@@ -4,7 +4,10 @@
             "all": [
                 "distrobox",
                 "just",
-                "kernel-devel-matched"
+                "kernel-devel-matched",
+                "libva-intel-driver",
+                "libva-utils",
+                "nvtop"
             ],
             "silverblue": [
                 "gnome-tweaks"
