@@ -10,7 +10,7 @@ ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION}"
 ADD build.sh /tmp/build.sh
 ADD packages.json /tmp/packages.json
 
-COPY --from=ghcr.io/ublue-os/udev-rules:latest /ublue-os-udev-rules.noarch.rpm /tmp/ublue-os-udev-rules.noarch.rpm
+COPY --from=ghcr.io/ublue-os/config:latest /rpms /tmp/rpms
 
 RUN /tmp/build.sh
 RUN rm -rf /tmp/*
