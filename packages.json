@@ -2,7 +2,12 @@
     "all": {
         "include": {
             "all": [
+                "distrobox",
+                "just",
                 "kernel-devel-matched"
+            ],
+            "silverblue": [
+                "gnome-tweaks"
             ]
         },
         "exclude": {
