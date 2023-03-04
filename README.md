@@ -8,8 +8,9 @@ A WIP common main image for all other Ublue images.
 
 This is an upstream image for all of the other Ublue images to inherit from. This image contains common packages for different editions and is inteded for further customization by downstream images.
 
-Graph of the Ublue structure:
-![Graph of the Ublue structure. Fedora-built images on the top, and only the opionated main aka this image inherits from it. Users is on the bottom, and users get the Ublue main image, a hypothetical image intended for Amd gpus and another existing one for Nvidia gpus. A startingpoint image inherits from the main, Amd and Nvidia images, and it is inteded for further customization by tinkerers into community-built images.](ublue-structure-graph.png)
+Graph of the [uBlue structure](https://ublue.it/structure/):
+
+![](https://ublue.it/ublue-structure-graph.png)
 
 ## Features
 
