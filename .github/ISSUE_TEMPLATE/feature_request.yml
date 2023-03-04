@@ -1,5 +1,5 @@
 name: Request a Package
-description: Request an RPM package to be included in the base image
+description: Request an RPM package to be included in an image
 labels: [package-request]
 
 body:
@@ -13,7 +13,7 @@ body:
       label: Describe the package
       description: Include why you feel this should be on the image
       placeholder: Tell us what you need
-      value: "I'd like to request the package `vim` on the main image"
+      value: "I'd like to request the package `vim` because ..."
     validations:
       required: true
   - type: dropdown
@@ -22,6 +22,7 @@ body:
       label: Image
       description: Which specific image do you want?
       options:
+        - All Images
         - Bazzite
         - Kinoite
         - LXQt
@@ -31,3 +32,4 @@ body:
         - Vauxite
     validations:
       required: true
+      
