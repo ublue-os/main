@@ -6,11 +6,7 @@ A WIP common main image for all other Ublue images.
 
 ## What is this?
 
-This is an upstream image for all of the other Ublue images to inherit from. This image contains common packages for different editions and is inteded for further customization by downstream images.
-
-Graph of the [uBlue architecture](https://ublue.it/architecture/):
-
-![](https://ublue.it/ublue-architecture-graph.png)
+These images are Fedora images that have been modified with the following quality of life features: 
 
 ## Features
 
@@ -21,9 +17,43 @@ Graph of the [uBlue architecture](https://ublue.it/architecture/):
 - Sets flatpaks to update twice a day
 - Everything else (desktop, artwork, etc) remains stock so you can use this as a good starting image
 
-## Applications
+## How to use these:
 
-Edit the `packages.json` file with your preferred applications
+To rebase an existing Silverblue/Kinoite machine to the latest release (37): 
+
+Silverblue (GNOME):
+
+    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-main:37
+
+Kinoite (KDE)
+
+    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/kinoite-main:37
+    
+Sericea (Sway) (38-only, recommended only for advanced users)
+
+   sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/sericea-main:38
+
+Vauxite (XFCE) 
+    
+    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/vauxite-main:37
+
+and finally Base, which does not come with any desktops or window managers, for builders:
+
+    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/base-main:37
+
+## Architecture
+
+This image can be used as an end user desktop or as something to derive from.
+If you're interested in [making your own](https://ublue.it/making-your-own/):
+
+Graph of the [uBlue architecture](https://ublue.it/architecture/):
+
+![](https://ublue.it/ublue-architecture-graph.png)
+
+### Adding Applications
+
+Edit the `packages.json` file with your preferred applications.
+Flatpak installation is a WIP.
 
 ## Verification
 
