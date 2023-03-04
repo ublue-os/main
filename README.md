@@ -13,11 +13,16 @@ Graph of the Ublue structure:
 
 ## Features
 
-TBA
+- Start with a base Fedora Silverblue 37 image
+- Adds the following packages to the base image:
+  - distrobox and gnome-tweaks
+- Sets automatic staging of updates for the system
+- Sets flatpaks to update twice a day
+- Everything else (desktop, artwork, etc) remains stock so you can use this as a good starting image
 
 ## Applications
 
-TBA
+Edit the `packages.json` file with your preferred applications
 
 ## Verification
 
