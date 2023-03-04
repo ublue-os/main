@@ -8,9 +8,9 @@ A WIP common main image for all other Ublue images.
 
 This is an upstream image for all of the other Ublue images to inherit from. This image contains common packages for different editions and is inteded for further customization by downstream images.
 
-Graph of the [uBlue structure](https://ublue.it/structure/):
+Graph of the [uBlue architecture](https://ublue.it/architecture/):
 
-![](https://ublue.it/ublue-structure-graph.png)
+![](https://ublue.it/ublue-architecture-graph.png)
 
 ## Features
 
