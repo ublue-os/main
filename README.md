@@ -31,7 +31,7 @@ Kinoite (KDE)
     
 Sericea (Sway) (38-only, recommended only for advanced users)
 
-   sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/sericea-main:38
+    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/sericea-main:38
 
 Vauxite (XFCE) 
     
