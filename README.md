@@ -22,10 +22,12 @@ These are Fedora images that have been modified with the following quality of li
 
 ## How to use these:
 
+Note: If you have an Nvidia GPU use [the ublue-os/nvidia images instead](https://github.com/ublue-os/nvidia)
+
 To rebase an existing Silverblue/Kinoite machine to the latest release (37): 
 1. Download and install [Fedora Silverblue](https://silverblue.fedoraproject.org/download)
-1. After you reboot you should [pin the working deployment](https://docs.fedoraproject.org/en-US/fedora-silverblue/faq/#_about_using_silverblue) so you can safely rollback. 
-1. Open a terminal and rebase the OS to this image:
+1. After you reboot you should [pin the working deployment](https://docs.fedoraproject.org/en-US/fedora-silverblue/faq/#_about_using_silverblue) so you can safely rollback 
+1. Open a terminal and use one of the following commands to rebase the OS:
 
 #### Silverblue (GNOME):
 
