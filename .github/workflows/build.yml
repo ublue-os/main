@@ -29,7 +29,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image_name: [silverblue, kinoite, vauxite, sericea, base]
+        image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt]
         major_version: [37, 38]
         include:
           - major_version: 37
@@ -50,6 +50,11 @@ jobs:
 
       - name: Matrix Variables
         run: |
+          if [[ "${{ matrix.image_name }}" == "lxqt" ]]; then
+              echo "SOURCE_IMAGE=base" >> $GITHUB_ENV
+          else
+              echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
+          fi
           echo "IMAGE_NAME=${{ format('{0}-{1}', matrix.image_name, env.IMAGE_BASE_NAME) }}" >> $GITHUB_ENV
 
       - name: Generate tags
@@ -119,6 +124,7 @@ jobs:
             ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
             IMAGE_NAME=${{ matrix.image_name }}
+            SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
             FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
