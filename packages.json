@@ -3,7 +3,6 @@
         "include": {
             "all": [
                 "distrobox",
-                "ffmpegthumbnailer",
                 "just",
                 "kernel-devel-matched",
                 "libva-intel-driver",
@@ -16,6 +15,7 @@
                 "vim"
             ],
             "silverblue": [
+                "ffmpegthumbnailer",
                 "gnome-tweaks"
             ],
             "lxqt": [
@@ -148,6 +148,9 @@
                 "xdg-user-dirs-gtk",
             "xmodmap",
                 "xrdb"
+            ],
+            "sericea": [
+                "tumbler"
             ]
         },
         "exclude": {
