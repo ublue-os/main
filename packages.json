@@ -52,10 +52,109 @@
                 "upower",
                 "xdg-desktop-portal-kde",
                 "xdg-user-dirs"
+            ],
+            "mate": [
+                "xdg-desktop-portal-gtk",
+                "NetworkManager-adsl",
+                "NetworkManager-openconnect-gnome",
+                "NetworkManager-openvpn-gnome",
+                "NetworkManager-ppp",
+                "NetworkManager-pptp-gnome",
+                "NetworkManager-ssh-gnome",
+                "NetworkManager-vpnc-gnome",
+                "NetworkManager-wwan",
+                "atril",
+                "atril-caja",
+                "atril-thumbnailer",
+                "blueman",
+                "caja",
+                "caja-actions",
+                "caja-image-converter",
+                "caja-open-terminal",
+                "caja-sendto",
+                "caja-wallpaper",
+                "caja-xattr-tags",
+                "dconf-editor",
+                "engrampa",
+                "eom",
+                "fedora-release-matecompiz",
+                "firefox",
+                "firewall-config",
+                "gnome-epub-thumbnailer",
+                "gnome-themes-extra",
+                "gstreamer1-plugins-ugly-free",
+                "gtk2-engines",
+                "gucharmap",
+                "gvfs-afc",
+                "gvfs-afp",
+                "gvfs-archive",
+                "gvfs-fuse",
+                "gvfs-gphoto2",
+                "gvfs-mtp",
+                "gvfs-nfs",
+                "gvfs-smb",
+                "initial-setup-gui",
+                "libmatekbd",
+                "libmatemixer",
+                "libmateweather",
+                "libsecret",
+                "lightdm",
+                "lm_sensors",
+                "marco",
+                "mate-applets",
+                "mate-backgrounds",
+                "mate-calc",
+                "mate-control-center",
+                "mate-desktop-configs",
+                "mate-dictionary",
+                "mate-disk-usage-analyzer",
+                "mate-icon-theme",
+                "mate-media",
+                "mate-menus",
+                "mate-menus-preferences-category-menu",
+                "mate-notification-daemon",
+                "mate-panel",
+                "mate-polkit",
+                "mate-power-manager",
+                "mate-screensaver",
+                "mate-screenshot",
+                "mate-search-tool",
+                "mate-session-manager",
+                "mate-settings-daemon",
+                "mate-system-log",
+                "mate-system-monitor",
+                "mate-terminal",
+                "mate-themes",
+                "mate-user-admin",
+                "mate-user-guide",
+                "mozo",
+                "network-manager-applet",
+                "nm-connection-editor",
+                "orca",
+                "parole",
+                "pavucontrol",
+                "pipewire-alsa",
+                "pipewire-pulseaudio",
+                "pluma",
+                "seahorse",
+                "seahorse-caja",
+                "setroubleshoot",
+                "slick-greeter-mate",
+                "system-config-language",
+                "system-config-printer",
+                "system-config-printer-applet",
+                "usermode-gtk",
+                "xdg-user-dirs-gtk",
+            "xmodmap",
+                "xrdb"
             ]
         },
         "exclude": {
-            "all": []
+            "all": [],
+            "mate": [
+                "python3-unbound",
+                "systemd-oomd-defaults"
+            ]
         }
     },
     "37": {
@@ -64,6 +163,12 @@
                 "ffmpeg",
                 "ffmpeg-libs",
                 "mesa-va-drivers-freeworld"
+            ],
+            "mate": [
+                "f37-backgrounds-base",
+                "f37-backgrounds-extras-base",
+                "f37-backgrounds-extras-mate",
+                "f37-backgrounds-mate"
             ]
         },
         "exclude": {
@@ -78,6 +183,20 @@
                 "libswscale-free",
                 "mesa-va-drivers"
             ]
+        }
+    },
+    "38": {
+        "include": {
+            "all": [],
+            "mate": [
+                "f38-backgrounds-base",
+                "f38-backgrounds-extras-base",
+                "f38-backgrounds-extras-mate",
+                "f38-backgrounds-mate"
+            ]
+        },
+        "exclude": {
+            "all": []
         }
     }
 }

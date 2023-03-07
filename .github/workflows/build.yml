@@ -29,7 +29,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt]
+        image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate]
         major_version: [37, 38]
         include:
           - major_version: 37
@@ -50,7 +50,7 @@ jobs:
 
       - name: Matrix Variables
         run: |
-          if [[ "${{ matrix.image_name }}" == "lxqt" ]]; then
+          if [[ "${{ matrix.image_name }}" == "lxqt" || "${{ matrix.image_name }}" == "mate" ]]; then
               echo "SOURCE_IMAGE=base" >> $GITHUB_ENV
           else
               echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
