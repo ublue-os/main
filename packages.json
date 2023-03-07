@@ -12,7 +12,8 @@
                 "openssl",
                 "pipewire-codec-aptx",
                 "smartmontools",
-                "vim"
+                "vim",
+                "rEFInd"
             ],
             "silverblue": [
                 "ffmpegthumbnailer",
