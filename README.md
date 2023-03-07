@@ -41,6 +41,10 @@ To rebase an existing Silverblue/Kinoite machine to the latest release (37):
 
     sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/lxqt-main:37
     
+#### MATE
+
+    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/mate-main:37
+    
 #### Sericea (Sway) 
 Fedora 38-only, recommended only for advanced users
 
