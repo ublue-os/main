@@ -82,6 +82,24 @@ These images are signed with sisgstore's [cosign](https://docs.sigstore.dev/cosi
 
 If you're forking this repo you should [read the docs](https://docs.github.com/en/actions/security-guides/encrypted-secrets) on keeping secrets in github. You need to [generate a new keypair](https://docs.sigstore.dev/cosign/overview/) with cosign. The public key can be in your public repo (your users need it to check the signatures), and you can paste the private key in Settings -> Secrets -> Actions.
 
+## Configuring Automatic Updates
+
+> **Warning**
+> 
+> Disabling automatic updates is an unsupported configuration. If you reconfigure updates, you MUST be on the latest image before opening any issues.
+
+With that said, you can individually disable which automatic update timers [ublue-os/config](https://github.com/ublue-os/config) provides with the following commands:
+
+* flatpak system: `sudo systemctl disable flatpak-system-update.timer`
+* flatpak user: `sudo systemctl --global disable flatpak-user-update.timer`
+
+You can also configure automatic `rpm-ostree` updates by editing `/etc/rpm-ostreed.conf` and changing "AutomaticUpdatePolicy" to "none" or "check":
+
+```
+[Daemon]
+AutomaticUpdatePolicy=check
+```
+
 ## Making your own
 
 See [the documentation](https://ublue.it/making-your-own/) on how use this image in your own projects.
