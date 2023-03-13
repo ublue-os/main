@@ -97,6 +97,10 @@ jobs:
           for TAG in "${BUILD_TAGS[@]}"; do
               echo "${TAG}"
           done
+          echo "The following tags will be used: "
+          for TAG in "${alias_tags[@]}"; do
+            echo "${TAG}"
+          done
           echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
 
       # Build metadata
