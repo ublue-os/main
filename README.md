@@ -103,3 +103,11 @@ AutomaticUpdatePolicy=check
 ## Making your own
 
 See [the documentation](https://ublue.it/making-your-own/) on how use this image in your own projects.
+
+## [![Repography logo](https://images.repography.com/logo.svg)](https://repography.com) / Recent activity [![Time period](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_badge.svg)](https://repography.com)
+[![Timeline graph](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_timeline.svg)](https://github.com/ublue-os/main/commits)
+[![Issue status graph](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_issues.svg)](https://github.com/ublue-os/main/issues)
+[![Pull request status graph](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_prs.svg)](https://github.com/ublue-os/main/pulls)
+[![Trending topics](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_words.svg)](https://github.com/ublue-os/main/commits)
+[![Top contributors](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_users.svg)](https://github.com/ublue-os/main/graphs/contributors)
+[![Activity map](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_map.svg)](https://github.com/ublue-os/main/commits)
