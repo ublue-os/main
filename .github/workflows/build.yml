@@ -97,6 +97,10 @@ jobs:
           for TAG in "${BUILD_TAGS[@]}"; do
               echo "${TAG}"
           done
+          echo "The following tags will be used: "
+          for TAG in "${alias_tags[@]}"; do
+            echo "${TAG}"
+          done
           echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
 
       # Build metadata
@@ -141,7 +145,7 @@ jobs:
       - name: Push To GHCR
         uses: redhat-actions/push-to-registry@v2
         id: push
-        if: github.event_name != 'pull_request'
+        #if: github.event_name != 'pull_request'
         env:
           REGISTRY_USER: ${{ github.actor }}
           REGISTRY_PASSWORD: ${{ github.token }}
@@ -156,7 +160,7 @@ jobs:
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
-        if: github.event_name != 'pull_request'
+        #if: github.event_name != 'pull_request'
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -164,10 +168,10 @@ jobs:
 
       # Sign container
       - uses: sigstore/cosign-installer@v3.0.1
-        if: github.event_name != 'pull_request'
+        #if: github.event_name != 'pull_request'
 
       - name: Sign container image
-        if: github.event_name != 'pull_request'
+        #if: github.event_name != 'pull_request'
         run: |
           echo "${{ env.COSIGN_PRIVATE_KEY }}" > cosign.key
           wc -c cosign.key
@@ -178,7 +182,7 @@ jobs:
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
 
       - name: Echo outputs
-        if: github.event_name != 'pull_request'
+        #if: github.event_name != 'pull_request'
         run: |
           echo "${{ toJSON(steps.push.outputs) }}"
 
