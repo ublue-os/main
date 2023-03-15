@@ -5,11 +5,11 @@
 A WIP common main image for all other Ublue images.
 
 1. [Features](#Features)
-1. [Tips and tricks](#Tips and tricks)
-1. [How to install](#How to install)
+1. [Tips and Tricks](#Tips-and-Tricks)
+1. [How to Install](#How-to-Install)
 1. [Verification](#Verification)
-1. [Configuring Automatic Updates](#Configuring Automatic Updates)
-1. [Making your own](#Making your own)
+1. [Configuring Automatic Updates](#Configuring-Automatic-Updates)
+1. [Making your own](#Making-your-own)
 
 ## What is this?
 
@@ -38,7 +38,7 @@ Distrobox is very powerful, for example you can use to [host your entire develop
 
 ublue-os/base-main is also very well suited for servers, and users are expected to make full use of `podman` to host containers running "typical" server software i.e. `nginx`, `caddy` and others. 
 
-## How to install:
+## How to Install
 
 Note: If you have an Nvidia GPU use [the ublue-os/nvidia images instead](https://github.com/ublue-os/nvidia)
 
