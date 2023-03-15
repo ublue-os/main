@@ -5,11 +5,11 @@
 A WIP common main image for all other Ublue images.
 
 1. [Features](#Features)
-1. [Tips and Tricks](#Tips and Tricks)
-1. [How to Install](#How to install)
+1. [Tips and Tricks](#Tips-andTricks)
+1. [How to Install](#How-to-Install)
 1. [Verification](#Verification)
-1. [Configuring Automatic Updates](#Configuring Automatic Updates)
-1. [Making your own](#Making your own)
+1. [Configuring Automatic Updates](#Configuring-Automatic-Updates)
+1. [Making your own](#Making-your-own)
 
 ## What is this?
 
