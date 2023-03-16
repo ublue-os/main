@@ -1,0 +1,86 @@
+default:
+  @just --list
+
+bios:
+  systemctl reboot --firmware-setup
+
+changelogs:
+  rpm-ostree db diff --changelogs
+
+distrobox-boxkit:
+  echo 'Creating Boxkit distrobox ...'
+  distrobox create --image ghcr.io/ublue-os/boxkit -n boxkit -Y
+
+distrobox-debian:
+  echo 'Creating Debian distrobox ...'
+  distrobox create --image quay.io/toolbx-images/debian-toolbox:unstable -n debian -Y
+
+distrobox-opensuse:
+  echo 'Creating openSUSE distrobox ...'
+  distrobox create --image quay.io/toolbx-images/opensuse-toolbox:tumbleweed -n opensuse -Y
+
+distrobox-ubuntu:
+  echo 'Creating Ubuntu distrobox ...'
+  distrobox create --image quay.io/toolbx-images/ubuntu-toolbox:22.04 -n ubuntu -Y
+  
+setup-flatpaks:
+  echo 'Setting up your flatpaks...'
+  flatpak install -y --system \\
+  com.seafile.Client \\
+  com.simplenote.Simplenote \\
+  nl.hjdskes.gcolor3 \\
+  org.gimp.GIMP \\
+  com.ktechpit.whatsie \\
+  org.signal.Signal \\
+  us.zoom.Zoom
+  
+setup-flatpak-overrides-pwa:
+  echo 'Giving browser permission to create PWAs (Progressive Web Apps)'
+  # Add for your favorite chromium-based browser
+  flatpak override --system --filesystem=~/.local/share/applications --filesystem=~/.local/share/icons com.brave.Browser
+  flatpak override --system --filesystem=~/.local/share/applications --filesystem=~/.local/share/icons com.microsoft.Edge
+
+setup-gaming-light:
+  echo 'Setting up light gaming experience ...'
+  flatpak install -y --system \\
+  net.sourceforge.lgames.LTris \\
+  org.frozen_bubble.frozen-bubble \\
+  org.gnome.Aisleriot \\
+  org.gnome.Crosswords \\
+  org.gnome.Mines
+
+setup-media-flatpaks:
+  echo 'Setting up creative media flatpaks...'
+  flatpak install -y --system \\
+  org.audacityteam.Audacity \\
+  org.inkscape.Inkscape \\
+  org.kde.kdenlive \\
+  org.kde.krita \\
+  org.freedesktop.Platform.VulkanLayer.OBSVkCapture//22.08 \\
+  com.obsproject.Studio \\
+  com.obsproject.Studio.Plugin.OBSVkCapture \\
+  com.obsproject.Studio.Plugin.Gstreamer
+
+setup-other-flatpaks:
+  echo 'Setting up misc other flatpaks...'
+  flatpak install -y --system \\
+  com.belmoussaoui.Obfuscate \\
+  com.discordapp.Discord \\
+  com.google.Chrome \\
+  com.microsoft.Edge \\
+  com.skype.Client \\
+  com.slack.Slack \\
+  com.visualstudio.code \\
+  de.haeckerfelix.Fragments \\
+  org.flameshot.Flameshot \\
+  org.gnome.Firmware \\
+  org.gnome.seahorse.Application \\
+  org.telegram.desktop \\
+  org.wezfurlong.wezterm \\
+  re.sonny.Junction \\
+  tech.feliciano.pocket-casts
+
+update:
+  rpm-ostree update
+  flatpak update -y
+  distrobox upgrade -a

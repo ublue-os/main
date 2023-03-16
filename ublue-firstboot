@@ -1,0 +1,149 @@
+#!/bin/sh
+
+if test -e "$HOME"/.config/ublue/firstboot-done; then
+    echo "Already ran"
+    exit 0
+fi
+
+VARIANT_ID=$(/usr/bin/grep ^VARIANT_ID /etc/os-release | /usr/bin/cut -f2 -d=)
+
+(
+echo "# Waiting for Internet connection"
+until /usr/bin/ping -q -c 1 flathub.org; do sleep 1; done
+echo "00"
+
+echo "# Removing Filtered Flathub Repository"
+/usr/bin/flatpak remote-delete flathub --force ||:
+if [ "$?" != 0 ] ; then
+        zenity --error \
+          --text="Removing Filtered Flathub Repo Failed"
+        exit 1
+fi
+echo "3"
+
+echo "# Enabling Flathub Repository"
+/usr/bin/flatpak remote-add --system --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+if [ "$?" != 0 ] ; then
+        zenity --error \
+          --text="Adding Flathub Repo Failed"
+        exit 1
+fi
+echo "5"
+
+if [[ "$VARIANT_ID" == "silverblue" ]]; then
+echo "# Replacing Fedora Flatpaks with Flathub Ones (this may take a while)"
+/usr/bin/flatpak remove --noninteractive org.gnome.Extensions
+/usr/bin/flatpak install --system --noninteractive org.gnome.Platform//43
+/usr/bin/flatpak install --system --noninteractive --reinstall flathub $(flatpak list --app-runtime=org.fedoraproject.Platform --columns=application | tail -n +1 )
+if [ "$?" != 0 ] ; then
+        zenity --error \
+          --text="Replacing Fedora Flatpaks Failed"
+        exit 1
+fi
+echo "20"
+fi
+
+echo "Removing preinstalled Fedora platform Flatpak"
+/usr/bin/flatpak remove --system --noninteractive org.fedoraproject.Platform ||:
+if [ "$?" != 0 ] ; then
+        zenity --error \
+          --text="Removing preinstalled Fedora platform Flatpak failed"
+        exit 1
+fi
+
+echo "# Removing Fedora Flatpak Repository"
+/usr/bin/flatpak remote-delete fedora --force ||:
+if [ "$?" != 0 ] ; then
+        zenity --error \
+          --text="Removing Fedora Flatpak Repo Failed"
+        exit 1
+fi
+echo "25"
+
+if [[ "$VARIANT_ID" == "silverblue" ]]; then
+
+echo "# Installing Extension Manager"
+/usr/bin/flatpak install --system --noninteractive flathub com.mattjakeman.ExtensionManager
+if [ "$?" != 0 ] ; then
+        zenity --error \
+          --text="Installing Extension Manager Failed"
+        exit 1
+fi
+echo "30"
+
+echo "# Installing Font Downloader"
+/usr/bin/flatpak install --system --noninteractive flathub org.gustavoperedo.FontDownloader
+if [ "$?" != 0 ] ; then
+        zenity --error \
+          --text="Installing FontDownloader Failed"
+        exit 1
+fi
+echo "35"
+
+echo "# Installing Geary"
+/usr/bin/flatpak install --system --noninteractive flathub org.gnome.Geary
+if [ "$?" != 0 ] ; then
+        zenity --error \
+          --text="Installing Geary Failed"
+        exit 1
+fi
+echo "35"
+
+echo "# Installing Firefox"
+/usr/bin/flatpak install --system --noninteractive flathub org.mozilla.firefox
+if [ "$?" != 0 ] ; then
+        zenity --error \
+          --text="Installing Firefox Failed"
+        exit 1
+fi
+echo "50"
+
+echo "# Installing DejaDup"
+/usr/bin/flatpak install --system --noninteractive flathub org.gnome.DejaDup
+if [ "$?" != 0 ] ; then
+        zenity --error \
+          --text="Installing DejaDup Failed"
+        exit 1
+fi
+echo "60"
+
+echo "# Installing Flatseal"
+/usr/bin/flatpak install --system --noninteractive flathub com.github.tchx84.Flatseal
+if [ "$?" != 0 ] ; then
+        zenity --error \
+          --text="Installing Flatseal Failed"
+        exit 1
+fi
+echo "70"
+
+echo "# Installing LibreOffice"
+/usr/bin/flatpak install --system --noninteractive flathub org.libreoffice.LibreOffice
+if [ "$?" != 0 ] ; then
+        zenity --error \
+          --text="Installing LibreOffice Failed"
+        exit 1
+fi
+echo "90"
+
+echo "# Installing Celluloid Media Player"
+/usr/bin/flatpak install --system --noninteractive flathub io.github.celluloid_player.Celluloid
+if [ "$?" != 0 ] ; then
+        zenity --error \
+          --text="Installing Celluloid Failed"
+        exit 1
+fi
+echo "100"
+
+echo "# Reticulating Final Splines"
+mkdir -p "$HOME"/.config/ublue/
+touch "$HOME"/.config/ublue/firstboot-done
+cp -n /etc/justfile "$HOME"/.justfile
+
+) | 
+     
+   zenity --progress --title="ublue-custom ($VARIANT_ID) Desktop Firstboot" --percentage=0 --auto-close --no-cancel --width=350
+
+if [ "$?" != 0 ] ; then
+        zenity --error \
+          --text="Firstboot Configuration Error"
+fi
