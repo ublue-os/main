@@ -3,16 +3,20 @@
         "include": {
             "all": [
                 "distrobox",
+                "ffmpeg",
+                "ffmpeg-libs",
                 "just",
                 "kernel-devel-matched",
                 "libva-intel-driver",
                 "libva-utils",
+                "mesa-va-drivers-freeworld",
                 "nvme-cli",
                 "nvtop",
                 "openssl",
                 "pipewire-codec-aptx",
                 "smartmontools",
-                "vim"
+                "vim",
+                "zstd"
             ],
             "silverblue": [
                 "ffmpegthumbnailer",
@@ -154,28 +158,6 @@
             ]
         },
         "exclude": {
-            "all": [],
-            "mate": [
-                "python3-unbound",
-                "systemd-oomd-defaults"
-            ]
-        }
-    },
-    "37": {
-        "include": {
-            "all": [
-                "ffmpeg",
-                "ffmpeg-libs",
-                "mesa-va-drivers-freeworld"
-            ],
-            "mate": [
-                "f37-backgrounds-base",
-                "f37-backgrounds-extras-base",
-                "f37-backgrounds-extras-mate",
-                "f37-backgrounds-mate"
-            ]
-        },
-        "exclude": {
             "all": [
                 "libavcodec-free",
                 "libavdevice-free",
@@ -186,7 +168,25 @@
                 "libswresample-free",
                 "libswscale-free",
                 "mesa-va-drivers"
+            ],
+            "mate": [
+                "python3-unbound",
+                "systemd-oomd-defaults"
             ]
+        }
+    },
+    "37": {
+        "include": {
+            "all": [],
+            "mate": [
+                "f37-backgrounds-base",
+                "f37-backgrounds-extras-base",
+                "f37-backgrounds-extras-mate",
+                "f37-backgrounds-mate"
+            ]
+        },
+        "exclude": {
+            "all": []
         }
     },
     "38": {
