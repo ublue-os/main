@@ -185,3 +185,23 @@ jobs:
         run: |
           echo "${{ toJSON(steps.push.outputs) }}"
 
+  build-iso:
+    runs-on: ubuntu-latest
+    container: fedora:latest
+    strategy:
+      matrix:
+        fedora-version: [ 37 ]
+    steps:
+      - uses: actions/checkout@v3
+        
+      - uses: ublue-os/isogenerator@main
+        id: isogenerator
+        with:
+          image-name: example-${{ matrix.fedora-version }}
+          installer-major-version: ${{ matrix.fedora-version }}
+          kickstart-file-path: ublue.ks
+          
+      - uses: actions/upload-artifact@v3
+        with:
+          name: example-${{ matrix.fedora-version }}
+          path: ${{ steps.isogenerator.outputs.iso-path }}
