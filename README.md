@@ -45,7 +45,8 @@ Note: If you have an Nvidia GPU use [the ublue-os/nvidia images instead](https:/
 To rebase an existing Silverblue/Kinoite machine to the latest release (37): 
 
 1. Download and install [Fedora Silverblue](https://silverblue.fedoraproject.org/download)
-1. After you reboot you should [pin the working deployment](https://docs.fedoraproject.org/en-US/fedora-silverblue/faq/#_about_using_silverblue) so you can safely rollback 
+1. After you reboot you should [pin the working deployment](https://docs.fedoraproject.org/en-US/fedora-silverblue/faq/#_about_using_silverblue) so you can safely rollback
+1. If you are coming from an existing system it is recommended to not have any layered packages before proceeding. See the [Fedora documentation](https://docs.fedoraproject.org/en-US/fedora-silverblue/) for more information.
 1. Open a terminal and use one of the following commands to rebase the OS:
 
 **Silverblue (GNOME):**
