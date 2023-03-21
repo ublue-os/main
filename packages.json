@@ -5,6 +5,7 @@
                 "distrobox",
                 "ffmpeg",
                 "ffmpeg-libs",
+                "htop",
                 "just",
                 "kernel-devel-matched",
                 "libva-intel-driver",
