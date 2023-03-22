@@ -5,6 +5,7 @@
                 "distrobox",
                 "ffmpeg",
                 "ffmpeg-libs",
+                "fzf",
                 "htop",
                 "just",
                 "kernel-devel-matched",
