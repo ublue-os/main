@@ -2,7 +2,6 @@
     "all": {
         "include": {
             "all": [
-                "adw-gtk3",
                 "btop",
                 "distrobox",
                 "ffmpeg",
@@ -25,6 +24,7 @@
                 "zstd"
             ],
             "silverblue": [
+                "adw-gtk3",
                 "ffmpegthumbnailer",
                 "gnome-console",
                 "gnome-tweaks"
@@ -168,8 +168,6 @@
             "all": [
                 "firefox",
                 "firefox-langpacks",
-                "gnome-terminal",
-                "gnome-terminal-nautilus",
                 "libavcodec-free",
                 "libavdevice-free",
                 "libavfilter-free",
@@ -179,6 +177,10 @@
                 "libswresample-free",
                 "libswscale-free",
                 "mesa-va-drivers"
+            ],
+            "silverblue": [
+                "gnome-terminal",
+                "gnome-terminal-nautilus"
             ],
             "mate": [
                 "python3-unbound",
@@ -203,6 +205,9 @@
     "38": {
         "include": {
             "all": [],
+            "silverblue": [
+                "adw-gtk4"
+            ],
             "mate": [
                 "f38-backgrounds-base",
                 "f38-backgrounds-extras-base",
