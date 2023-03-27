@@ -1,0 +1,23 @@
+@prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix pset:  <http://lv2plug.in/ns/ext/presets#> .
+@prefix state: <http://lv2plug.in/ns/ext/state#> .
+@prefix ui:    <http://lv2plug.in/ns/extensions/ui#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+
+<https://github.com/werman/noise-suppression-for-voice>
+	a lv2:Plugin ;
+	lv2:binary <librnnoise_mono.so> ;
+	rdfs:seeAlso <dsp.ttl> .
+
+<https://github.com/werman/noise-suppression-for-voice:UI>
+	a ui:X11UI ;
+	lv2:binary <librnnoise_mono.so> ;
+	rdfs:seeAlso <ui.ttl> .
+
+<https://github.com/werman/noise-suppression-for-voice:preset1>
+	a pset:Preset ;
+	lv2:appliesTo <https://github.com/werman/noise-suppression-for-voice> ;
+	rdfs:label "" ;
+	state:state [ <https://github.com/werman/noise-suppression-for-voice:Program> "0"^^xsd:int ; ] .
+

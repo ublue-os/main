@@ -1,0 +1,27 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix opts: <http://lv2plug.in/ns/ext/options#> .
+@prefix param: <http://lv2plug.in/ns/ext/parameters#> .
+@prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .
+@prefix urid: <http://lv2plug.in/ns/ext/urid#> .
+
+<https://github.com/werman/noise-suppression-for-voice:UI>
+	lv2:extensionData
+		ui:idleInterface ,
+		opts:interface ,
+		ui:noUserResize ,
+		ui:resize ;
+
+	lv2:requiredFeature
+		ui:idleInterface ,
+		urid:map ,
+		ui:parent ,
+		<http://lv2plug.in/ns/ext/instance-access> ;
+
+	lv2:optionalFeature
+		ui:noUserResize ,
+		opts:interface ,
+		opts:options ;
+
+	opts:supportedOption
+		ui:scaleFactor ,
+		param:sampleRate .

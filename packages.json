@@ -2,6 +2,8 @@
     "all": {
         "include": {
             "all": [
+                "adw-gtk3",
+                "btop",
                 "distrobox",
                 "ffmpeg",
                 "ffmpeg-libs",
@@ -17,11 +19,14 @@
                 "openssl",
                 "pipewire-codec-aptx",
                 "smartmontools",
+                "starship",
                 "vim",
+                "yubioath-desktop",
                 "zstd"
             ],
             "silverblue": [
                 "ffmpegthumbnailer",
+                "gnome-console",
                 "gnome-tweaks"
             ],
             "lxqt": [
@@ -161,6 +166,10 @@
         },
         "exclude": {
             "all": [
+                "firefox",
+                "firefox-langpacks",
+                "gnome-terminal",
+                "gnome-terminal-nautilus",
                 "libavcodec-free",
                 "libavdevice-free",
                 "libavfilter-free",
