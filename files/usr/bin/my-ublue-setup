@@ -2,7 +2,7 @@
 
 if [ -e "${HOME}/.config/my-ublue/first-boot-done" ]; then
     echo "Setup already ran!"
-    exit 1
+    exit 0
 fi
 
 echo "# Waiting for internet connection"
@@ -13,22 +13,15 @@ echo "# Setting up flatpaks"
 /usr/bin/flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 /usr/bin/flatpak install --user --noninteractive org.gnome.Platform//43
 /usr/bin/flatpak install --user --noninteractive --reinstall flathub $(flatpak list --app-runtime=org.fedoraproject.Platform --columns=application | tail -n +1 )
-FLATPAK_INSTALL=""
-for f in "/etc/my-ublue/flatpaks.d/*"; do
-    FLATPAK_INSTALL="$(cat $f)"
-done
-/usr/bin/flatpak install --user --noninteractive flathub $FLATPAK_INSTALL
+/usr/bin/flatpak install --user --noninteractive flathub $(cat /etc/my-ublue/flatpaks)
 /usr/bin/flatpak remove --system --noninteractive --all
 /usr/bin/flatpak remote-delete fedora --force
 /usr/bin/flatpak remote-delete fedora-testing --force
 
-echo "# Running scripts"
-for f in /etc/my-ublue/scripts.d/*.sh; do
-    /usr/bin/bash "$f"
-done
+echo "# Running setup"
+/usr/bin/bash /etc/my-ublue/setup.sh
 
 mkdir -p "${HOME}/.config/my-ublue"
 touch "${HOME}/.config/my-ublue/first-boot-done"
 
 echo "# Completed setup!"
-exit 0

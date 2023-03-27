@@ -3,6 +3,7 @@
         "include": {
             "all": [
                 "btop",
+                "corectrl",
                 "distrobox",
                 "ffmpeg",
                 "ffmpeg-libs",
@@ -10,6 +11,7 @@
                 "htop",
                 "just",
                 "kernel-devel-matched",
+                "libratbag-ratbagd",
                 "libva-intel-driver",
                 "libva-utils",
                 "mesa-va-drivers-freeworld",
@@ -20,7 +22,8 @@
                 "smartmontools",
                 "starship",
                 "vim",
-                "yubioath-desktop",
+                "virt-manager",
+                "yubikey-manager-qt",
                 "zstd"
             ],
             "silverblue": [
@@ -190,7 +193,9 @@
     },
     "37": {
         "include": {
-            "all": [],
+            "all": [
+                "yubioath-desktop"
+            ],
             "mate": [
                 "f37-backgrounds-base",
                 "f37-backgrounds-extras-base",
