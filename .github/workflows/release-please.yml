@@ -26,7 +26,7 @@ jobs:
     strategy:
       matrix:
         major_version: [ 38 ]
-        image_name: [silverblue, kinoite, vauxite, sericea, lxqt, mate]
+        image_name: [silverblue-main, kinoite-main, vauxite-main, sericea-main, lxqt-main, mate-main]
     steps:
       - uses: actions/checkout@v3
       - name: generate KS files
