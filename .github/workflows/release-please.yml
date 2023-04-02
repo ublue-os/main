@@ -6,8 +6,13 @@ name: release-please
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      releases_created: ${{ steps.release-please.outputs.releases_created }}
+      tag: ${{ steps.release-please.outputs.tag_name }}
+      upload_url: ${{ steps.release-please.outputs.upload_url }}
     steps:
       - uses: google-github-actions/release-please-action@v3
+        id: release-please
         with:
           release-type: node
           package-name: release-please-action
