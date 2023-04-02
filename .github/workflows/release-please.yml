@@ -47,7 +47,7 @@ jobs:
       - name: install github CLI
         run: |
           sudo dnf install 'dnf-command(config-manager)' -y
-          sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo 
+          sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
           sudo dnf install gh -y
       - name: Upload ISO
         env:
