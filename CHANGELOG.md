@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/bigpod98/main/compare/v1.0.0...v1.0.1) (2023-04-02)
+
+
+### Bug Fixes
+
+* sfdag ([bcb85fb](https://github.com/bigpod98/main/commit/bcb85fb11ef942770d2e5182e1263c4222018aa7))
+
 ## 1.0.0 (2023-04-02)
 
 
