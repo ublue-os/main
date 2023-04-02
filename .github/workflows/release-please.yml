@@ -29,7 +29,7 @@ jobs:
       - name: generate KS files
         shell: bash
         run: |
-          tee -a ${{ matrix.image_name }}.ks << END
+          tee -a ${{ matrix.image_name }}.ks << END 
           ostreecontainer --url="ghcr.io/ublue-os/${{ matrix.image_flavor }}:${{ matrix.fedora-version }}" --no-signature-verification
           url --url="https://download.fedoraproject.org/pub/fedora/linux/development/38/Everything/x86_64/os/" 
 
