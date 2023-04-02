@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/bigpod98/main/compare/v1.0.3...v1.0.4) (2023-04-02)
+
+
+### Bug Fixes
+
+* mistake ([6f0829e](https://github.com/bigpod98/main/commit/6f0829e52bb464402c0a39c6966711a43149afd9))
+
 ## [1.0.3](https://github.com/bigpod98/main/compare/v1.0.2...v1.0.3) (2023-04-02)
 
 
