@@ -26,9 +26,7 @@ jobs:
     strategy:
       matrix:
         major_version: [ 38 ]
-        image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate]
-        exclude:
-          - image_name: base
+        image_name: [silverblue, kinoite, vauxite, sericea, lxqt, mate]
     steps:
       - uses: actions/checkout@v3
       - name: generate KS files
