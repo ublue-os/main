@@ -40,7 +40,11 @@ ublue-os/base-main is also very well suited for servers, and users are expected 
 
 ## How to Install
 
-Note: If you have an Nvidia GPU use [the ublue-os/nvidia images instead](https://github.com/ublue-os/nvidia)
+1. [Download the image you want](https://github.com/ublue-os/main/releases)
+1. [Follow these instructions](https://ublue.it/installation)
+
+<details>
+<summary>To switch to another image</summary>
 
 To rebase an existing Silverblue/Kinoite machine to the latest release (37): 
 
@@ -79,6 +83,8 @@ Fedora 38-only, recommended only for advanced users
 Which does not come with any desktops or window managers:
 
     sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/base-main:37
+    
+</details>
 
 ## Verification
 
