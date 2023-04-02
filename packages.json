@@ -9,6 +9,7 @@
                 "ffmpeg-libs",
                 "fzf",
                 "htop",
+                "intel-media-driver",
                 "just",
                 "kernel-devel-matched",
                 "libva-intel-driver",
