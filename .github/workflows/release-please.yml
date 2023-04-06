@@ -45,10 +45,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run:
-          gh release upload ${{ needs.release-please.outputs.tag }} ${{ steps.isogenerator.outputs.iso-path }} -R ublue-os/main
+          gh release upload ${{ needs.release-please.outputs.tag }} ${{ steps.isogenerator.outputs.iso-path }} -R ublue-os/main --clobber
       - name: Upload SHA256SUM
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run:
-          gh release upload ${{ needs.release-please.outputs.tag }} ${{ steps.isogenerator.outputs.sha256sum-path }} -R ublue-os/main
+          gh release upload ${{ needs.release-please.outputs.tag }} ${{ steps.isogenerator.outputs.sha256sum-path }} -R ublue-os/main --clobber
 
