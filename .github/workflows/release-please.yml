@@ -23,6 +23,10 @@ jobs:
     needs: release-please
     if: needs.release-please.outputs.releases_created
     container: fedora:latest
+    strategy:
+      matrix:
+        major_version: [ 38 ]
+        image_name: [silverblue-main, kinoite-main, vauxite-main, sericea-main, lxqt-main, mate-main]
     steps:
       - uses: actions/checkout@v3
       - name: Generate ISO  
