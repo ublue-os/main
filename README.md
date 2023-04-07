@@ -44,7 +44,7 @@ ublue-os/base-main is also very well suited for servers, and users are expected 
 1. [Follow these instructions](https://ublue.it/installation)
 
 <details>
-<summary>To switch to another image</summary>
+<summary>To switch to another Image</summary>
 
 To rebase an existing Silverblue/Kinoite machine to the latest release (37): 
 
