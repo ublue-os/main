@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/ublue-os/main/compare/v1.1.3...v1.1.4) (2023-04-07)
+
+
+### Bug Fixes
+
+* update readme to kick off build ([#121](https://github.com/ublue-os/main/issues/121)) ([83186eb](https://github.com/ublue-os/main/commit/83186eb1dd72c5cc5903b8ba308cbcb5a96e7ff7))
+
 ## [1.1.3](https://github.com/ublue-os/main/compare/v1.1.2...v1.1.3) (2023-04-07)
 
 
