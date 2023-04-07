@@ -42,6 +42,7 @@ ublue-os/base-main is also very well suited for servers, and users are expected 
 
 1. [Download the image you want](https://github.com/ublue-os/main/releases)
 1. [Follow these instructions](https://ublue.it/installation)
+1. [File an issue](https://github.com/ublue-os/main/issues) if you find a problem
 
 <details>
 <summary>To switch to another Image</summary>
