@@ -22,31 +22,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: release-please
     if: needs.release-please.outputs.releases_created
-    container: fedora:latest
-    strategy:
-      matrix:
-        major_version: [ 38 ]
-        image_name: [silverblue-main, kinoite-main, vauxite-main, sericea-main, lxqt-main, mate-main]
+    container: fedora:38
     steps:
       - uses: actions/checkout@v3
-      - name: generate KS files
-        shell: bash
-        run: |
-          tee -a ${{ matrix.image_name }}.ks << END 
-          ostreecontainer --url="ghcr.io/ublue-os/${{ matrix.image_name }}:${{ matrix.major_version }}" --no-signature-verification
-          url --url="https://download.fedoraproject.org/pub/fedora/linux/development/38/Everything/x86_64/os/"
-
-          %post --logfile=/root/ks-post.log --erroronfail
-          %end
-          END
       - name: Generate ISO  
         uses: ublue-os/isogenerator@main
         id: isogenerator
         with:
-          image-name: ${{ matrix.image_name }}-${{ matrix.major_version }}
+          image-name: universalblue-38
           installer-repo: development
-          installer-major-version: ${{ matrix.major_version }}
-          kickstart-file-path: ${{ matrix.image_name }}.ks
+          installer-major-version: 38
       - name: install github CLI
         run: |
           sudo dnf install 'dnf-command(config-manager)' -y
@@ -56,9 +41,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run:
-          gh release upload ${{ needs.release-please.outputs.tag }} ./${{ steps.isogenerator.outputs.iso-path }} -R ublue-os/main
+          gh release upload ${{ needs.release-please.outputs.tag }} ${{ steps.isogenerator.outputs.iso-path }} -R ublue-os/main
       - name: Upload SHA256SUM
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run:
-          gh release upload ${{ needs.release-please.outputs.tag }} ./${{ steps.isogenerator.outputs.sha256sum-path }} -R ublue-os/main 
+          gh release upload ${{ needs.release-please.outputs.tag }} ${{ steps.isogenerator.outputs.sha256sum-path }} -R ublue-os/main
+
