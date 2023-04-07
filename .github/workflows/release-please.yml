@@ -22,7 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: release-please
     if: needs.release-please.outputs.releases_created
-    container: fedora:38
+    container:
+      image: fedora:38
+      options: --privileged
     steps:
       - uses: actions/checkout@v3
       - name: Generate ISO  
