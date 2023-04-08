@@ -1,6 +1,6 @@
 name: ISO Issue Report
 description: File a report on an installation ISO
-title: ""
+title: "Report an issue with an ISO"
 labels: ["iso"]
 body:
   - type: markdown
