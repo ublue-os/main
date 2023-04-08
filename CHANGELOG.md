@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.6](https://github.com/ublue-os/main/compare/v1.1.5...v1.1.6) (2023-04-08)
+
+
+### Bug Fixes
+
+* make intro text more clear ([#128](https://github.com/ublue-os/main/issues/128)) ([5c8567d](https://github.com/ublue-os/main/commit/5c8567d72f8ad5ba68c2e20a04ab10a72df40980))
+
 ## [1.1.5](https://github.com/ublue-os/main/compare/v1.1.4...v1.1.5) (2023-04-07)
 
 
