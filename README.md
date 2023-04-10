@@ -13,7 +13,7 @@ A common main image for all other uBlue images, with minimal (but important) adj
 
 ## What is this?
 
-You should be familiar with [immutable desktops](https://silverblue.fedoraproject.org/about). These are Fedora ostree images that have been modified with the following quality of life features: 
+You should be familiar with [immutable desktops](https://silverblue.fedoraproject.org/about). These are Fedora ostree images that have been modified with the following quality of life features:
 
 ## Features
 
