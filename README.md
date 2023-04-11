@@ -22,6 +22,7 @@ You should be familiar with [immutable desktops](https://silverblue.fedoraprojec
   - Hardware acceleration and codecs
   - `distrobox` for terminal CLI and user package installation
   - A selection of [udev rules and service units](https://github.com/ublue-os/config)
+  - [libratbag](https://github.com/libratbag/libratbag), to configure supported mice via [piper](https://github.com/libratbag/piper)
   - Various other tools: check out the [complete list of packages](packages.json)
 - Sets automatic staging of updates for the system
 - Sets flatpaks to update twice a day

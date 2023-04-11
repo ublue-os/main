@@ -12,6 +12,7 @@
                 "intel-media-driver",
                 "just",
                 "kernel-devel-matched",
+                "libratbag-ratbagd",
                 "libva-intel-driver",
                 "libva-utils",
                 "mesa-va-drivers-freeworld",
