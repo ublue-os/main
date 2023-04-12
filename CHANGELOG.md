@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/ublue-os/main/compare/v1.1.8...v1.2.0) (2023-04-12)
+
+
+### Features
+
+* Include libratbag ([#139](https://github.com/ublue-os/main/issues/139)) ([4dcd439](https://github.com/ublue-os/main/commit/4dcd439c4b0a07c9ed96d6dd96d8a997a092b5b4))
+
 ## [1.1.8](https://github.com/ublue-os/main/compare/v1.1.7...v1.1.8) (2023-04-10)
 
 
