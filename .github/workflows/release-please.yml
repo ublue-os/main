@@ -36,7 +36,7 @@ jobs:
       - name: Calculate ISO name
         id: iso-name
         run: |
-          echo "iso_name=universalblue-${{ matrix.fedora_release }}-${{ matrix.cpu_arch }}-$(date +%Y%m%d).iso" > $GITHUB_OUTPUT
+          echo "iso_name=universalblue-${{ matrix.fedora_release }}-${{ matrix.cpu_arch }}-$(date +%Y%m%d)" > $GITHUB_OUTPUT
       - name: Generate ISO  
         uses: ublue-os/isogenerator@main
         id: isogenerator
