@@ -22,18 +22,28 @@ jobs:
     runs-on: ubuntu-latest
     needs: release-please
     if: needs.release-please.outputs.releases_created
+    strategy:
+      matrix:
+        cpu_arch:
+          - x86-64
+        fedora_release:
+          - 38
     container: 
       image: fedora:38
       options: --privileged
     steps:
       - uses: actions/checkout@v3
+      - name: Calculate ISO name
+        id: iso-name
+        run: |
+          echo "iso_name=universalblue-${{ matrix.fedora_release }}-${{ matrix.cpu_arch }}-$(date +%Y%m%d).iso" > $GITHUB_OUTPUT
       - name: Generate ISO  
         uses: ublue-os/isogenerator@main
         id: isogenerator
         with:
-          image-name: universalblue-38
+          image-name: ${{ steps.iso-name.outputs.iso_name }}
           installer-repo: development
-          installer-major-version: 38
+          installer-major-version: ${{ matrix.fedora_release }}
       - name: install github CLI
         run: |
           sudo dnf install 'dnf-command(config-manager)' -y
