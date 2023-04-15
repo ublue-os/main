@@ -13,7 +13,7 @@ A common main image for all other uBlue images, with minimal (but important) adj
 
 ## What is this?
 
-You should be familiar with [immutable desktops](https://silverblue.fedoraproject.org/about). These are Fedora ostree images that have been modified with the following quality of life features:
+You should be familiar with [image-based desktops](https://silverblue.fedoraproject.org/about). These are Fedora ostree images that have been modified with the following quality of life features:
 
 ## Features
 
@@ -30,8 +30,7 @@ You should be familiar with [immutable desktops](https://silverblue.fedoraprojec
 
 ## Tips and Tricks
 
-These images are immutable, you can't, and really shouldn't, install packages like in a mutable "normal" distribution.
-Applications should be installed using Flatpak whenever possible (execpt for IDEs in some cases, more below).
+Unlike traditional Linux distributions, the base image is intended to be used "out of the box" as it is, packages are installed via Flatpak whenever possible (execpt for IDEs in some cases, more below).
 Should that not be possible, you can use [distrobox](https://github.com/89luca89/distrobox) to have images of mutable distributions where you can install applications normally.
 Want an application that is only available on Arch Linux *and* one that is only on Ubuntu? Well, now can have both!
 
