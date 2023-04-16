@@ -31,7 +31,7 @@ jobs:
         uses: ublue-os/isogenerator@main
         id: isogenerator
         with:
-          image-name: universalblue-38
+          image-name: universalblue
           installer-repo: development
           installer-major-version: 38
       - name: install github CLI
