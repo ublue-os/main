@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/ublue-os/main/compare/v1.2.0...v1.2.1) (2023-04-15)
+
+
+### Bug Fixes
+
+* update readme a bit ([#148](https://github.com/ublue-os/main/issues/148)) ([1ca2aaa](https://github.com/ublue-os/main/commit/1ca2aaacf9291f8dca28c5dd189192386be1db36))
+
 ## [1.2.0](https://github.com/ublue-os/main/compare/v1.1.8...v1.2.0) (2023-04-12)
 
 
