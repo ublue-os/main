@@ -31,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Generate ISO  
-        uses: akdev1l/isogenerator@v1.1.1
+        uses: akdev1l/isogenerator@v1.1.2
         id: isogenerator
         with:
           image-name: universalblue
