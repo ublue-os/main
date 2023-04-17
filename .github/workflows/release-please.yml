@@ -5,6 +5,9 @@ on:
 name: release-please
 jobs:
   release-please:
+    permissions:
+      contents: write
+      pull-requests: write
     runs-on: ubuntu-latest
     outputs:
       releases_created: ${{ steps.release-please.outputs.releases_created }}
@@ -28,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Generate ISO  
-        uses: ublue-os/isogenerator@main
+        uses: akdev1l/isogenerator@v1.1.1
         id: isogenerator
         with:
           image-name: universalblue
@@ -43,10 +46,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run:
-          gh release upload ${{ needs.release-please.outputs.tag }} ${{ steps.isogenerator.outputs.iso-path }} -R ublue-os/main --clobber
+          gh release upload \
+            ${{ needs.release-please.outputs.tag }} \
+            ${{ steps.isogenerator.outputs.iso-path }} \
+            --repo ${{ github.repository_owner }}/${{ github.event.repository.name }} \
+            --clobber
+
       - name: Upload SHA256SUM
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run:
-          gh release upload ${{ needs.release-please.outputs.tag }} ${{ steps.isogenerator.outputs.sha256sum-path }} -R ublue-os/main --clobber
-
+          gh release upload \
+            ${{ needs.release-please.outputs.tag }} \
+            ${{ steps.isogenerator.outputs.sha256sum-path }} \
+            --repo ${{ github.repository_owner }}/${{ github.event.repository.name }} \
+            --clobber
