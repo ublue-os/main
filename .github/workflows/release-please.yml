@@ -47,9 +47,10 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           ls -l
+          pwd
           gh release upload \
             ${{ needs.release-please.outputs.tag }} \
-            ${{ github.workspace }}/${{ steps.isogenerator.outputs.iso-path }} \
+            ./${{ steps.isogenerator.outputs.iso-path }} \
             --repo ${{ github.repository_owner }}/${{ github.event.repository.name }} \
             --clobber
 
