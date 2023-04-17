@@ -28,6 +28,8 @@ jobs:
     container: 
       image: fedora:38
       options: --privileged
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v3
       - name: Generate ISO  
