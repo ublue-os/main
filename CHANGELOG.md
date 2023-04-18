@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/ublue-os/main/compare/v1.2.1...v1.3.0) (2023-04-18)
+
+
+### Features
+
+* promote ISO to F38 GA ([#156](https://github.com/ublue-os/main/issues/156)) ([4968d34](https://github.com/ublue-os/main/commit/4968d34aef7a9e4a6c55bfee1e2e2eb8d095e6c1))
+* use tagged release for isogenerator ([#155](https://github.com/ublue-os/main/issues/155)) ([f7d05b4](https://github.com/ublue-os/main/commit/f7d05b4f58096fa87df920523390cfe51774cdee))
+
 ## [1.2.1](https://github.com/ublue-os/main/compare/v1.2.0...v1.2.1) (2023-04-15)
 
 
