@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/ublue-os/main/compare/v1.3.0...v1.3.1) (2023-04-18)
+
+
+### Bug Fixes
+
+* kick off ISO build ([#159](https://github.com/ublue-os/main/issues/159)) ([7c9e430](https://github.com/ublue-os/main/commit/7c9e43008eb65a6af6ed1c69a3c08dfbc819ba63))
+
 ## [1.3.0](https://github.com/ublue-os/main/compare/v1.2.1...v1.3.0) (2023-04-18)
 
 
