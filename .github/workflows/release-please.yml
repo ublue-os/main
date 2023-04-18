@@ -32,7 +32,7 @@ jobs:
         id: isogenerator
         with:
           image-name: universalblue
-          installer-repo: development
+          installer-repo: releases
           installer-major-version: 38
       - name: install github CLI
         run: |
