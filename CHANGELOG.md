@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.2](https://github.com/ublue-os/main/compare/v1.3.1...v1.3.2) (2023-04-20)
+
+
+### Bug Fixes
+
+* temporarily disable mesa-va-drivers-freeworld for f38 ([#163](https://github.com/ublue-os/main/issues/163)) ([73a10d0](https://github.com/ublue-os/main/commit/73a10d02c7b814cb382823c1571c97a86309e22a))
+
+
+### Reverts
+
+* "fix: temporarily disable mesa-va-drivers-freeworld for f38" ([#166](https://github.com/ublue-os/main/issues/166)) ([32b29ac](https://github.com/ublue-os/main/commit/32b29ac8299919b2e97e16058a6c94e66410ef10))
+
 ## [1.3.1](https://github.com/ublue-os/main/compare/v1.3.0...v1.3.1) (2023-04-18)
 
 
