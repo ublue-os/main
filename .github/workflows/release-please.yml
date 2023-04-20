@@ -33,7 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Generate ISO  
-        uses: ublue-os/isogenerator@v1.1.0
+        uses: ublue-os/isogenerator@v1.2.0
         id: isogenerator
         with:
           image-name: universalblue
