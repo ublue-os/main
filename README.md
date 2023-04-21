@@ -13,7 +13,7 @@ A common main image for all other uBlue images, with minimal (but important) adj
 
 ## What is this?
 
-You should be familiar with [image-based desktops](https://silverblue.fedoraproject.org/about). These are Fedora ostree images that have been modified with the following quality of life features:
+You should be familiar with [image-based desktops](https://silverblue.fedoraproject.org/about). These are Fedora OStree images that have been modified with the following quality of life features:
 
 ## Features
 
@@ -23,7 +23,7 @@ You should be familiar with [image-based desktops](https://silverblue.fedoraproj
   - `distrobox` for terminal CLI and user package installation
   - A selection of [udev rules and service units](https://github.com/ublue-os/config)
   - [libratbag](https://github.com/libratbag/libratbag), to configure supported mice via [piper](https://github.com/libratbag/piper)
-  - Various other tools: check out the [complete list of packages](packages.json)
+  - Various other tools: check out the [complete list of packages](https://github.com/ublue-os/main/blob/main/packages.json)
 - Sets automatic staging of updates for the system
 - Sets flatpaks to update twice a day
 - Everything else (desktop, artwork, etc) remains stock so you can use this as a good starting image

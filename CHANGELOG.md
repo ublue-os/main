@@ -1,5 +1,39 @@
 # Changelog
 
+## [1.3.3](https://github.com/ublue-os/main/compare/v1.3.2...v1.3.3) (2023-04-20)
+
+
+### Bug Fixes
+
+* bump isogenerator to 1.2.0 ([#167](https://github.com/ublue-os/main/issues/167)) ([2a46e49](https://github.com/ublue-os/main/commit/2a46e49765fea7683278f74e1d2eb6fe2b3b9ff4))
+
+## [1.3.2](https://github.com/ublue-os/main/compare/v1.3.1...v1.3.2) (2023-04-20)
+
+
+### Bug Fixes
+
+* temporarily disable mesa-va-drivers-freeworld for f38 ([#163](https://github.com/ublue-os/main/issues/163)) ([73a10d0](https://github.com/ublue-os/main/commit/73a10d02c7b814cb382823c1571c97a86309e22a))
+
+
+### Reverts
+
+* "fix: temporarily disable mesa-va-drivers-freeworld for f38" ([#166](https://github.com/ublue-os/main/issues/166)) ([32b29ac](https://github.com/ublue-os/main/commit/32b29ac8299919b2e97e16058a6c94e66410ef10))
+
+## [1.3.1](https://github.com/ublue-os/main/compare/v1.3.0...v1.3.1) (2023-04-18)
+
+
+### Bug Fixes
+
+* kick off ISO build ([#159](https://github.com/ublue-os/main/issues/159)) ([7c9e430](https://github.com/ublue-os/main/commit/7c9e43008eb65a6af6ed1c69a3c08dfbc819ba63))
+
+## [1.3.0](https://github.com/ublue-os/main/compare/v1.2.1...v1.3.0) (2023-04-18)
+
+
+### Features
+
+* promote ISO to F38 GA ([#156](https://github.com/ublue-os/main/issues/156)) ([4968d34](https://github.com/ublue-os/main/commit/4968d34aef7a9e4a6c55bfee1e2e2eb8d095e6c1))
+* use tagged release for isogenerator ([#155](https://github.com/ublue-os/main/issues/155)) ([f7d05b4](https://github.com/ublue-os/main/commit/f7d05b4f58096fa87df920523390cfe51774cdee))
+
 ## [1.2.1](https://github.com/ublue-os/main/compare/v1.2.0...v1.2.1) (2023-04-15)
 
 
