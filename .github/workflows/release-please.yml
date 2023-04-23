@@ -33,12 +33,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Generate ISO  
-        uses: ublue-os/isogenerator@v1.2.0
+        uses: ublue-os/isogenerator@v2.0.0
         id: isogenerator
         with:
           image-name: universalblue
           installer-repo: releases
           installer-major-version: 38
+          boot-menu-path: boot_menu.yml
       - name: install github CLI
         run: |
           sudo dnf install 'dnf-command(config-manager)' -y

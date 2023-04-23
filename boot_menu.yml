@@ -1,0 +1,41 @@
+ublue_variants:
+  - label: ublue-os/main
+    ks: /kickstart/ublue-os.ks
+    flavors:
+      - label: silverblue-main
+        info: GNOME
+      - label: kinoite-main
+        info: KDE
+      - label: vauxite-main
+        info: Xfce
+      - label: sericea-main
+        info: Sway
+      - label: lxqt-main
+      - label: mate-main
+      - label: base-main
+        info: no DE
+  - label: ublue-os/nvidia
+    ks: /kickstart/ublue-os-nvidia.ks
+    subvariants:
+      - label: latest driver
+      - label: 470xx driver
+        suffix: -470
+    flavors:
+      - label: silverblue-nvidia
+        info: GNOME
+      - label: kinoite-nvidia
+        info: KDE
+      - label: vauxite-nvidia
+        info: Xfce
+      - label: sericea-nvidia
+        info: Sway
+      - label: lxqt-nvidia
+      - label: mate-nvidia
+      - label: base-nvidia
+        info: no DE
+  - label: ublue-os/bluefin
+    ks: /kickstart/ublue-os.ks
+    flavors:
+      - label: bluefin
+      - label: bluefin-nvidia
+        ks: /kickstart/ublue-os-nvidia.ks
