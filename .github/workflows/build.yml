@@ -6,6 +6,7 @@ on:
     paths-ignore:
       - '**.md'
       - '**.txt'
+  merge_group:    
   schedule:
     - cron: '20 20 * * *'  # 8:20pm everyday
   push:
