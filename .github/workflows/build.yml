@@ -1,20 +1,12 @@
 name: build-ublue
 on:
   pull_request:
-    branches:
-      - main
     paths-ignore:
       - '**.md'
       - '**.txt'
   merge_group:    
   schedule:
     - cron: '20 20 * * *'  # 8:20pm everyday
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
   workflow_dispatch:
 env:
     IMAGE_BASE_NAME: main
