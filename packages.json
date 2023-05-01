@@ -22,6 +22,7 @@
                 "podman-compose",
                 "pipewire-codec-aptx",
                 "smartmontools",
+                "tmux",
                 "vim",
                 "zstd"
             ],
