@@ -7,6 +7,8 @@ body:
     attributes:
       value: |
         Thank you for taking the time to fill out this request!
+        
+        Check out the [Project Scope](https://ublue.it/scope/) for more information on how packages are selected.
   - type: textarea
     id: describe-bug
     attributes:

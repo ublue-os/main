@@ -2,21 +2,27 @@
     "all": {
         "include": {
             "all": [
+                "apr",
+                "apr-util",
                 "distrobox",
                 "ffmpeg",
                 "ffmpeg-libs",
                 "fzf",
                 "htop",
+                "intel-media-driver",
                 "just",
                 "kernel-devel-matched",
+                "libratbag-ratbagd",
                 "libva-intel-driver",
                 "libva-utils",
                 "mesa-va-drivers-freeworld",
                 "nvme-cli",
                 "nvtop",
                 "openssl",
+                "podman-compose",
                 "pipewire-codec-aptx",
                 "smartmontools",
+                "tmux",
                 "vim",
                 "zstd"
             ],
@@ -157,6 +163,9 @@
             ],
             "sericea": [
                 "tumbler"
+            ],
+            "vauxite": [
+                "xfce4-clipman-plugin"
             ]
         },
         "exclude": {

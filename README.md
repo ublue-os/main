@@ -2,7 +2,7 @@
 
 [![build-ublue](https://github.com/ublue-os/main/actions/workflows/build.yml/badge.svg)](https://github.com/ublue-os/main/actions/workflows/build.yml)
 
-A WIP common main image for all other Ublue images.
+A common main image for all other uBlue images, with minimal (but important) adjustments to Fedora.
 
 1. [Features](#Features)
 1. [Tips and Tricks](#Tips-and-Tricks)
@@ -13,7 +13,7 @@ A WIP common main image for all other Ublue images.
 
 ## What is this?
 
-You should be familiar with [immutable desktops](https://silverblue.fedoraproject.org/about). These are Fedora-ostree images that have been modified with the following quality of life features: 
+You should be familiar with [image-based desktops](https://silverblue.fedoraproject.org/about). These are Fedora OStree images that have been modified with the following quality of life features:
 
 ## Features
 
@@ -22,15 +22,15 @@ You should be familiar with [immutable desktops](https://silverblue.fedoraprojec
   - Hardware acceleration and codecs
   - `distrobox` for terminal CLI and user package installation
   - A selection of [udev rules and service units](https://github.com/ublue-os/config)
-  - Various other tools: check out the [complete list of packages](packages.json)
+  - [libratbag](https://github.com/libratbag/libratbag), to configure supported mice via [piper](https://github.com/libratbag/piper)
+  - Various other tools: check out the [complete list of packages](https://github.com/ublue-os/main/blob/main/packages.json)
 - Sets automatic staging of updates for the system
 - Sets flatpaks to update twice a day
 - Everything else (desktop, artwork, etc) remains stock so you can use this as a good starting image
 
 ## Tips and Tricks
 
-These images are immutable, you can't, and really shouldn't, install packages like in a mutable "normal" distribution.
-Applications should be installed using Flatpak whenever possible (execpt for IDEs in some cases, more below).
+Unlike traditional Linux distributions, the base image is intended to be used "out of the box" as it is, packages are installed via Flatpak whenever possible (execpt for IDEs in some cases, more below).
 Should that not be possible, you can use [distrobox](https://github.com/89luca89/distrobox) to have images of mutable distributions where you can install applications normally.
 Want an application that is only available on Arch Linux *and* one that is only on Ubuntu? Well, now can have both!
 
@@ -40,12 +40,18 @@ ublue-os/base-main is also very well suited for servers, and users are expected 
 
 ## How to Install
 
-Note: If you have an Nvidia GPU use [the ublue-os/nvidia images instead](https://github.com/ublue-os/nvidia)
+1. [Download the image you want](https://github.com/ublue-os/main/releases)
+1. [Follow these instructions](https://ublue.it/installation)
+1. [File an issue](https://github.com/ublue-os/main/issues) if you find a problem
+
+<details>
+<summary>To switch to another Image</summary>
 
 To rebase an existing Silverblue/Kinoite machine to the latest release (37): 
 
 1. Download and install [Fedora Silverblue](https://silverblue.fedoraproject.org/download)
-1. After you reboot you should [pin the working deployment](https://docs.fedoraproject.org/en-US/fedora-silverblue/faq/#_about_using_silverblue) so you can safely rollback 
+1. After you reboot you should [pin the working deployment](https://docs.fedoraproject.org/en-US/fedora-silverblue/faq/#_about_using_silverblue) so you can safely rollback
+1. If you are coming from an existing system it is recommended to not have any layered packages before proceeding. See the [Fedora documentation](https://docs.fedoraproject.org/en-US/fedora-silverblue/) for more information.
 1. Open a terminal and use one of the following commands to rebase the OS:
 
 **Silverblue (GNOME):**
@@ -78,6 +84,8 @@ Fedora 38-only, recommended only for advanced users
 Which does not come with any desktops or window managers:
 
     sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/base-main:37
+    
+</details>
 
 ## Verification
 
