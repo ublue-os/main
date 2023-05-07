@@ -18,6 +18,7 @@
                 "mesa-va-drivers-freeworld",
                 "nvme-cli",
                 "nvtop",
+                "openrgb-udev-rules",
                 "openssl",
                 "podman-compose",
                 "pipewire-codec-aptx",
