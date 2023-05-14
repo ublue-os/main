@@ -2,6 +2,7 @@
     "all": {
         "include": {
             "all": [
+                "alsa-tools",
                 "apr",
                 "apr-util",
                 "distrobox",
