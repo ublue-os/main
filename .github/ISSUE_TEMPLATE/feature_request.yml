@@ -18,6 +18,15 @@ body:
       value: "I'd like to request the package `vim` because ..."
     validations:
       required: true
+  - type: textarea
+    id: add-info
+    attributes:
+      label: Information on the package
+      description: Additional information that we need
+      placeholder: So that we have a record of why it's being added
+      value: "Paste the results of `dnf info packagename` here" 
+    validations:
+      required: true    
   - type: dropdown
     id: image
     attributes:
