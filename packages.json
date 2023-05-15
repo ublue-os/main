@@ -12,6 +12,7 @@
                 "intel-media-driver",
                 "just",
                 "kernel-devel-matched",
+                "kernel-tools",
                 "libratbag-ratbagd",
                 "libva-intel-driver",
                 "libva-utils",
