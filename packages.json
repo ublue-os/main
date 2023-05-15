@@ -28,6 +28,7 @@
                 "zstd"
             ],
             "silverblue": [
+                "adw-gtk3-theme",
                 "ffmpegthumbnailer",
                 "gnome-tweaks"
             ],
