@@ -20,12 +20,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image_name: [sericea, base]
-        major_version: [rawhide, 38]
+        image_name: [sericea]
+        major_version: [38]
         include:
-          - major_version: rawhide
-            is_latest_version: true
-            is_stable_version: false
           - major_version: 38
             is_latest_version: true
             is_stable_version: true
