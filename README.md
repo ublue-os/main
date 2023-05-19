@@ -1,6 +1,6 @@
 # Main
 
-[![build-ublue](https://github.com/ublue-os/main/actions/workflows/build.yml/badge.svg)](https://github.com/ublue-os/main/actions/workflows/build.yml)
+[![build-ublue](https://github.com/d1sev/metal-iso/actions/workflows/build.yml/badge.svg)](https://github.com/d1sev/metal-iso/actions/workflows/build.yml)
 
 A common main image for all other uBlue images, with minimal (but important) adjustments to Fedora.
 
@@ -23,7 +23,7 @@ You should be familiar with [image-based desktops](https://silverblue.fedoraproj
   - `distrobox` for terminal CLI and user package installation
   - A selection of [udev rules and service units](https://github.com/ublue-os/config)
   - [libratbag](https://github.com/libratbag/libratbag), to configure supported mice via [piper](https://github.com/libratbag/piper)
-  - Various other tools: check out the [complete list of packages](https://github.com/ublue-os/main/blob/main/packages.json)
+  - Various other tools: check out the [complete list of packages](https://github.com/d1sev/metal-iso/blob/main/packages.json)
 - Sets automatic staging of updates for the system
 - Sets flatpaks to update twice a day
 - Everything else (desktop, artwork, etc) remains stock so you can use this as a good starting image
@@ -40,9 +40,9 @@ ublue-os/base-main is also very well suited for servers, and users are expected 
 
 ## How to Install
 
-1. [Download the image you want](https://github.com/ublue-os/main/releases)
+1. [Download the image you want](https://github.com/d1sev/metal-iso/releases)
 1. [Follow these instructions](https://ublue.it/installation)
-1. [File an issue](https://github.com/ublue-os/main/issues) if you find a problem
+1. [File an issue](https://github.com/d1sev/metal-iso/issues) if you find a problem
 
 <details>
 <summary>To switch to another Image</summary>
@@ -118,9 +118,9 @@ AutomaticUpdatePolicy=check
 See [the documentation](https://ublue.it/making-your-own/) on how use this image in your own projects.
 
 ## [![Repography logo](https://images.repography.com/logo.svg)](https://repography.com) / Recent activity [![Time period](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_badge.svg)](https://repography.com)
-[![Timeline graph](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_timeline.svg)](https://github.com/ublue-os/main/commits)
-[![Issue status graph](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_issues.svg)](https://github.com/ublue-os/main/issues)
-[![Pull request status graph](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_prs.svg)](https://github.com/ublue-os/main/pulls)
-[![Trending topics](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_words.svg)](https://github.com/ublue-os/main/commits)
-[![Top contributors](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_users.svg)](https://github.com/ublue-os/main/graphs/contributors)
-[![Activity map](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_map.svg)](https://github.com/ublue-os/main/commits)
+[![Timeline graph](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_timeline.svg)](https://github.com/d1sev/metal-iso/commits)
+[![Issue status graph](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_issues.svg)](https://github.com/d1sev/metal-iso/issues)
+[![Pull request status graph](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_prs.svg)](https://github.com/d1sev/metal-iso/pulls)
+[![Trending topics](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_words.svg)](https://github.com/d1sev/metal-iso/commits)
+[![Top contributors](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_users.svg)](https://github.com/d1sev/metal-iso/graphs/contributors)
+[![Activity map](https://images.repography.com/35181738/ublue-os/main/recent-activity/xrA_PaNuNMQaiMXAgCjt1WHFLAbONeWxJABDiQSIMJI/sadhuTBbL8fbqM2jXKHWg-T1EsqHwZ2NlnlT6FB-e7Q_map.svg)](https://github.com/d1sev/metal-iso/commits)
