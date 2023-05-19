@@ -2,7 +2,7 @@
 
 [![build-ublue](https://github.com/ublue-os/main/actions/workflows/build.yml/badge.svg)](https://github.com/ublue-os/main/actions/workflows/build.yml)
 
-A common main image for all other uBlue images, with minimal (but important) adjustments to Fedora.
+A common main image for all other uBlue images, with minimal (but important) adjustments to Fedora. <3  
 
 1. [Features](#Features)
 1. [Tips and Tricks](#Tips-and-Tricks)
