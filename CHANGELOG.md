@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.4.0](https://github.com/ublue-os/main/compare/v1.3.3...v1.4.0) (2023-05-17)
+
+
+### Features
+
+* add adw-gtk3-theme for Silverblue ([#204](https://github.com/ublue-os/main/issues/204)) ([3aa1345](https://github.com/ublue-os/main/commit/3aa1345d46507a4158ff7df29cbb92b186c89b4b))
+* add kernel-tools ([#208](https://github.com/ublue-os/main/issues/208)) ([b2d0b07](https://github.com/ublue-os/main/commit/b2d0b0795067de0630ef4f64a3471dda5d33e5d9))
+* add openrgb udev rules ([#197](https://github.com/ublue-os/main/issues/197)) ([a95ec2d](https://github.com/ublue-os/main/commit/a95ec2d42e059eb3595f31b5c1bc8251e1cb0662))
+* add podman-compose ([#180](https://github.com/ublue-os/main/issues/180)) ([4eea999](https://github.com/ublue-os/main/commit/4eea999b5771d438e819735b9f000b9d0b4ef27c))
+* add tmux ([#190](https://github.com/ublue-os/main/issues/190)) ([c5491b9](https://github.com/ublue-os/main/commit/c5491b9a903be6eb5311e01c9dbefc638c3567d9))
+* add xfce4-clipman-plugin to vauxite ([#182](https://github.com/ublue-os/main/issues/182)) ([5a7a820](https://github.com/ublue-os/main/commit/5a7a820180dd878b9be8bc2729ba3c51c2e3594d))
+* new akmods build process ([#87](https://github.com/ublue-os/main/issues/87)) ([f0503ff](https://github.com/ublue-os/main/commit/f0503ffd4ac769e9c38f58adc274e35af9edf50f))
+* switch the latest tag to F38 ([#177](https://github.com/ublue-os/main/issues/177)) ([9aca46a](https://github.com/ublue-os/main/commit/9aca46a742d9128e9b22bfbc5e380f5394ee269a))
+
 ## [1.3.3](https://github.com/ublue-os/main/compare/v1.3.2...v1.3.3) (2023-04-20)
 
 
