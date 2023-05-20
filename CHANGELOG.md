@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.2](https://github.com/ublue-os/main/compare/v1.4.1...v1.4.2) (2023-05-20)
+
+
+### Bug Fixes
+
+* bump isogenerator dep and regen ISOs ([#222](https://github.com/ublue-os/main/issues/222)) ([b3d690b](https://github.com/ublue-os/main/commit/b3d690b338e32d28210e00112973e15797cf6749))
+* rename README.mdlol to README.md ([#219](https://github.com/ublue-os/main/issues/219)) ([5548e8f](https://github.com/ublue-os/main/commit/5548e8fd8b1b2585dbfb6b07a498c716c7b7521e))
+
 ## [1.4.1](https://github.com/ublue-os/main/compare/v1.4.0...v1.4.1) (2023-05-19)
 
 
