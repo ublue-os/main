@@ -16,6 +16,7 @@
                 "libratbag-ratbagd",
                 "libva-intel-driver",
                 "libva-utils",
+                "lshw",
                 "mesa-va-drivers-freeworld",
                 "nvme-cli",
                 "nvtop",
