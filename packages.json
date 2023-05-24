@@ -212,6 +212,9 @@
                 "f38-backgrounds-extras-base",
                 "f38-backgrounds-extras-mate",
                 "f38-backgrounds-mate"
+            ],
+            "kinoite":[
+                "xwaylandvideobridge"
             ]
         },
         "exclude": {
