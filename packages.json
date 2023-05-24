@@ -207,14 +207,14 @@
     "38": {
         "include": {
             "all": [],
+            "kinoite": [
+                "xwaylandvideobridge"
+            ],
             "mate": [
                 "f38-backgrounds-base",
                 "f38-backgrounds-extras-base",
                 "f38-backgrounds-extras-mate",
                 "f38-backgrounds-mate"
-            ],
-            "kinoite":[
-                "xwaylandvideobridge"
             ]
         },
         "exclude": {
