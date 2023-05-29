@@ -24,6 +24,9 @@ rpm-ostree install \
     /tmp/rpms/*.rpm \
     fedora-repos-archive
 
+rpm-ostree install \
+    /tmp/akmods-rpms/*.rpm
+
 if [[ "${#INCLUDED_PACKAGES[@]}" -gt 0 && "${#EXCLUDED_PACKAGES[@]}" -eq 0 ]]; then
     rpm-ostree install \
         ${INCLUDED_PACKAGES[@]}
