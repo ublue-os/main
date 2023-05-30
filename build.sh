@@ -24,8 +24,11 @@ rpm-ostree install \
     /tmp/rpms/*.rpm \
     fedora-repos-archive
 
-rpm-ostree install \
-    /tmp/akmods-rpms/*.rpm
+# akmods: use any provided repos, but leave them disabled
+cp /tmp/akmods-repos/*.repo /etc/yum.repos.d/
+rpm-ostree install /tmp/akmods-rpms/*.rpm
+sed -i 's@enabled=1@enabled=0@g' /tmp/akmods-repos/*.repo
+cp /tmp/akmods-repos/*.repo /etc/yum.repos.d/
 
 if [[ "${#INCLUDED_PACKAGES[@]}" -gt 0 && "${#EXCLUDED_PACKAGES[@]}" -eq 0 ]]; then
     rpm-ostree install \
