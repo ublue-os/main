@@ -10,6 +10,8 @@ ublue_variants:
         info: Xfce
       - label: sericea-main
         info: Sway
+      - label: cinnamon-main
+        info: Cinnamon
       - label: lxqt-main
       - label: mate-main
       - label: base-main
@@ -29,6 +31,8 @@ ublue_variants:
         info: Xfce
       - label: sericea-nvidia
         info: Sway
+      - label: cinnamon-nvidia
+        info: Cinnamon
       - label: lxqt-nvidia
       - label: mate-nvidia
       - label: base-nvidia
