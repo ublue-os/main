@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.0](https://github.com/ublue-os/main/compare/v1.4.2...v1.5.0) (2023-05-31)
+
+
+### Features
+
+* add `lshw` (issue [#225](https://github.com/ublue-os/main/issues/225)) ([#230](https://github.com/ublue-os/main/issues/230)) ([5501e3c](https://github.com/ublue-os/main/commit/5501e3c008aaed027c2bbfc25c3a952a2500db4d))
+* add cinnamon image to iso ([#237](https://github.com/ublue-os/main/issues/237)) ([d6d98a2](https://github.com/ublue-os/main/commit/d6d98a238a2d6f9702d428de5ef94011df6a4a3e))
+* add xwaylandvideobridge ([#232](https://github.com/ublue-os/main/issues/232)) ([ef29a6b](https://github.com/ublue-os/main/commit/ef29a6bbfc4edd28bebef63994f8a6ab922818a1))
+* align packagelist with fedora workstation ([#235](https://github.com/ublue-os/main/issues/235)) ([fe48ba8](https://github.com/ublue-os/main/commit/fe48ba84a061ef193285830f72c95d3f71c7a496))
+* enable ublue-os akmods ([#234](https://github.com/ublue-os/main/issues/234)) ([df93c4f](https://github.com/ublue-os/main/commit/df93c4f17fe4262dad7e59233097513c734cc007))
+* use custom repos provided by akmods ([#236](https://github.com/ublue-os/main/issues/236)) ([efe5364](https://github.com/ublue-os/main/commit/efe53640acc871ed2d60903774577e8a5565672c))
+
 ## [1.4.2](https://github.com/ublue-os/main/compare/v1.4.1...v1.4.2) (2023-05-20)
 
 
