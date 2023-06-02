@@ -39,6 +39,9 @@
                 "ffmpegthumbnailer",
                 "gnome-tweaks"
             ],
+            "kinoite": [
+                "ksshaskpass"
+            ],
             "lxqt": [
                 "breeze-cursor-theme",
                 "breeze-gtk",
