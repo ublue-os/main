@@ -32,7 +32,8 @@
                 "tmux",
                 "traceroute",
                 "vim",
-                "zstd"
+                "zstd",
+                "wireguard-tools"
             ],
             "silverblue": [
                 "adw-gtk3-theme",
