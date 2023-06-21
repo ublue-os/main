@@ -9,6 +9,7 @@
                 "ffmpeg-libs",
                 "fzf",
                 "grub2-tools-extra",
+                "libheif-tools",
                 "htop",
                 "intel-media-driver",
                 "just",
