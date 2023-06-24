@@ -47,7 +47,8 @@
                 "gnome-tweaks"
             ],
             "kinoite": [
-                "ksshaskpass"
+                "ksshaskpass",
+                "kate"
             ],
             "lxqt": [
                 "breeze-cursor-theme",
@@ -198,6 +199,9 @@
                 "libswresample-free",
                 "libswscale-free",
                 "mesa-va-drivers"
+            ],
+            "kinoite": [ 
+                "kwrite"
             ],
             "mate": [
                 "python3-unbound",
