@@ -26,6 +26,7 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 - [Building Locally](#building-locally)
 - [Styleguides](#styleguides)
 - [Commit Messages](#commit-messages)
+- [Nvidia](#nvidia)
 - [Join The Project Team](#join-the-project-team)
 
 ## Code of Conduct
@@ -91,17 +92,17 @@ Building locally is much faster than building in GitHub and is a good way to mov
     git clone https://github.com/ublue-os/base.git
 
 ### Build the image
-    
+
 First make sure you can build an existing image: 
-    
+
     podman build . -t something
-    
+
 Then confirm your image built:
-    
+
     podman image ls 
 
 TODO: Set up and push to your own local registry
-    
+
 ### Make your changes
 
 This usually involved editing the `Containerfile`. Most techniques for building containers apply here, if you're new to containers using the term "Dockerfile" in your searches usually shows more results when you're searching for information. 
@@ -132,6 +133,12 @@ refactor: share logic between 4d3d3d3 and flarhgunnstow
 style: convert tabs to spaces
 test: ensure Tayne retains clothing
 ```
+
+## Nvidia
+
+Please note, RPM Fusion supports the initial Nvidia driver release available with each Fedora version as well as the latest version. Any intermittent versions are not maintained by RPM Fusion after they have been superceded with a new version.
+
+Keep in mind checks, other than building the akmods, do fail in pull requests.
 
 ## Join The Project Team
 
