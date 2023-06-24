@@ -48,7 +48,8 @@
             ],
             "kinoite": [
                 "ksshaskpass",
-                "kate"
+                "kate",
+                "kio-admin"
             ],
             "lxqt": [
                 "breeze-cursor-theme",
