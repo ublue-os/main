@@ -47,10 +47,11 @@
                 "gnome-tweaks"
             ],
             "kinoite": [
-                "ksshaskpass",
+                "icoutils",
                 "kate",
                 "kcron",
-                "kio-admin"
+                "kio-admin",
+                "ksshaskpass"
             ],
             "lxqt": [
                 "breeze-cursor-theme",
