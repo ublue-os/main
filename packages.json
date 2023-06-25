@@ -7,6 +7,7 @@
                 "distrobox",
                 "ffmpeg",
                 "ffmpeg-libs",
+                "ffmpegthumbnailer",
                 "fzf",
                 "grub2-tools-extra",
                 "heif-pixbuf-loader",
@@ -43,7 +44,6 @@
             ],
             "silverblue": [
                 "adw-gtk3-theme",
-                "ffmpegthumbnailer",
                 "gnome-tweaks",
                 "raw-thumbnailer"
             ],
@@ -201,6 +201,9 @@
                 "libswresample-free",
                 "libswscale-free",
                 "mesa-va-drivers"
+            ],
+            "kinoite": [
+                "ffmpegthumbnailer"
             ],
             "mate": [
                 "python3-unbound",
