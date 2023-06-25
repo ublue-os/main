@@ -44,7 +44,8 @@
             "silverblue": [
                 "adw-gtk3-theme",
                 "ffmpegthumbnailer",
-                "gnome-tweaks"
+                "gnome-tweaks",
+                "raw-thumbnailer"
             ],
             "kinoite": [
                 "ksshaskpass"
@@ -168,6 +169,7 @@
                 "pipewire-alsa",
                 "pipewire-pulseaudio",
                 "pluma",
+                "raw-thumbnailer",
                 "seahorse",
                 "seahorse-caja",
                 "setroubleshoot",
@@ -184,6 +186,7 @@
                 "tumbler"
             ],
             "vauxite": [
+                "raw-thumbnailer",
                 "xfce4-clipman-plugin"
             ]
         },
