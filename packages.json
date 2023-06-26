@@ -48,6 +48,10 @@
                 "raw-thumbnailer"
             ],
             "kinoite": [
+                "icoutils",
+                "kate",
+                "kcron",
+                "kio-admin",
                 "ksshaskpass"
             ],
             "lxqt": [
@@ -204,7 +208,8 @@
                 "mesa-va-drivers"
             ],
             "kinoite": [
-                "ffmpegthumbnailer"
+                "ffmpegthumbnailer",
+                "kwrite"
             ],
             "mate": [
                 "python3-unbound",
