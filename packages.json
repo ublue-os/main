@@ -7,6 +7,7 @@
                 "distrobox",
                 "ffmpeg",
                 "ffmpeg-libs",
+                "ffmpegthumbnailer",
                 "fzf",
                 "grub2-tools-extra",
                 "heif-pixbuf-loader",
@@ -43,8 +44,8 @@
             ],
             "silverblue": [
                 "adw-gtk3-theme",
-                "ffmpegthumbnailer",
-                "gnome-tweaks"
+                "gnome-tweaks",
+                "raw-thumbnailer"
             ],
             "kinoite": [
                 "icoutils",
@@ -82,6 +83,7 @@
                 "openbox",
                 "pcmanfm-qt",
                 "perl-File-MimeInfo",
+                "qt5-qtimageformats",
                 "qterminal",
                 "sddm",
                 "sddm-themes",
@@ -172,6 +174,7 @@
                 "pipewire-alsa",
                 "pipewire-pulseaudio",
                 "pluma",
+                "raw-thumbnailer",
                 "seahorse",
                 "seahorse-caja",
                 "setroubleshoot",
@@ -188,6 +191,7 @@
                 "tumbler"
             ],
             "vauxite": [
+                "raw-thumbnailer",
                 "xfce4-clipman-plugin"
             ]
         },
@@ -203,7 +207,8 @@
                 "libswscale-free",
                 "mesa-va-drivers"
             ],
-            "kinoite": [ 
+            "kinoite": [
+                "ffmpegthumbnailer",
                 "kwrite"
             ],
             "mate": [
