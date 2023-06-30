@@ -48,7 +48,7 @@ ublue-os/base-main is also very well suited for servers, and users are expected 
 <details>
 <summary>To switch to another Image</summary>
 
-To rebase an existing Silverblue/Kinoite machine to the latest release (37): 
+To rebase an existing Silverblue/Kinoite machine to the latest release (38):
 
 1. Download and install [Fedora Silverblue](https://silverblue.fedoraproject.org/download)
 1. After you reboot you should [pin the working deployment](https://docs.fedoraproject.org/en-US/fedora-silverblue/faq/#_about_using_silverblue) so you can safely rollback
@@ -57,34 +57,34 @@ To rebase an existing Silverblue/Kinoite machine to the latest release (37):
 
 **Silverblue (GNOME):**
 
-    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-main:37
+    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-main:38
 
 **Kinoite (KDE)**
 
-    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/kinoite-main:37
+    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/kinoite-main:38
     
 **LXQt**
 
-    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/lxqt-main:37
+    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/lxqt-main:38
     
 **MATE**
 
-    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/mate-main:37
+    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/mate-main:38
     
 **Sericea (Sway)** 
-Fedora 38-only, recommended only for advanced users
+Recommended only for advanced users
 
     sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/sericea-main:38
 
 **Vauxite (XFCE)**
     
-    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/vauxite-main:37
+    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/vauxite-main:38
 
 **Base**
 
 Which does not come with any desktops or window managers:
 
-    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/base-main:37
+    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/base-main:38
     
 </details>
 
