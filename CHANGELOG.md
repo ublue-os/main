@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.6.0](https://github.com/ublue-os/main/compare/v1.5.0...v1.6.0) (2023-06-30)
+
+
+### Features
+
+* add libheif-freeworld & heif-pixbuf-loader ([#255](https://github.com/ublue-os/main/issues/255)) ([5f21453](https://github.com/ublue-os/main/commit/5f2145300d11d2c844ce73df13f6a53520655c6e))
+* Add libheif-tools ([#253](https://github.com/ublue-os/main/issues/253)) ([8703dc8](https://github.com/ublue-os/main/commit/8703dc8c3ab6c63237e2e3d948796d7e3fe67919))
+* add some indonesian fonts ([#248](https://github.com/ublue-os/main/issues/248)) ([abfc70d](https://github.com/ublue-os/main/commit/abfc70d21cc9ea97b839564fe959587e0dbb7fef))
+* add wireguard-tools ([#241](https://github.com/ublue-os/main/issues/241)) ([44cb522](https://github.com/ublue-os/main/commit/44cb522091433b2e1e4a84f4bdac4ea592e353b0))
+* Fix inconsistent thumbnails across images ([#262](https://github.com/ublue-os/main/issues/262)) ([3fc9c69](https://github.com/ublue-os/main/commit/3fc9c69b7c3d4f8571eebc0788a1a7015e5bdfe0))
+* KDE QoL additions ([#259](https://github.com/ublue-os/main/issues/259)) ([a2a561e](https://github.com/ublue-os/main/commit/a2a561e57ace78d975e33c07232e21d50e79df45))
+
+
+### Bug Fixes
+
+* Revert to older version of ostree to fix Flatpak installations ([#261](https://github.com/ublue-os/main/issues/261)) ([0859834](https://github.com/ublue-os/main/commit/0859834454591a4b231a710e491825c08391235d))
+
+
+### Reverts
+
+* "fix: Revert to older version of ostree to fix Flatpak installations ([#261](https://github.com/ublue-os/main/issues/261))" ([#265](https://github.com/ublue-os/main/issues/265)) ([f2c2a31](https://github.com/ublue-os/main/commit/f2c2a314b57b585c467ebc6bbbb40febfd40a11f))
+* "revert: "fix: Revert to older version of ostree to fix Flatpak installations ([#261](https://github.com/ublue-os/main/issues/261))"" ([#266](https://github.com/ublue-os/main/issues/266)) ([36711fa](https://github.com/ublue-os/main/commit/36711fa635afba4dcb2be667fadc96a8d9feeb48))
+
 ## [1.5.0](https://github.com/ublue-os/main/compare/v1.4.2...v1.5.0) (2023-05-31)
 
 
