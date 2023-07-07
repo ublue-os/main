@@ -2,6 +2,7 @@
     "all": {
         "include": {
             "all": [
+                "alsa-firmware",
                 "apr",
                 "apr-util",
                 "distrobox",
