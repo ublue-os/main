@@ -189,7 +189,8 @@
                 "xrdb"
             ],
             "sericea": [
-                "tumbler"
+                "tumbler",
+                "clipman"
             ],
             "vauxite": [
                 "raw-thumbnailer",
