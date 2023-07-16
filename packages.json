@@ -33,6 +33,7 @@
                 "openrgb-udev-rules",
                 "openssl",
                 "podman-compose",
+                "power-profiles-daemon",
                 "pipewire-codec-aptx",
                 "smartmontools",
                 "symlinks",
