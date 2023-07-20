@@ -57,34 +57,34 @@ To rebase an existing Silverblue/Kinoite machine to the latest release (38):
 
 **Silverblue (GNOME):**
 
-    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/silverblue-main:38
+    sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/silverblue-main:38
 
 **Kinoite (KDE)**
 
-    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/kinoite-main:38
+    sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/kinoite-main:38
     
 **LXQt**
 
-    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/lxqt-main:38
+    sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/lxqt-main:38
     
 **MATE**
 
-    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/mate-main:38
+    sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/mate-main:38
     
 **Sericea (Sway)** 
 Recommended only for advanced users
 
-    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/sericea-main:38
+    sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/sericea-main:38
 
 **Vauxite (XFCE)**
     
-    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/vauxite-main:38
+    sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/vauxite-main:38
 
 **Base**
 
 Which does not come with any desktops or window managers:
 
-    sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/base-main:38
+    sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/base-main:38
     
 </details>
 
@@ -92,7 +92,7 @@ Which does not come with any desktops or window managers:
 
 These images are signed with sisgstore's [cosign](https://docs.sigstore.dev/cosign/overview/). You can verify the signature by downloading the `cosign.pub` key from this repo and running the following command:
 
-    cosign verify --key cosign.pub ghcr.io/ublue-os/base
+    cosign verify --key cosign.pub ghcr.io/ublue-os/silverblue-main
 
 If you're forking this repo you should [read the docs](https://docs.github.com/en/actions/security-guides/encrypted-secrets) on keeping secrets in github. You need to [generate a new keypair](https://docs.sigstore.dev/cosign/overview/) with cosign. The public key can be in your public repo (your users need it to check the signatures), and you can paste the private key in Settings -> Secrets -> Actions.
 
