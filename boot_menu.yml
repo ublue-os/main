@@ -41,5 +41,9 @@ ublue_variants:
     ks: /kickstart/ublue-os.ks
     flavors:
       - label: bluefin
+      - label: bluefin-dx
       - label: bluefin-nvidia
+      - label: bluefin-dx-nvidia
+      - label: bluefin-framework
+      - label: bluefin-dx-framework
         ks: /kickstart/ublue-os-nvidia.ks
