@@ -194,7 +194,8 @@
             ],
             "vauxite": [
                 "raw-thumbnailer",
-                "xfce4-clipman-plugin"
+                "xfce4-clipman-plugin",
+                "xfce4-whiskermenu-plugin"
             ]
         },
         "exclude": {
