@@ -46,7 +46,12 @@
             "silverblue": [
                 "adw-gtk3-theme",
                 "gnome-tweaks",
-                "raw-thumbnailer"
+                "raw-thumbnailer",
+                "kernel",
+                "kernel-core",
+                "kernel-modules",
+                "kernel-modules-core",
+                "kernel-modules-extra"
             ],
             "kinoite": [
                 "icoutils",
