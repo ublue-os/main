@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/ublue-os/main/compare/v1.7.0...v1.8.0) (2023-08-11)
+
+
+### Features
+
+* **vauxite:** add xfce4-whiskermenu-plugin ([#293](https://github.com/ublue-os/main/issues/293)) ([ca58833](https://github.com/ublue-os/main/commit/ca588333009d01e40a41d94b6a64dff87490c106))
+
 ## [1.7.0](https://github.com/ublue-os/main/compare/v1.6.0...v1.7.0) (2023-08-08)
 
 
