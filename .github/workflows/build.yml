@@ -125,6 +125,13 @@ jobs:
             FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
+          extra-args: |
+            --security-opt
+              label=disable
+            -v
+              /etc/selinux:/etc/selinux
+            -v
+              /var/lib/selinux:/var/lib/selinux
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
