@@ -1,7 +1,9 @@
 name: build-ublue
 on:
   pull_request:
-  merge_group:    
+  pull_request_review:
+    type: [submitted]
+  merge_group:
   schedule:
     - cron: '0 7 * * *'  # 7 am everyday
   workflow_dispatch:
@@ -12,6 +14,7 @@ env:
 jobs:
   push-ghcr:
     name: Build and push image
+    if: github.event.review.state == 'approved' || github.event_name != 'pull_request_review'
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -34,7 +37,7 @@ jobs:
           # When F38 is added, sericea will automatically be built too
           - image_name: sericea
             major_version: 37
-    steps: 
+    steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@v3
@@ -59,11 +62,11 @@ jobs:
           BUILD_TAGS=()
           # Have tags for tracking builds during pull request
           SHA_SHORT="${GITHUB_SHA::7}"
-          COMMIT_TAGS+=("pr-${{ github.event.number }}-${MAJOR_VERSION}")
+          COMMIT_TAGS+=("pr-${{ github.event.pull_request.number }}-${MAJOR_VERSION}")
           COMMIT_TAGS+=("${SHA_SHORT}-${MAJOR_VERSION}")
           if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
              [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
-              COMMIT_TAGS+=("pr-${{ github.event.number }}")
+              COMMIT_TAGS+=("pr-${{ github.event.pull_request.number }}")
               COMMIT_TAGS+=("${SHA_SHORT}")
           fi
 
@@ -74,7 +77,7 @@ jobs:
               BUILD_TAGS+=("latest")
           fi
 
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          if [[ "${{ github.event_name }}" == "pull_request_review" ]]; then
               echo "Generated the following commit tags: "
               for TAG in "${COMMIT_TAGS[@]}"; do
                   echo "${TAG}"
@@ -138,7 +141,7 @@ jobs:
       - name: Push To GHCR
         uses: redhat-actions/push-to-registry@v2
         id: push
-        if: github.event_name != 'pull_request'
+        if: github.event.review.state == 'approved' || github.event_name != 'pull_request'
         env:
           REGISTRY_USER: ${{ github.actor }}
           REGISTRY_PASSWORD: ${{ github.token }}
@@ -153,7 +156,7 @@ jobs:
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
-        if: github.event_name != 'pull_request'
+        if: github.event.review.state == 'approved' || github.event_name != 'pull_request'
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -161,10 +164,10 @@ jobs:
 
       # Sign container
       - uses: sigstore/cosign-installer@v3.1.1
-        if: github.event_name != 'pull_request'
+        if: github.event.review.state == 'approved' || github.event_name != 'pull_request'
 
       - name: Sign container image
-        if: github.event_name != 'pull_request'
+        if: github.event.review.state == 'approved' || github.event_name != 'pull_request'
         run: |
           cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ env.IMAGE_NAME }}@${TAGS}
         env:
@@ -173,7 +176,6 @@ jobs:
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
 
       - name: Echo outputs
-        if: github.event_name != 'pull_request'
+        if: github.event.review.state == 'approved' || github.event_name != 'pull_request'
         run: |
           echo "${{ toJSON(steps.push.outputs) }}"
-
