@@ -6,20 +6,19 @@
 # example: https://github.com/wez/wezterm/releases
 #   ORG_PROJ would be "wez/wezterm"
 #
-# FILTER is used if there are more than one RPMs which match our arch/noarch.rpm pattern
-# example: wezterm builds a lot of rpms, but they are labeled by distro so we can filter
-#   FILTER would be "fedora36" to get the RPM build for fedora36 OR "fedora" should get
-#          the RPM build for fedora37 (or newest fedora build) due to a reverse sort
+# ARCH_FILTER is used to select the specific RPM. Typically this can just be the arch
+#   such as 'x86_64' but sometimes a specific filter is required when multiple match.
+# example: wezterm builds RPMs for different distros so we must be more specific.
+#   ARCH_FILTER of "fedora37.x86_64" gets the x86_64 RPM build for fedora37
+
 
 ORG_PROJ=${1}
-SUFFIX=${2}
-FILTER=${3}
+ARCH_FILTER=${2}
 
 usage() {
-  echo "$0 ORG_PROJ SUFFIX [FILTER]"
-  echo "    ORG_PROJ - organization/projectname"
-  echo "    SUFFIX   - trailing part of rpm name: eg, x86_64rpm or noarch.rpm"
-  echo "    FILTER   - optional extra filter to further limit rpm selection"
+  echo "$0 ORG_PROJ ARCH_FILTER"
+  echo "    ORG_PROJ    - organization/projectname"
+  echo "    ARCH_FILTER - optional extra filter to further limit rpm selection"
 
 }
 
@@ -28,16 +27,19 @@ if [ -z ${ORG_PROJ} ]; then
   exit 1
 fi
 
-if [ -z ${SUFFIX} ]; then
+if [ -z ${ARCH_FILTER} ]; then
   usage
   exit 2
 fi
 
 API="https://api.github.com/repos/${ORG_PROJ}/releases/latest"
-RPM_URLS=$(curl -sL ${API} | jq -r '.assets[].browser_download_url' | grep -E "${SUFFIX}$" | grep "${FILTER}" |sort -r)
+RPM_URLS=$(curl -sL ${API} \
+  | jq \
+    --arg arch_filter "${ARCH_FILTER}" \
+    '.assets | sort_by(.created_at) | reverse | .[] | select(.name|test($arch_filter)) | select (.name|test("rpm$")) | .browser_download_url')
 for URL in ${RPM_URLS}; do
-  # WARNING: in case of multiple matches, this only installs the first (hopefully the newest, given the reverse sort)
-  echo "execute: rpm-ostree install \"${URL}\""
-  rpm-ostree install "${URL}"
+  # WARNING: in case of multiple matches, this only installs the first matched release
+  echo "execute: rpm-ostree install ${URL}"
+  rpm-ostree install ${URL}
   break
 done
