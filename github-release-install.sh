@@ -32,6 +32,8 @@ if [ -z ${ARCH_FILTER} ]; then
   exit 2
 fi
 
+set -ouex pipefail
+
 API="https://api.github.com/repos/${ORG_PROJ}/releases/latest"
 RPM_URLS=$(curl -sL ${API} \
   | jq \
