@@ -32,14 +32,17 @@ if [ -z ${ARCH_FILTER} ]; then
   exit 2
 fi
 
+set -ouex pipefail
+
 API="https://api.github.com/repos/${ORG_PROJ}/releases/latest"
 RPM_URLS=$(curl -sL ${API} \
   | jq \
+    -r \
     --arg arch_filter "${ARCH_FILTER}" \
     '.assets | sort_by(.created_at) | reverse | .[] | select(.name|test($arch_filter)) | select (.name|test("rpm$")) | .browser_download_url')
 for URL in ${RPM_URLS}; do
   # WARNING: in case of multiple matches, this only installs the first matched release
-  echo "execute: rpm-ostree install ${URL}"
-  rpm-ostree install ${URL}
+  echo "execute: rpm-ostree install \"${URL}\""
+  rpm-ostree install "${URL}"
   break
 done

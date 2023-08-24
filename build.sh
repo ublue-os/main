@@ -58,4 +58,4 @@ else
 fi
 
 ## install packages direct from github
-/tmp/github-release-install.sh sigstore/cosign x86_64.rpm
+/tmp/github-release-install.sh sigstore/cosign x86_64
