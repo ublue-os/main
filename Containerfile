@@ -2,7 +2,6 @@ ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG SOURCE_IMAGE="${SOURCE_IMAGE:-silverblue}"
 ARG BASE_IMAGE="quay.io/fedora-ostree-desktops/${SOURCE_IMAGE}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-37}"
-ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
 
 
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS main
@@ -12,7 +11,7 @@ ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-37}"
 COPY github-release-install.sh /tmp/github-release-install.sh
 COPY main-install.sh /tmp/main-install.sh
 COPY main-post-install.sh /tmp/main-post-install.sh
-COPY packages.json /tmp/packages.json
+COPY main-packages.json /tmp/main-packages.json
 
 COPY --from=ghcr.io/ublue-os/config:latest /rpms /tmp/rpms
 COPY --from=ghcr.io/ublue-os/akmods:${FEDORA_MAJOR_VERSION} /rpms /tmp/akmods-rpms

@@ -137,7 +137,7 @@ jobs:
           images: |
             ${{ env.IMAGE_NAME }}
           labels: |
-            org.opencontainers.image.title=${{ 'nvidia' == matrix.image_flavor && format('{0}-nvidia', matrix.image_name) || format('{0}-main', matrix.image_name) }}
+            org.opencontainers.image.title=${{ matrix.image_flavor }}-${{ matrix.image_flavor }}
             org.opencontainers.image.version=${{ steps.labels.outputs.VERSION }}
             org.opencontainers.image.description=A base Universal Blue ${{ matrix.image_name }} image with batteries included${{ 'nvidia' == matrix.image_flavor && ' and Nvidia drivers added' || '' }}
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/main/README.md
@@ -150,7 +150,7 @@ jobs:
         with:
           containerfiles: |
             ./Containerfile
-          image: ${{ env.IMAGE_NAME }}
+          image: ${{ matrix.image_flavor }}-${{ matrix.image_flavor }}
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
@@ -203,7 +203,8 @@ jobs:
       - name: Sign container image
         if: github.event_name != 'pull_request'
         run: |
-          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ env.IMAGE_NAME }}@${TAGS}
+          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ steps.push.outputs.image }}@${TAGS}
+          tags: ${{ steps.build_image.outputs.tags }}
         env:
           TAGS: ${{ steps.push.outputs.digest }}
           COSIGN_EXPERIMENTAL: false
