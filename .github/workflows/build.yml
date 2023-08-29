@@ -78,8 +78,8 @@ jobs:
           if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
              [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
             if [[ "${{ matrix.image_flavor }}" == "main" ]] || \
-               [[ "${{ matrix.image_flavor }}" == "nvidia" ]] && \
                [[ "${{ matrix.is_latest_nvidia }}" == "true" ]]; then
+                # assume matrix is honestis_latest_nvidia==true only when image_flavor==nvidia
                 COMMIT_TAGS+=("pr-${{ github.event.number }}")
                 COMMIT_TAGS+=("${SHA_SHORT}")
             fi
@@ -100,8 +100,8 @@ jobs:
           if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
              [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
             if [[ "${{ matrix.image_flavor }}" == "main" ]] || \
-               [[ "${{ matrix.image_flavor }}" == "nvidia" ]] && \
                [[ "${{ matrix.is_latest_nvidia }}" == "true" ]]; then
+                # assume matrix is honest: is_latest_nvidia==true only when image_flavor==nvidia
                 BUILD_TAGS+=("${TIMESTAMP}")
                 BUILD_TAGS+=("latest")
             fi
