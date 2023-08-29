@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         image_flavor: [main, nvidia]
-        image_name: [sericea]  # TODO: temporary rename to reduce builder noise while testing
+        image_name: [silverblue, sericea]  # TODO: temporary rename to reduce builder noise while testing
         #image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate]
         major_version: [37, 38]
         nvidia_version: [0, 470, 535]
