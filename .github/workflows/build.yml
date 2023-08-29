@@ -78,7 +78,7 @@ jobs:
           if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
              [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
             if [[ "${{ matrix.image_flavor }}" == "main" ]] || \
-            if [[ "${{ matrix.image_flavor }}" == "nvidia" ]] && \
+               [[ "${{ matrix.image_flavor }}" == "nvidia" ]] && \
                [[ "${{ matrix.is_latest_nvidia }}" == "true" ]]; then
                 COMMIT_TAGS+=("pr-${{ github.event.number }}")
                 COMMIT_TAGS+=("${SHA_SHORT}")
@@ -100,7 +100,7 @@ jobs:
           if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
              [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
             if [[ "${{ matrix.image_flavor }}" == "main" ]] || \
-            if [[ "${{ matrix.image_flavor }}" == "nvidia" ]] && \
+               [[ "${{ matrix.image_flavor }}" == "nvidia" ]] && \
                [[ "${{ matrix.is_latest_nvidia }}" == "true" ]]; then
                 BUILD_TAGS+=("${TIMESTAMP}")
                 BUILD_TAGS+=("latest")
