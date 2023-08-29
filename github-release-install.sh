@@ -35,7 +35,7 @@ fi
 set -ouex pipefail
 
 API="https://api.github.com/repos/${ORG_PROJ}/releases/latest"
-RPM_URLS=$(curl -sL ${API} \
+RPM_URLS=$(curl --retry 3 --retry-delay 0 --retry-all-errors -sL ${API} \
   | jq \
     -r \
     --arg arch_filter "${ARCH_FILTER}" \
