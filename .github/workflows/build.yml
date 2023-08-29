@@ -85,7 +85,7 @@ jobs:
             fi
           fi
 
-          BUILD_TAGS=("${VARIANT}"
+          BUILD_TAGS=("${VARIANT}")
 
           if [[ "${{ matrix.is_latest_nvidia }}" == "true" ]]; then
               BUILD_TAGS+=("${{ matrix.major_version }}-current")
