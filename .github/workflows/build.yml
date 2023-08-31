@@ -19,8 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image_name: [silverblue, sericea]
-        #image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate]
+        image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate]
         major_version: [37, 38]
         nvidia_version: [470, 535]
         include:
