@@ -214,6 +214,11 @@ jobs:
           labels: ${{ steps.meta_main.outputs.labels }}
           oci: false
 
+      - name: List Local Images
+        shell: bash
+        run: |
+          podman images
+
       # Build image using Buildah action
       - name: Build Image (nvidia)
         id: build_nvidia
