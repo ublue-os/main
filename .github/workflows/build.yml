@@ -9,7 +9,7 @@ env:
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
 jobs:
-  push-ghcr:
+  push-main:
     name: Build and push image
     runs-on: ubuntu-22.04
     permissions:
@@ -19,10 +19,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image_flavor: [main, nvidia]
-        image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate]
+        image_name: [sericea]
+        #image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate]
         major_version: [37, 38]
-        nvidia_version: [0, 470, 535]
         include:
           - major_version: 37
             is_latest_version: false
@@ -30,20 +29,12 @@ jobs:
           - major_version: 38
             is_latest_version: true
             is_stable_version: true
-          - nvidia_version: 535
-            is_latest_nvidia: true
         exclude:
           # There is no Fedora 37 version of sericea
           # When F38 is added, sericea will automatically be built too
           - image_name: sericea
             major_version: 37
-          - image_flavor: main
-            nvidia_version: 470
-          - image_flavor: main
-            nvidia_version: 535
-          - image_flavor: nvidia
-            nvidia_version: 0
-    steps: 
+    steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@v3
@@ -55,7 +46,7 @@ jobs:
           else
               echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
           fi
-          echo "IMAGE_NAME=${{ matrix.image_name }}-${{ matrix.image_flavor }}" >> $GITHUB_ENV
+          echo "IMAGE_NAME=${{ matrix.image_name }}-main" >> $GITHUB_ENV
 
       - name: Generate tags
         id: generate-tags
@@ -63,7 +54,7 @@ jobs:
         run: |
           # Generate a timestamp for creating an image version history
           TIMESTAMP="$(date +%Y%m%d)"
-          VARIANT="${{ 'nvidia' == matrix.image_flavor && format('{0}-{1}', matrix.major_version, matrix.nvidia_version) || format('{0}', matrix.major_version) }}"
+          VARIANT="${{ matrix.major_version }}"
 
           COMMIT_TAGS=()
           BUILD_TAGS=()
@@ -75,20 +66,11 @@ jobs:
 
           if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
              [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
-            if [[ "${{ matrix.image_flavor }}" == "main" ]] || \
-               [[ "${{ matrix.is_latest_nvidia }}" == "true" ]]; then
-                # assume matrix is honestis_latest_nvidia==true only when image_flavor==nvidia
-                COMMIT_TAGS+=("pr-${{ github.event.number }}")
-                COMMIT_TAGS+=("${SHA_SHORT}")
-            fi
+              COMMIT_TAGS+=("pr-${{ github.event.number }}")
+              COMMIT_TAGS+=("${SHA_SHORT}")
           fi
 
           BUILD_TAGS=("${VARIANT}")
-
-          if [[ "${{ matrix.is_latest_nvidia }}" == "true" ]]; then
-              BUILD_TAGS+=("${{ matrix.major_version }}-current")
-              BUILD_TAGS+=("${{ matrix.major_version }}")
-          fi
 
           # Append matching timestamp tags to keep a version history
           for TAG in "${BUILD_TAGS[@]}"; do
@@ -97,12 +79,8 @@ jobs:
 
           if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
              [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
-            if [[ "${{ matrix.image_flavor }}" == "main" ]] || \
-               [[ "${{ matrix.is_latest_nvidia }}" == "true" ]]; then
-                # assume matrix is honest: is_latest_nvidia==true only when image_flavor==nvidia
-                BUILD_TAGS+=("${TIMESTAMP}")
-                BUILD_TAGS+=("latest")
-            fi
+              BUILD_TAGS+=("${TIMESTAMP}")
+              BUILD_TAGS+=("latest")
           fi
 
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
@@ -138,7 +116,7 @@ jobs:
           labels: |
             org.opencontainers.image.title=${{ env.IMAGE_NAME }}
             org.opencontainers.image.version=${{ steps.labels.outputs.VERSION }}
-            org.opencontainers.image.description=A base Universal Blue ${{ matrix.image_name }} image with batteries included${{ 'nvidia' == matrix.image_flavor && ' and Nvidia drivers added' || '' }}
+            org.opencontainers.image.description=A Universal Blue ${{ matrix.image_name }} image with batteries included
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/main/README.md
             io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/120078124?s=200&v=4
 
@@ -148,7 +126,196 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           containerfiles: |
-            ./Containerfile
+            ./Containerfile.main
+          image: ${{ env.IMAGE_NAME }}
+          tags: |
+            ${{ steps.generate-tags.outputs.alias_tags }}
+          build-args: |
+            IMAGE_NAME=${{ matrix.image_name }}
+            SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
+            FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
+          labels: ${{ steps.meta.outputs.labels }}
+          oci: false
+
+      # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
+      # https://github.com/macbre/push-to-ghcr/issues/12
+      - name: Lowercase Registry
+        id: registry_case
+        uses: ASzc/change-string-case-action@v5
+        with:
+          string: ${{ env.IMAGE_REGISTRY }}
+
+      # Push the image to GHCR (Image Registry)
+      - name: Push To GHCR
+        uses: redhat-actions/push-to-registry@v2
+        id: push
+        if: github.event_name != 'pull_request'
+        env:
+          REGISTRY_USER: ${{ github.actor }}
+          REGISTRY_PASSWORD: ${{ github.token }}
+        with:
+          image: ${{ steps.build_image.outputs.image }}
+          tags: ${{ steps.build_image.outputs.tags }}
+          registry: ${{ steps.registry_case.outputs.lowercase }}
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+          extra-args: |
+            --disable-content-trust
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        if: github.event_name != 'pull_request'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Sign container
+      - uses: sigstore/cosign-installer@v3.1.1
+        if: github.event_name != 'pull_request'
+
+      - name: Sign container image
+        if: github.event_name != 'pull_request'
+        run: |
+          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image.outputs.image }}@${TAGS}
+        env:
+          TAGS: ${{ steps.push.outputs.digest }}
+          COSIGN_EXPERIMENTAL: false
+          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+
+      - name: Echo outputs
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "${{ toJSON(steps.push.outputs) }}"
+
+  push-nvidia:
+    name: Build and push image
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        image_name: [sericea]
+        #image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate]
+        major_version: [37, 38]
+        nvidia_version: [470, 535]
+        include:
+          - major_version: 37
+            is_latest_version: false
+            is_stable_version: true
+          - major_version: 38
+            is_latest_version: true
+            is_stable_version: true
+          - nvidia_version: 535
+            is_latest_nvidia: true
+        exclude:
+          # There is no Fedora 37 version of sericea
+          # When F38 is added, sericea will automatically be built too
+          - image_name: sericea
+            major_version: 37
+    steps: 
+      # Checkout push-to-registry action GitHub repository
+      - name: Checkout Push to Registry action
+        uses: actions/checkout@v3
+
+      - name: Matrix Variables
+        run: |
+          if [[ "${{ matrix.image_name }}" == "lxqt" || "${{ matrix.image_name }}" == "mate" ]]; then
+              echo "SOURCE_IMAGE=base" >> $GITHUB_ENV
+          else
+              echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
+          fi
+          echo "IMAGE_NAME=${{ matrix.image_name }}-nvidia" >> $GITHUB_ENV
+
+      - name: Generate tags
+        id: generate-tags
+        shell: bash
+        run: |
+          # Generate a timestamp for creating an image version history
+          TIMESTAMP="$(date +%Y%m%d)"
+          VARIANT="${{ matrix.major_version }}-${{ matrix.nvidia_version }}
+
+          COMMIT_TAGS=()
+          BUILD_TAGS=()
+
+          # Have tags for tracking builds during pull request
+          SHA_SHORT="${GITHUB_SHA::7}"
+          COMMIT_TAGS+=("pr-${{ github.event.number }}-${VARIANT}")
+          COMMIT_TAGS+=("${SHA_SHORT}-${VARIANT}")
+
+          if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
+             [[ "${{ matrix.is_stable_version }}" == "true" ]] && \
+             [[ "${{ matrix.is_latest_nvidia }}" == "true" ]]; then
+              COMMIT_TAGS+=("pr-${{ github.event.number }}")
+              COMMIT_TAGS+=("${SHA_SHORT}")
+          fi
+
+          BUILD_TAGS=("${VARIANT}")
+
+          if [[ "${{ matrix.is_latest_nvidia }}" == "true" ]]; then
+              BUILD_TAGS+=("${{ matrix.major_version }}-current")
+              BUILD_TAGS+=("${{ matrix.major_version }}")
+          fi
+
+          # Append matching timestamp tags to keep a version history
+          for TAG in "${BUILD_TAGS[@]}"; do
+              BUILD_TAGS+=("${TAG}-${TIMESTAMP}")
+          done
+
+          if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
+             [[ "${{ matrix.is_stable_version }}" == "true" ]] && \
+             [[ "${{ matrix.is_latest_nvidia }}" == "true" ]]; then
+              BUILD_TAGS+=("${TIMESTAMP}")
+              BUILD_TAGS+=("latest")
+          fi
+
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+              echo "Generated the following commit tags: "
+              for TAG in "${COMMIT_TAGS[@]}"; do
+                  echo "${TAG}"
+              done
+              alias_tags=("${COMMIT_TAGS[@]}")
+          else
+              alias_tags=("${BUILD_TAGS[@]}")
+          fi
+
+          echo "Generated the following build tags: "
+          for TAG in "${BUILD_TAGS[@]}"; do
+              echo "${TAG}"
+          done
+
+          echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
+
+      - name: Get current version
+        id: labels
+        run: |
+          ver=$(skopeo inspect docker://quay.io/fedora-ostree-desktops/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
+          echo "VERSION=$ver" >> $GITHUB_OUTPUT
+
+      # Build metadata
+      - name: Image Metadata
+        uses: docker/metadata-action@v4
+        id: meta
+        with:
+          images: |
+            ${{ env.IMAGE_NAME }}
+          labels: |
+            org.opencontainers.image.title=${{ env.IMAGE_NAME }}
+            org.opencontainers.image.version=${{ steps.labels.outputs.VERSION }}
+            org.opencontainers.image.description=A Universal Blue ${{ matrix.image_name }} image with Nvidia drivers added
+            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/main/README.md
+            io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/120078124?s=200&v=4
+
+      # Build image using Buildah action
+      - name: Build Image
+        id: build_image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          containerfiles: |
+            ./Containerfile.nvidia
           image: ${{ env.IMAGE_NAME }}
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
@@ -159,8 +326,6 @@ jobs:
             NVIDIA_MAJOR_VERSION=${{ matrix.nvidia_version }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
-          extra-args: |
-            --target=${{ matrix.image_flavor }}
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
@@ -216,7 +381,7 @@ jobs:
   check:
     name: Check all builds successful
     runs-on: ubuntu-latest
-    needs: [push-ghcr]
+    needs: [push-nvidia]
     steps:
       - name: Exit
         shell: bash
