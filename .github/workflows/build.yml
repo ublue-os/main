@@ -233,7 +233,7 @@ jobs:
           build-args: |
             IMAGE_NAME=${{ matrix.image_name }}
             SOURCE_IMAGE=${{ env.IMAGE_NAME_MAIN }}
-            SOURCE_TAG=${{ env.SHA_SHORT }}
+            SOURCE_TAG=${{ env.SHA_SHORT }}-${{ matrix.major_version }}
             FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
             NVIDIA_MAJOR_VERSION=${{ matrix.nvidia_version }}
           labels: ${{ steps.meta_nvidia.outputs.labels }}
