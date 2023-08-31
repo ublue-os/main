@@ -191,6 +191,7 @@ jobs:
   push-nvidia:
     name: Build and push image
     runs-on: ubuntu-22.04
+    needs: [push-main]
     permissions:
       contents: read
       packages: write
