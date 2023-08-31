@@ -49,6 +49,7 @@ jobs:
           else
               echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
           fi
+          echo "SHA_SHORT=${GITHUB_SHA::7}" >> $GITHUB_ENV
           echo "IMAGE_NAME_MAIN=${{ matrix.image_name }}-main" >> $GITHUB_ENV
           echo "IMAGE_NAME_NVIDIA=${{ matrix.image_name }}-nvidia" >> $GITHUB_ENV
 
@@ -70,7 +71,7 @@ jobs:
           BUILD_TAGS=()
 
           # Have tags for tracking builds during pull request
-          SHA_SHORT="${GITHUB_SHA::7}"
+          SHA_SHORT="${{ env.SHA_SHORT }}"
           COMMIT_TAGS+=("pr-${{ github.event.number }}-${VARIANT}")
           COMMIT_TAGS+=("${SHA_SHORT}-${VARIANT}")
 
@@ -122,7 +123,7 @@ jobs:
           BUILD_TAGS=()
 
           # Have tags for tracking builds during pull request
-          SHA_SHORT="${GITHUB_SHA::7}"
+          SHA_SHORT="${{ env.SHA_SHORT }}"
           COMMIT_TAGS+=("pr-${{ github.event.number }}-${VARIANT}")
           COMMIT_TAGS+=("${SHA_SHORT}-${VARIANT}")
 
@@ -232,6 +233,7 @@ jobs:
           build-args: |
             IMAGE_NAME=${{ matrix.image_name }}
             SOURCE_IMAGE=${{ env.IMAGE_NAME_MAIN }}
+            SOURCE_TAG=${{ env.SHA_SHORT }}
             FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
             NVIDIA_MAJOR_VERSION=${{ matrix.nvidia_version }}
           labels: ${{ steps.meta_nvidia.outputs.labels }}
