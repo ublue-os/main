@@ -21,20 +21,3 @@ RUN /tmp/main-post-install.sh
 RUN rm -rf /tmp/* /var/*
 RUN ostree container commit
 RUN mkdir -p /var/tmp && chmod -R 1777 /var/tmp
-
-
-FROM main AS nvidia
-ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
-ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-37}"
-ARG NVIDIA_MAJOR_VERSION="${NVIDIA_MAJOR_VERSION:-535}"
-
-COPY nvidia-install.sh /tmp/nvidia-install.sh
-COPY nvidia-post-install.sh /tmp/nvidia-post-install.sh
-
-COPY --from=ghcr.io/ublue-os/akmods-nvidia:${FEDORA_MAJOR_VERSION}-${NVIDIA_MAJOR_VERSION} /rpms /tmp/akmods-rpms
-
-RUN /tmp/nvidia-install.sh
-RUN /tmp/nvidia-post-install.sh
-RUN rm -rf /tmp/* /var/*
-RUN ostree container commit
-RUN mkdir -p /var/tmp && chmod -R 1777 /tmp /var/tmp
