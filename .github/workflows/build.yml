@@ -78,7 +78,6 @@ jobs:
              [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
               COMMIT_TAGS+=("pr-${{ github.event.number }}")
               COMMIT_TAGS+=("${SHA_SHORT}")
-            fi
           fi
 
           BUILD_TAGS=("${VARIANT}")
@@ -132,7 +131,6 @@ jobs:
              [[ "${{ matrix.is_latest_nvidia }}" == "true" ]]; then
               COMMIT_TAGS+=("pr-${{ github.event.number }}")
               COMMIT_TAGS+=("${SHA_SHORT}")
-            fi
           fi
 
           BUILD_TAGS=("${VARIANT}")
@@ -288,7 +286,7 @@ jobs:
       - uses: sigstore/cosign-installer@v3.1.1
         if: github.event_name != 'pull_request'
 
-      - name: Sign container images (main)
+      - name: Sign container image (main)
         if: github.event_name != 'pull_request'
         run: |
           cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_main.outputs.image }}@${TAGS}
@@ -297,7 +295,7 @@ jobs:
           COSIGN_EXPERIMENTAL: false
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
 
-      - name: Sign container images (nvidia)
+      - name: Sign container image (nvidia)
         if: github.event_name != 'pull_request'
         run: |
           cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_nvidia.outputs.image }}@${TAGS}
