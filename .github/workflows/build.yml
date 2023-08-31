@@ -137,6 +137,16 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
 
+      - name: Export Image
+        run: |
+          podman save -o image.tar ${{ env.IMAGE_NAME }}
+
+      - uses: actions/upload-artifact@v3
+        name: Upload Image Artifact
+        with:
+          name: ${{ env.IMAGE_NAME }}
+          path: image.tar
+
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
       - name: Lowercase Registry
@@ -224,11 +234,7 @@ jobs:
 
       - name: Matrix Variables
         run: |
-          if [[ "${{ matrix.image_name }}" == "lxqt" || "${{ matrix.image_name }}" == "mate" ]]; then
-              echo "SOURCE_IMAGE=base" >> $GITHUB_ENV
-          else
-              echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
-          fi
+          echo "SOURCE_IMAGE=${{ matrix.image_name }}-main" >> $GITHUB_ENV
           echo "IMAGE_NAME=${{ matrix.image_name }}-nvidia" >> $GITHUB_ENV
 
       - name: Generate tags
@@ -290,10 +296,20 @@ jobs:
 
           echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
 
+      - name: Download Image Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.IMAGE_NAME }}
+
+      - name: Import Image
+        run: |
+          podman load -i image.tar
+          podman images
+
       - name: Get current version
         id: labels
         run: |
-          ver=$(skopeo inspect docker://quay.io/fedora-ostree-desktops/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
+          ver=$(skopeo inspect containers-storage:localhost/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
           echo "VERSION=$ver" >> $GITHUB_OUTPUT
 
       # Build metadata
