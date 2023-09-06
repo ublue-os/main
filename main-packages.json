@@ -41,7 +41,9 @@
                 "traceroute",
                 "vim",
                 "zstd",
-                "wireguard-tools"
+                "wireguard-tools",
+                "clevis-luks",
+                "clevis-dracut"
             ],
             "silverblue": [
                 "adw-gtk3-theme",
