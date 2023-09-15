@@ -18,6 +18,10 @@ COPY --from=ghcr.io/ublue-os/akmods:${FEDORA_MAJOR_VERSION} /rpms /tmp/akmods-rp
 
 RUN /tmp/main-install.sh
 RUN /tmp/main-post-install.sh
+
+# temporary fix for https://github.com/containers/podman/issues/19930
+RUN rpm-ostree override replace https://bodhi.fedoraproject.org/updates/FEDORA-2023-8d641964bc
+
 RUN rm -rf /tmp/* /var/*
 RUN ostree container commit
 RUN mkdir -p /var/tmp && chmod -R 1777 /var/tmp
