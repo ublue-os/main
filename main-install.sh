@@ -31,6 +31,7 @@ for REPO in $(rpm -ql ublue-os-akmods-addons|grep ^"/etc"|grep repo$); do
 done
 
 rpm-ostree install \
+    /tmp/akmods-rpms/kmods/*openrazer*.rpm \
     /tmp/akmods-rpms/kmods/*v4l2loopback*.rpm \
     /tmp/akmods-rpms/kmods/*xpadneo*.rpm \
     /tmp/akmods-rpms/kmods/*xone*.rpm \
