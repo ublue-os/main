@@ -266,7 +266,9 @@
             "all": []
         },
         "exclude": {
-            "all": []
+            "all": [
+                "default-fonts-cjk-sans"
+            ]
         }
     }
 }
