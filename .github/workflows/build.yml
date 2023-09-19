@@ -43,14 +43,14 @@ jobs:
           # When F38 is added, sericea will automatically be built too
           - image_name: sericea
             major_version: 37
+          - image_name: vauxite
+            major_version: 39
           - image_flavor: main
             nvidia_version: 470
           - image_flavor: main
             nvidia_version: 535
           - image_flavor: nvidia
             nvidia_version: 0
-          - image_flavor: vauxite
-            major_version: 39
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
