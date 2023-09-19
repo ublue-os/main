@@ -20,7 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         image_flavor: [main, nvidia]
-        image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate]
+        image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate, onyx]
         major_version: [37, 38, 39]
         nvidia_version: [0, 470, 535]
         include:
@@ -43,6 +43,11 @@ jobs:
           # When F38 is added, sericea will automatically be built too
           - image_name: sericea
             major_version: 37
+          # There is no Fedora 37 or 38 version of onyx
+          - image_name: onyx
+            major_version: 37
+          - image_name: onyx
+            major_version: 38
           - image_name: vauxite
             major_version: 39
           - image_flavor: main
