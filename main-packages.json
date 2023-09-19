@@ -27,7 +27,6 @@
                 "google-noto-sans-javanese-fonts",
                 "google-noto-sans-balinese-fonts",
                 "google-noto-sans-sundanese-fonts",
-                "google-noto-sans-cjk-fonts",
                 "nvme-cli",
                 "nvtop",
                 "openrgb-udev-rules",
@@ -45,8 +44,7 @@
             ],
             "silverblue": [
                 "adw-gtk3-theme",
-                "gnome-tweaks",
-                "raw-thumbnailer"
+                "gnome-tweaks"
             ],
             "kinoite": [
                 "icoutils",
@@ -175,7 +173,6 @@
                 "pipewire-alsa",
                 "pipewire-pulseaudio",
                 "pluma",
-                "raw-thumbnailer",
                 "seahorse",
                 "seahorse-caja",
                 "setroubleshoot",
@@ -193,7 +190,6 @@
                 "clipman"
             ],
             "vauxite": [
-                "raw-thumbnailer",
                 "xfce4-clipman-plugin",
                 "xfce4-whiskermenu-plugin"
             ]
@@ -224,12 +220,21 @@
     },
     "37": {
         "include": {
-            "all": [],
+            "all": [
+                "google-noto-sans-cjk-fonts"
+            ],
+            "silverblue": [
+                "raw-thumbnailer"
+            ],
             "mate": [
                 "f37-backgrounds-base",
                 "f37-backgrounds-extras-base",
                 "f37-backgrounds-extras-mate",
-                "f37-backgrounds-mate"
+                "f37-backgrounds-mate",
+                "raw-thumbnailer"
+            ],
+            "vauxite": [
+                "raw-thumbnailer"
             ]
         },
         "exclude": {
@@ -238,16 +243,35 @@
     },
     "38": {
         "include": {
-            "all": [],
+            "all": [
+                "google-noto-sans-cjk-fonts"
+            ],
+            "silverblue": [
+                "raw-thumbnailer"
+            ],
             "mate": [
                 "f38-backgrounds-base",
                 "f38-backgrounds-extras-base",
                 "f38-backgrounds-extras-mate",
-                "f38-backgrounds-mate"
+                "f38-backgrounds-mate",
+                "raw-thumbnailer"
+            ],
+            "vauxite": [
+                "raw-thumbnailer"
             ]
         },
         "exclude": {
             "all": []
+        }
+    },
+    "39": {
+        "include": {
+            "all": []
+        },
+        "exclude": {
+            "all": [
+                "default-fonts-cjk-sans"
+            ]
         }
     }
 }

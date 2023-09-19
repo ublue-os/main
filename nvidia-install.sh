@@ -2,7 +2,11 @@
 
 set -ouex pipefail
 
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-{cisco-openh264,modular,updates-modular}.repo
+if [[ "${FEDORA_MAJOR_VERSION}" -le 38 ]]; then
+    sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-{cisco-openh264,modular,updates-modular}.repo
+else
+    sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
+fi
 
 rpm-ostree install \
     /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
