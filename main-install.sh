@@ -32,7 +32,6 @@ done
 
 # Only run if FEDORA_MAJOR_VERSION is not 39
 if grep -qv "39" <<< $FEDORA_MAJOR_VERSION; then
-    echo "HELOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"
     rpm-ostree install \
         /tmp/akmods-rpms/kmods/*xpadneo*.rpm \
         /tmp/akmods-rpms/kmods/*xpad-noone*.rpm \
