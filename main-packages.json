@@ -17,7 +17,6 @@
                 "just",
                 "kernel-devel-matched",
                 "kernel-tools",
-                "libheif-freeworld",
                 "libheif-tools",
                 "libratbag-ratbagd",
                 "libva-intel-driver",
@@ -28,6 +27,7 @@
                 "google-noto-sans-javanese-fonts",
                 "google-noto-sans-balinese-fonts",
                 "google-noto-sans-sundanese-fonts",
+                "google-noto-sans-cjk-fonts",
                 "nvme-cli",
                 "nvtop",
                 "openrgb-udev-rules",
@@ -208,7 +208,8 @@
                 "libpostproc-free",
                 "libswresample-free",
                 "libswscale-free",
-                "mesa-va-drivers"
+                "mesa-va-drivers",
+                "google-noto-sans-cjk-vf-fonts"
             ],
             "kinoite": [
                 "plasma-discover-rpm-ostree",
