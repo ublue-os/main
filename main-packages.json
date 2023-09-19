@@ -45,8 +45,7 @@
             ],
             "silverblue": [
                 "adw-gtk3-theme",
-                "gnome-tweaks",
-                "raw-thumbnailer"
+                "gnome-tweaks"
             ],
             "kinoite": [
                 "icoutils",
@@ -175,7 +174,6 @@
                 "pipewire-alsa",
                 "pipewire-pulseaudio",
                 "pluma",
-                "raw-thumbnailer",
                 "seahorse",
                 "seahorse-caja",
                 "setroubleshoot",
@@ -193,7 +191,6 @@
                 "clipman"
             ],
             "vauxite": [
-                "raw-thumbnailer",
                 "xfce4-clipman-plugin",
                 "xfce4-whiskermenu-plugin"
             ]
@@ -225,11 +222,18 @@
     "37": {
         "include": {
             "all": [],
+            "silverblue": [
+                "raw-thumbnailer"
+            ],
             "mate": [
                 "f37-backgrounds-base",
                 "f37-backgrounds-extras-base",
                 "f37-backgrounds-extras-mate",
-                "f37-backgrounds-mate"
+                "f37-backgrounds-mate",
+                "raw-thumbnailer"
+            ],
+            "vauxite": [
+                "raw-thumbnailer"
             ]
         },
         "exclude": {
@@ -239,11 +243,18 @@
     "38": {
         "include": {
             "all": [],
+            "silverblue": [
+                "raw-thumbnailer"
+            ],
             "mate": [
                 "f38-backgrounds-base",
                 "f38-backgrounds-extras-base",
                 "f38-backgrounds-extras-mate",
-                "f38-backgrounds-mate"
+                "f38-backgrounds-mate",
+                "raw-thumbnailer"
+            ],
+            "vauxite": [
+                "raw-thumbnailer"
             ]
         },
         "exclude": {
@@ -255,9 +266,7 @@
             "all": []
         },
         "exclude": {
-            "all": [
-                "raw-thumbnailer"
-            ]
+            "all": []
         }
     }
 }
