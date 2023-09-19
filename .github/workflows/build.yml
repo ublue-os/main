@@ -43,6 +43,8 @@ jobs:
             nvidia_version: 535
           - image_flavor: nvidia
             nvidia_version: 0
+          - image_flavor: vauxite
+            major_version: 39
     steps: 
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
