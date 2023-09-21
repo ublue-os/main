@@ -30,6 +30,7 @@
                 "nvme-cli",
                 "nvtop",
                 "openrgb-udev-rules",
+                "solaar-udev",
                 "openssl",
                 "podman-compose",
                 "pipewire-codec-aptx",
