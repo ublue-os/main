@@ -6,9 +6,12 @@ ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS nokmods
 
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
+ARG IMAGE_VENDOR="ublue-os"
+ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
 
 COPY github-release-install.sh /tmp/github-release-install.sh
+COPY image-info.sh /tmp/image-info.sh
 COPY nokmods-install.sh /tmp/nokmods-install.sh
 COPY nokmods-post-install.sh /tmp/nokmods-post-install.sh
 COPY nokmods-packages.json /tmp/nokmods-packages.json
@@ -17,6 +20,7 @@ COPY --from=ghcr.io/ublue-os/config:latest /rpms /tmp/rpms
 
 RUN wget https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-$(rpm -E %fedora)/ublue-os-staging-fedora-$(rpm -E %fedora).repo -O /etc/yum.repos.d/_copr_ublue-os_staging.repo && \
     wget https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-$(rpm -E %fedora)/kylegospo-oversteer-fedora-$(rpm -E %fedora).repo -O /etc/yum.repos.d/_copr_kylegospo_oversteer.repo && \
+    /tmp/image-info.sh && \
     /tmp/nokmods-install.sh && \
     /tmp/nokmods-post-install.sh && \
     # temporary fix for https://github.com/containers/podman/issues/19930
@@ -35,15 +39,19 @@ RUN ostree container commit && \
 FROM nokmods AS main
 
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
+ARG IMAGE_VENDOR="ublue-os"
+ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
 
+COPY image-info.sh /tmp/image-info.sh
 COPY main-install.sh /tmp/main-install.sh
 
 COPY --from=ghcr.io/ublue-os/akmods:${FEDORA_MAJOR_VERSION} /rpms /tmp/akmods-rpms
 
 COPY main-sys_files /
 
-RUN /tmp/main-install.sh && \
+RUN /tmp/image-info.sh && \
+    /tmp/main-install.sh && \
     rm -rf /tmp/* /var/*
 
 RUN ostree container commit && \
