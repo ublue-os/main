@@ -1,12 +1,12 @@
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG SOURCE_IMAGE="${SOURCE_IMAGE:-silverblue}"
 ARG BASE_IMAGE="quay.io/fedora-ostree-desktops/${SOURCE_IMAGE}"
-ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-39}"
+ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
 
 
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS main
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
-ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-39}"
+ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
 
 COPY github-release-install.sh /tmp/github-release-install.sh
 COPY main-install.sh /tmp/main-install.sh
@@ -31,7 +31,7 @@ RUN mkdir -p /var/tmp && chmod -R 1777 /var/tmp
 
 FROM main AS nvidia
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
-ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-39}"
+ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
 ARG NVIDIA_MAJOR_VERSION="${NVIDIA_MAJOR_VERSION:-535}"
 
 COPY nvidia-install.sh /tmp/nvidia-install.sh
