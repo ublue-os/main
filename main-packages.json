@@ -261,6 +261,9 @@
             ],
             "vauxite": [
                 "raw-thumbnailer"
+            ],
+            "kinoite": [
+                "xwaylandvideobridge"
             ]
         },
         "exclude": {
@@ -269,7 +272,10 @@
     },
     "39": {
         "include": {
-            "all": []
+            "all": [],
+            "kinoite": [
+                "xwaylandvideobridge"
+            ]
         },
         "exclude": {
             "all": [
