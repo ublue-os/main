@@ -19,11 +19,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image_flavor: [main, nvidia]
+        image_flavor: [main, nokmods]
         image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate, onyx]
         #major_version: [37, 38, 39]
         major_version: [37, 38]
-        nvidia_version: [0, 470, 535]
         include:
           - major_version: 37
             is_latest_version: false
@@ -37,8 +36,6 @@ jobs:
           #  is_latest_version: true
           #  is_stable_version: false
           #  is_gts_version: false
-          - nvidia_version: 535
-            is_latest_nvidia: true
         exclude:
           # There is no Fedora 37 version of sericea
           # When F38 is added, sericea will automatically be built too
@@ -51,12 +48,6 @@ jobs:
             major_version: 38
           - image_name: vauxite
             major_version: 39
-          - image_flavor: main
-            nvidia_version: 470
-          - image_flavor: main
-            nvidia_version: 535
-          - image_flavor: nvidia
-            nvidia_version: 0
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
@@ -77,7 +68,7 @@ jobs:
         run: |
           # Generate a timestamp for creating an image version history
           TIMESTAMP="$(date +%Y%m%d)"
-          VARIANT="${{ 'nvidia' == matrix.image_flavor && format('{0}-{1}', matrix.major_version, matrix.nvidia_version) || format('{0}', matrix.major_version) }}"
+          VARIANT="${{ matrix.major_version }}"
 
           COMMIT_TAGS=()
           BUILD_TAGS=()
@@ -89,20 +80,11 @@ jobs:
 
           if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
              [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
-            if [[ "${{ matrix.image_flavor }}" == "main" ]] || \
-               [[ "${{ matrix.is_latest_nvidia }}" == "true" ]]; then
-                # assume matrix is honestis_latest_nvidia==true only when image_flavor==nvidia
-                COMMIT_TAGS+=("pr-${{ github.event.number }}")
-                COMMIT_TAGS+=("${SHA_SHORT}")
-            fi
+              COMMIT_TAGS+=("pr-${{ github.event.number }}")
+              COMMIT_TAGS+=("${SHA_SHORT}")
           fi
 
           BUILD_TAGS=("${VARIANT}")
-
-          if [[ "${{ matrix.is_latest_nvidia }}" == "true" ]]; then
-              BUILD_TAGS+=("${{ matrix.major_version }}-current")
-              BUILD_TAGS+=("${{ matrix.major_version }}")
-          fi
 
           # Append matching timestamp tags to keep a version history
           for TAG in "${BUILD_TAGS[@]}"; do
@@ -111,18 +93,11 @@ jobs:
 
           if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
              [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
-            if [[ "${{ matrix.image_flavor }}" == "main" ]] || \
-               [[ "${{ matrix.is_latest_nvidia }}" == "true" ]]; then
-                # assume matrix is honest: is_latest_nvidia==true only when image_flavor==nvidia
-                BUILD_TAGS+=("${TIMESTAMP}")
-                BUILD_TAGS+=("latest")
-            fi
+              BUILD_TAGS+=("${TIMESTAMP}")
+              BUILD_TAGS+=("latest")
           elif [[ "${{ matrix.is_gts_version }}" == "true" ]]; then
-            if [[ "${{ matrix.image_flavor }}" == "main" ]] || \
-               [[ "${{ matrix.is_latest_nvidia }}" == "true" ]]; then
-                BUILD_TAGS+=("gts-${TIMESTAMP}")
-                BUILD_TAGS+=("gts")
-            fi
+              BUILD_TAGS+=("gts-${TIMESTAMP}")
+              BUILD_TAGS+=("gts")
           fi
 
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
@@ -158,7 +133,7 @@ jobs:
           labels: |
             org.opencontainers.image.title=${{ env.IMAGE_NAME }}
             org.opencontainers.image.version=${{ steps.labels.outputs.VERSION }}
-            org.opencontainers.image.description=A base Universal Blue ${{ matrix.image_name }} image with batteries included${{ 'nvidia' == matrix.image_flavor && ' and Nvidia drivers added' || '' }}
+            org.opencontainers.image.description=A base Universal Blue ${{ matrix.image_name }} image with batteries included${{ 'nokmods' == matrix.image_flavor && ' but no extra kmod or kernel packages' || '' }}
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/main/README.md
             io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/120078124?s=200&v=4
 
@@ -176,7 +151,6 @@ jobs:
             IMAGE_NAME=${{ matrix.image_name }}
             SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
             FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
-            NVIDIA_MAJOR_VERSION=${{ matrix.nvidia_version }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
           extra-args: |
