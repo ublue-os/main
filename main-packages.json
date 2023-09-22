@@ -270,6 +270,7 @@
     },
     "39": {
         "include": {
+            "all": [],
             "kinoite": [
                 "xwaylandvideobridge"
             ]
