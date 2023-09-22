@@ -1,12 +1,14 @@
 name: build-ublue
 on:
   pull_request:
-  merge_group:    
+  merge_group:
   schedule:
     - cron: '0 7 * * *'  # 7 am everyday
   workflow_dispatch:
 env:
-    IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  BASE_FLAVOR: nokmods
+  MAIN_FLAVOR: main
 
 jobs:
   push-ghcr:
@@ -19,8 +21,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image_flavor: [main, nokmods]
-        image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate, onyx]
+        image_name:
+          - silverblue
+          - kinoite
+          - sericea
+          - onyx
+          - base
+          - lxqt
+          - mate
+          - vauxite
         #major_version: [37, 38, 39]
         major_version: [37, 38]
         include:
@@ -60,7 +69,8 @@ jobs:
           else
               echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
           fi
-          echo "IMAGE_NAME=${{ matrix.image_name }}-${{ matrix.image_flavor }}" >> $GITHUB_ENV
+          echo "BASE_IMAGE=${{ matrix.image_name }}-${{ env.BASE_FLAVOR }}" >> $GITHUB_ENV
+          echo "MAIN_IMAGE=${{ matrix.image_name }}-${{ env.MAIN_FLAVOR }}" >> $GITHUB_ENV
 
       - name: Generate tags
         id: generate-tags
@@ -124,37 +134,68 @@ jobs:
           echo "VERSION=$ver" >> $GITHUB_OUTPUT
 
       # Build metadata
-      - name: Image Metadata
+      - name: Base Image Metadata
         uses: docker/metadata-action@v5
-        id: meta
+        id: meta-base
         with:
           images: |
-            ${{ env.IMAGE_NAME }}
+            ${{ env.BASE_IMAGE }}
           labels: |
-            org.opencontainers.image.title=${{ env.IMAGE_NAME }}
+            org.opencontainers.image.title=${{ env.BASE_IMAGE }}
             org.opencontainers.image.version=${{ steps.labels.outputs.VERSION }}
-            org.opencontainers.image.description=A base Universal Blue ${{ matrix.image_name }} image with batteries included${{ 'nokmods' == matrix.image_flavor && ' but no extra kmod or kernel packages' || '' }}
+            org.opencontainers.image.description=A base Universal Blue ${{ matrix.image_name }} image with no extra kmod or kernel packages
+            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/main/README.md
+            io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/120078124?s=200&v=4
+
+      - name: Main Image Metadata
+        uses: docker/metadata-action@v5
+        id: meta-main
+        with:
+          images: |
+            ${{ env.MAIN_IMAGE }}
+          labels: |
+            org.opencontainers.image.title=${{ env.MAIN_IMAGE }}
+            org.opencontainers.image.version=${{ steps.labels.outputs.VERSION }}
+            org.opencontainers.image.description=A base Universal Blue ${{ matrix.image_name }} image with batteries included
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/main/README.md
             io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/120078124?s=200&v=4
 
       # Build image using Buildah action
-      - name: Build Image
-        id: build_image
+      - name: Build Base Image
+        id: build_image-base
         uses: redhat-actions/buildah-build@v2
         with:
           containerfiles: |
             ./Containerfile
-          image: ${{ env.IMAGE_NAME }}
+          image: ${{ env.BASE_IMAGE }}
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
             IMAGE_NAME=${{ matrix.image_name }}
             SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
             FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
-          labels: ${{ steps.meta.outputs.labels }}
+          labels: ${{ steps.meta-base.outputs.labels }}
           oci: false
           extra-args: |
-            --target=${{ matrix.image_flavor }}
+            --target=${{ env.BASE_FLAVOR }}
+
+      - name: Build Main Image
+        id: build_image-main
+        uses: redhat-actions/buildah-build@v2
+        with:
+          containerfiles: |
+            ./Containerfile
+          image: ${{ env.MAIN_IMAGE }}
+          tags: |
+            ${{ steps.generate-tags.outputs.alias_tags }}
+          build-args: |
+            IMAGE_NAME=${{ matrix.image_name }}
+            SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
+            FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
+          labels: ${{ steps.meta-main.outputs.labels }}
+          oci: false
+          extra-args: |
+            --target=${{ env.MAIN_FLAVOR }}
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
@@ -165,16 +206,32 @@ jobs:
           string: ${{ env.IMAGE_REGISTRY }}
 
       # Push the image to GHCR (Image Registry)
-      - name: Push To GHCR
+      - name: Push Base To GHCR
         uses: redhat-actions/push-to-registry@v2
-        id: push
+        id: push-base
         if: github.event_name != 'pull_request'
         env:
           REGISTRY_USER: ${{ github.actor }}
           REGISTRY_PASSWORD: ${{ github.token }}
         with:
-          image: ${{ steps.build_image.outputs.image }}
-          tags: ${{ steps.build_image.outputs.tags }}
+          image: ${{ steps.build_image-base.outputs.image }}
+          tags: ${{ steps.build_image-base.outputs.tags }}
+          registry: ${{ steps.registry_case.outputs.lowercase }}
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+          extra-args: |
+            --disable-content-trust
+
+      - name: Push Main To GHCR
+        uses: redhat-actions/push-to-registry@v2
+        id: push-main
+        if: github.event_name != 'pull_request'
+        env:
+          REGISTRY_USER: ${{ github.actor }}
+          REGISTRY_PASSWORD: ${{ github.token }}
+        with:
+          image: ${{ steps.build_image-main.outputs.image }}
+          tags: ${{ steps.build_image-main.outputs.tags }}
           registry: ${{ steps.registry_case.outputs.lowercase }}
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
@@ -193,19 +250,29 @@ jobs:
       - uses: sigstore/cosign-installer@v3.1.2
         if: github.event_name != 'pull_request'
 
-      - name: Sign container image
+      - name: Sign Base container image
         if: github.event_name != 'pull_request'
         run: |
-          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image.outputs.image }}@${TAGS}
+          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image-base.outputs.image }}@${TAGS}
         env:
-          TAGS: ${{ steps.push.outputs.digest }}
+          TAGS: ${{ steps.push-base.outputs.digest }}
+          COSIGN_EXPERIMENTAL: false
+          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+
+      - name: Sign Main container image
+        if: github.event_name != 'pull_request'
+        run: |
+          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image-main.outputs.image }}@${TAGS}
+        env:
+          TAGS: ${{ steps.push-main.outputs.digest }}
           COSIGN_EXPERIMENTAL: false
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
 
       - name: Echo outputs
         if: github.event_name != 'pull_request'
         run: |
-          echo "${{ toJSON(steps.push.outputs) }}"
+          echo "${{ toJSON(steps.push-base.outputs) }}"
+          echo "${{ toJSON(steps.push-main.outputs) }}"
 
   check:
     name: Check all builds successful
