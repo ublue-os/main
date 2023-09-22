@@ -21,7 +21,7 @@ jobs:
       matrix:
         image_flavor: [main, nvidia]
         image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate, onyx]
-        major_version: [37, 38, 39]
+        major_version: [37, 38]
         nvidia_version: [0, 470, 535]
         include:
           - major_version: 37
