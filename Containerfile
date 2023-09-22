@@ -5,10 +5,14 @@ ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
 
 
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS main
+
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
+ARG IMAGE_VENDOR="ublue-os"
+ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
 
 COPY github-release-install.sh /tmp/github-release-install.sh
+COPY image-info.sh /tmp/image-info.sh
 COPY main-install.sh /tmp/main-install.sh
 COPY main-post-install.sh /tmp/main-post-install.sh
 COPY main-packages.json /tmp/main-packages.json
@@ -18,6 +22,7 @@ COPY --from=ghcr.io/ublue-os/akmods:${FEDORA_MAJOR_VERSION} /rpms /tmp/akmods-rp
 
 COPY system_files /
 
+RUN /tmp/image-info.sh
 RUN /tmp/main-install.sh
 RUN /tmp/main-post-install.sh
 
@@ -30,7 +35,10 @@ RUN mkdir -p /var/tmp && chmod -R 1777 /var/tmp
 
 
 FROM main AS nvidia
+
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
+ARG IMAGE_VENDOR="ublue-os"
+ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-nvidia}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
 ARG NVIDIA_MAJOR_VERSION="${NVIDIA_MAJOR_VERSION:-535}"
 
@@ -39,6 +47,7 @@ COPY nvidia-post-install.sh /tmp/nvidia-post-install.sh
 
 COPY --from=ghcr.io/ublue-os/akmods-nvidia:${FEDORA_MAJOR_VERSION}-${NVIDIA_MAJOR_VERSION} /rpms /tmp/akmods-rpms
 
+RUN /tmp/image-info.sh
 RUN /tmp/nvidia-install.sh
 RUN /tmp/nvidia-post-install.sh
 RUN rm -rf /tmp/* /var/*

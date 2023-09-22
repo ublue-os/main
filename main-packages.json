@@ -15,6 +15,7 @@
                 "htop",
                 "intel-media-driver",
                 "just",
+                "jq",
                 "kernel-devel-matched",
                 "kernel-tools",
                 "libheif-tools",
