@@ -16,6 +16,8 @@ COPY main-packages.json /tmp/main-packages.json
 COPY --from=ghcr.io/ublue-os/config:latest /rpms /tmp/rpms
 COPY --from=ghcr.io/ublue-os/akmods:${FEDORA_MAJOR_VERSION} /rpms /tmp/akmods-rpms
 
+COPY system_files /
+
 RUN /tmp/main-install.sh
 RUN /tmp/main-post-install.sh
 
