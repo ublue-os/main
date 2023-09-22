@@ -222,7 +222,8 @@
     "37": {
         "include": {
             "all": [
-                "google-noto-sans-cjk-fonts"
+                "google-noto-sans-cjk-fonts",
+                "libheif-freeworld"
             ],
             "silverblue": [
                 "raw-thumbnailer"
@@ -245,7 +246,8 @@
     "38": {
         "include": {
             "all": [
-                "google-noto-sans-cjk-fonts"
+                "google-noto-sans-cjk-fonts",
+                "libheif-freeworld"
             ],
             "silverblue": [
                 "raw-thumbnailer"
