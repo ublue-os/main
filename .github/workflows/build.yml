@@ -30,8 +30,7 @@ jobs:
           - lxqt
           - mate
           - vauxite
-        #major_version: [37, 38, 39]
-        major_version: [37, 38]
+        major_version: [37, 38, 39]
         include:
           - major_version: 37
             is_latest_version: false
@@ -41,13 +40,12 @@ jobs:
             is_latest_version: true
             is_stable_version: true
             is_gts_version: true
-          #- major_version: 39
-          #  is_latest_version: true
-          #  is_stable_version: false
-          #  is_gts_version: false
+          - major_version: 39
+            is_latest_version: true
+            is_stable_version: false
+            is_gts_version: false
         exclude:
           # There is no Fedora 37 version of sericea
-          # When F38 is added, sericea will automatically be built too
           - image_name: sericea
             major_version: 37
           # There is no Fedora 37 or 38 version of onyx
