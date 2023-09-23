@@ -15,8 +15,6 @@
                 "htop",
                 "intel-media-driver",
                 "just",
-                "kernel-devel-matched",
-                "kernel-tools",
                 "libheif-tools",
                 "libratbag-ratbagd",
                 "libva-intel-driver",
