@@ -24,7 +24,7 @@ RUN wget https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-$(
     ## bootc 
     wget https://copr.fedorainfracloud.org/coprs/rhcontainerbot/bootc/repo/fedora-"${FEDORA_MAJOR_VERSION}"/bootc-"${FEDORA_MAJOR_VERSION}".repo -O /etc/yum.repos.d/bootc.repo && \
     rpm-ostree install bootc && \
-    rm -f /etc/yum.repos.d/bootc-"${FEDORA_MAJOR_VERSION}".repo && \
+    rm -f /etc/yum.repos.d/bootc.repo && \
     rm -f /etc/yum.repos.d/_copr_ublue-os_staging.repo && \
     rm -f /etc/yum.repos.d/_copr_kylegospo_oversteer.repo && \
     rm -rf /tmp/* /var/*
