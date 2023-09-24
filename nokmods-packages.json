@@ -31,6 +31,7 @@
                 "openrgb-udev-rules",
                 "solaar-udev",
                 "openssl",
+                "oversteer-udev",
                 "podman-compose",
                 "pipewire-codec-aptx",
                 "smartmontools",
