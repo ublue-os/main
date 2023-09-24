@@ -16,11 +16,13 @@ COPY nokmods-packages.json /tmp/nokmods-packages.json
 COPY --from=ghcr.io/ublue-os/config:latest /rpms /tmp/rpms
 
 RUN wget https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-$(rpm -E %fedora)/ublue-os-staging-fedora-$(rpm -E %fedora).repo -O /etc/yum.repos.d/_copr_ublue-os_staging.repo && \
+    wget https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-$(rpm -E %fedora).repo/kylegospo-oversteer-fedora-$(rpm -E %fedora).repo.repo -O /etc/yum.repos.d/_copr_kylegospo_oversteer.repo && \
     /tmp/nokmods-install.sh && \
     /tmp/nokmods-post-install.sh && \
     # temporary fix for https://github.com/containers/podman/issues/19930
     rpm-ostree override replace https://bodhi.fedoraproject.org/updates/FEDORA-2023-8d641964bc && \
     rm -f /etc/yum.repos.d/_copr_ublue-os_staging.repo && \
+    rm -f /etc/yum.repos.d/_copr_kylegospo_oversteer.repo && \
     rm -rf /tmp/* /var/*
 
 RUN ostree container commit && \
