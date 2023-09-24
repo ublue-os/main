@@ -16,7 +16,7 @@ COPY nokmods-packages.json /tmp/nokmods-packages.json
 COPY --from=ghcr.io/ublue-os/config:latest /rpms /tmp/rpms
 
 RUN wget https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-$(rpm -E %fedora)/ublue-os-staging-fedora-$(rpm -E %fedora).repo -O /etc/yum.repos.d/_copr_ublue-os_staging.repo && \
-    wget https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-$(rpm -E %fedora).repo/kylegospo-oversteer-fedora-$(rpm -E %fedora).repo.repo -O /etc/yum.repos.d/_copr_kylegospo_oversteer.repo && \
+    wget https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-$(rpm -E %fedora)/kylegospo-oversteer-fedora-$(rpm -E %fedora).repo -O /etc/yum.repos.d/_copr_kylegospo_oversteer.repo && \
     /tmp/nokmods-install.sh && \
     /tmp/nokmods-post-install.sh && \
     # temporary fix for https://github.com/containers/podman/issues/19930
