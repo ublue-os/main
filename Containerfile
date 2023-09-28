@@ -8,10 +8,11 @@ FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS nokmods
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
 
-COPY github-release-install.sh /tmp/github-release-install.sh
-COPY nokmods-install.sh /tmp/nokmods-install.sh
-COPY nokmods-post-install.sh /tmp/nokmods-post-install.sh
-COPY nokmods-packages.json /tmp/nokmods-packages.json
+COPY github-release-install.sh \
+     nokmods-install.sh \
+     nokmods-post-install.sh \
+     nokmods-packages.json \
+        /tmp/
 
 COPY --from=ghcr.io/ublue-os/config:latest /rpms /tmp/rpms
 
@@ -38,10 +39,9 @@ ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
 
 COPY main-install.sh /tmp/main-install.sh
+COPY main-sys_files /
 
 COPY --from=ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} /rpms /tmp/akmods-rpms
-
-COPY main-sys_files /
 
 RUN /tmp/main-install.sh && \
     rm -rf /tmp/* /var/*
