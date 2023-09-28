@@ -7,8 +7,6 @@ on:
   workflow_dispatch:
 env:
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
-  BASE_FLAVOR: nokmods
-  MAIN_FLAVOR: main
 
 jobs:
   push-ghcr:
@@ -30,6 +28,7 @@ jobs:
           - lxqt
           - mate
           - vauxite
+        image_flavor: [main, nokmods]
         major_version: [37, 38, 39]
         include:
           - major_version: 37
@@ -45,6 +44,9 @@ jobs:
             is_stable_version: false
             is_gts_version: false
         exclude:
+          # Fedora 39 images do not include kmods
+          - image_flavor: nokmods
+            major_version: 39
           # There is no Fedora 37 version of sericea
           - image_name: sericea
             major_version: 37
@@ -65,13 +67,12 @@ jobs:
 
       - name: Matrix Variables
         run: |
+          echo "IMAGE_NAME=${{ matrix.image_name }}-${{ matrix.image_flavor }}" >> $GITHUB_ENV
           if [[ "${{ matrix.image_name }}" == "lxqt" || "${{ matrix.image_name }}" == "mate" ]]; then
               echo "SOURCE_IMAGE=base" >> $GITHUB_ENV
           else
               echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
           fi
-          echo "BASE_IMAGE=${{ matrix.image_name }}-${{ env.BASE_FLAVOR }}" >> $GITHUB_ENV
-          echo "MAIN_IMAGE=${{ matrix.image_name }}-${{ env.MAIN_FLAVOR }}" >> $GITHUB_ENV
 
       - name: Generate tags
         id: generate-tags
@@ -134,69 +135,39 @@ jobs:
           ver=$(skopeo inspect docker://quay.io/fedora-ostree-desktops/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
           echo "VERSION=$ver" >> $GITHUB_OUTPUT
 
-      # Build metadata
-      - name: Base Image Metadata
-        uses: docker/metadata-action@v5
-        id: meta-base
-        with:
-          images: |
-            ${{ env.BASE_IMAGE }}
-          labels: |
-            org.opencontainers.image.title=${{ env.BASE_IMAGE }}
-            org.opencontainers.image.version=${{ steps.labels.outputs.VERSION }}
-            org.opencontainers.image.description=A base Universal Blue ${{ matrix.image_name }} image with no extra kmod or kernel packages
-            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/main/README.md
-            io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/120078124?s=200&v=4
-
-      - name: Main Image Metadata
+      # Generate image metadata
+      - name: Image Metadata
         uses: docker/metadata-action@v5
         id: meta-main
         with:
           images: |
-            ${{ env.MAIN_IMAGE }}
+            ${{ env.IMAGE_NAME }}
           labels: |
-            org.opencontainers.image.title=${{ env.MAIN_IMAGE }}
+            org.opencontainers.image.title=${{ env.IMAGE_NAME }}
             org.opencontainers.image.version=${{ steps.labels.outputs.VERSION }}
             org.opencontainers.image.description=A base Universal Blue ${{ matrix.image_name }} image with batteries included
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/main/README.md
             io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/120078124?s=200&v=4
 
       # Build image using Buildah action
-      - name: Build Base Image
-        id: build_image-base
-        uses: redhat-actions/buildah-build@v2
-        with:
-          containerfiles: |
-            ./Containerfile
-          image: ${{ env.BASE_IMAGE }}
-          tags: |
-            ${{ steps.generate-tags.outputs.alias_tags }}
-          build-args: |
-            IMAGE_NAME=${{ matrix.image_name }}
-            SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
-            FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
-          labels: ${{ steps.meta-base.outputs.labels }}
-          oci: false
-          extra-args: |
-            --target=${{ env.BASE_FLAVOR }}
-
-      - name: Build Main Image
+      - name: Build Image
         id: build_image-main
         uses: redhat-actions/buildah-build@v2
         with:
           containerfiles: |
             ./Containerfile
-          image: ${{ env.MAIN_IMAGE }}
+          image: ${{ env.IMAGE_NAME }}
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
             IMAGE_NAME=${{ matrix.image_name }}
+            IMAGE_FLAVOR=${{ matrix.image_flavor }}
             SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
             FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
           labels: ${{ steps.meta-main.outputs.labels }}
           oci: false
           extra-args: |
-            --target=${{ env.MAIN_FLAVOR }}
+            --target=${{ matrix.image_flavor }}
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
