@@ -53,5 +53,17 @@ fi
 ## install packages direct from github
 /tmp/github-release-install.sh sigstore/cosign x86_64
 
+# Install OpenTabletDriver udev rules from their portable releases
+mkdir -p /tmp/OpenTabletDriver/
+mkdir -p /usr/etc/udev/rules.d/
+curl -s https://api.github.com/repos/OpenTabletDriver/OpenTabletDriver/releases/latest \
+| grep "browser_download_url.*opentabletdriver-.*-x64.tar.gz" \
+| cut -d : -f 2,3 \
+| tr -d \" \
+| wget -qi - -O /tmp/OpenTabletDriver/opentabletdriver.tar.gz
+tar -xvzf /tmp/OpenTabletDriver/opentabletdriver.tar.gz -C /tmp/OpenTabletDriver
+mv /tmp/OpenTabletDriver/opentabletdriver/etc/udev/rules.d/70-opentabletdriver.rules /usr/etc/udev/rules.d/70-opentabletdriver.rules
+rm -rf /tmp/OpenTabletDriver
+
 # reset forced use of single rpmfusion mirror
 rename -v .repo.bak .repo /etc/yum.repos.d/rpmfusion-*repo.bak
