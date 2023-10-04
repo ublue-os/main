@@ -45,7 +45,8 @@
             ],
             "silverblue": [
                 "adw-gtk3-theme",
-                "gnome-tweaks"
+                "gnome-tweaks",
+                "gnome-text-editor"
             ],
             "kinoite": [
                 "icoutils",
@@ -225,7 +226,8 @@
                 "google-noto-sans-cjk-fonts"
             ],
             "silverblue": [
-                "raw-thumbnailer"
+                "raw-thumbnailer",
+                "eog"
             ],
             "mate": [
                 "f37-backgrounds-base",
@@ -248,7 +250,8 @@
                 "google-noto-sans-cjk-fonts"
             ],
             "silverblue": [
-                "raw-thumbnailer"
+                "raw-thumbnailer",
+                "eog"
             ],
             "mate": [
                 "f38-backgrounds-base",
@@ -273,6 +276,9 @@
             "all": [],
             "kinoite": [
                 "xwaylandvideobridge"
+            ],
+            "silverblue": [
+                "loupe"
             ]
         },
         "exclude": {
