@@ -22,6 +22,7 @@
                 "libva-utils",
                 "lshw",
                 "mesa-va-drivers-freeworld",
+                "mesa-libOpenCL",
                 "net-tools",
                 "google-noto-sans-javanese-fonts",
                 "google-noto-sans-balinese-fonts",
