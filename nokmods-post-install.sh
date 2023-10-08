@@ -2,6 +2,7 @@
 
 set -ouex pipefail
 
+systemctl enable fstrim.timer
 systemctl enable rpm-ostreed-automatic.timer
 systemctl enable flatpak-system-update.timer
 
