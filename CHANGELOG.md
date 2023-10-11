@@ -1,5 +1,41 @@
 # Changelog
 
+## [1.10.0](https://github.com/ublue-os/main/compare/v1.9.0...v1.10.0) (2023-10-11)
+
+
+### Features
+
+* add a bootc snapshot ([#367](https://github.com/ublue-os/main/issues/367)) ([b9b3095](https://github.com/ublue-os/main/commit/b9b3095925e76a9bded365b8419634ef003790cb))
+* add cosign ([#308](https://github.com/ublue-os/main/issues/308)) ([4ba7efd](https://github.com/ublue-os/main/commit/4ba7efd440efd31b83c81b9fd88e5a99f1322763))
+* Add OpenRazer kmod ([#340](https://github.com/ublue-os/main/issues/340)) ([76a95c6](https://github.com/ublue-os/main/commit/76a95c6e706b57d49c711a983b13cfe8419b211f))
+* Add udev rules for android phones ([#362](https://github.com/ublue-os/main/issues/362)) ([6e7ac65](https://github.com/ublue-os/main/commit/6e7ac653f5c361b4a023bd47e5297b9d0b8df603))
+* Add udev rules for Logitech steering wheels ([#366](https://github.com/ublue-os/main/issues/366)) ([03ccff2](https://github.com/ublue-os/main/commit/03ccff21751ce74e51d41a41dce6e2b794d81e67))
+* Add udev rules for Solaar ([#349](https://github.com/ublue-os/main/issues/349)) ([913a9e5](https://github.com/ublue-os/main/commit/913a9e5707fe80d3b714bbaa6ecc944265cea69e))
+* Add WL driver by default (Disabled by default) ([#350](https://github.com/ublue-os/main/issues/350)) ([f1a0e1c](https://github.com/ublue-os/main/commit/f1a0e1cb2b38cf8f408adc658c1285da751735b4))
+* Add xone and xpad-noone drivers ([#314](https://github.com/ublue-os/main/issues/314)) ([940a231](https://github.com/ublue-os/main/commit/940a231bcd9418db3c2a4e1f4f150ed265647ad4))
+* build nvidia images in main repo ([#319](https://github.com/ublue-os/main/issues/319)) ([40e6c5d](https://github.com/ublue-os/main/commit/40e6c5d1facb90b3d5340f113ae3a52f169bd1ac))
+* enable fedora 39 builds ([#301](https://github.com/ublue-os/main/issues/301)) ([67d4669](https://github.com/ublue-os/main/commit/67d466928fd28398fef7d9d574273756f28293bd))
+* enable onyx builds ([#348](https://github.com/ublue-os/main/issues/348)) ([ec3e1c2](https://github.com/ublue-os/main/commit/ec3e1c211afb8aae0fe849cf579c2c50bf3bed4c))
+* Generate image info ([75e26c9](https://github.com/ublue-os/main/commit/75e26c93540cfe2b46aad2d3a3af12e7fc23d783))
+* re-add xwaylandvideobridge ([#352](https://github.com/ublue-os/main/issues/352)) ([df4e369](https://github.com/ublue-os/main/commit/df4e36912cb2fd19702a139247886e41224c6877))
+* remove google-noto-sans-cjk-vf-fonts and replace it with google-noto-sans-cjk-fonts ([#334](https://github.com/ublue-os/main/issues/334)) ([50541f2](https://github.com/ublue-os/main/commit/50541f2d77c7208dd7b18d5e3947f6bac6c267c1))
+* restore libheif-freeworld for F37-F38 ([#354](https://github.com/ublue-os/main/issues/354)) ([bd53a9a](https://github.com/ublue-os/main/commit/bd53a9a4914b8bec099529ac5378e8fcfbe4e93f))
+
+
+### Bug Fixes
+
+* add missing blacklist for wl modprobe config ([#355](https://github.com/ublue-os/main/issues/355)) ([7972f3c](https://github.com/ublue-os/main/commit/7972f3c4a04d34da9027944b19b0e3f147b6b1b8))
+* add workaround for podman/crun regression ([#335](https://github.com/ublue-os/main/issues/335)) ([d23273c](https://github.com/ublue-os/main/commit/d23273cf484a9627df7862dfcd31d33dd8e6b4f6))
+* **nvidia-32bit:** Append release to packages ([#338](https://github.com/ublue-os/main/issues/338)) ([d94c197](https://github.com/ublue-os/main/commit/d94c197ce2932162840358ac6a4416ce05d1d651))
+* **nvidia-32bit:** Correct package name ([#339](https://github.com/ublue-os/main/issues/339)) ([dc380d4](https://github.com/ublue-os/main/commit/dc380d4b8594d565a83418ffa351c075cd93cccc))
+* **nvidia:** Install 32 bit driver libraries ([#336](https://github.com/ublue-os/main/issues/336)) ([ed724e0](https://github.com/ublue-os/main/commit/ed724e0b5a3d1fddd1e7627e779395aa144d0c74))
+* re-remove libheif-freeworld for F37-F38 ([#358](https://github.com/ublue-os/main/issues/358)) ([ec73435](https://github.com/ublue-os/main/commit/ec7343533a91d4acdb95316e4cdd15d472c371ce))
+* remove extra 'tags' line from cosign ([#321](https://github.com/ublue-os/main/issues/321)) ([36fcf22](https://github.com/ublue-os/main/commit/36fcf22bc0b1bcfda66f6fdfec21d95923bb5f6f))
+* remove libheif-freeworld from packages to fix build ([#332](https://github.com/ublue-os/main/issues/332)) ([9cb853b](https://github.com/ublue-os/main/commit/9cb853bfe535426a9113f32f972f3ae7b210db32))
+* switch back to free builders to fix skopeo inspect issue ([#322](https://github.com/ublue-os/main/issues/322)) ([1cfad9e](https://github.com/ublue-os/main/commit/1cfad9e1f728707f65864125959126dadfe3ab29))
+* use new akmods:main-RELEASE tag structure ([#372](https://github.com/ublue-os/main/issues/372)) ([86149a1](https://github.com/ublue-os/main/commit/86149a1f8b9b396091a5ebad142fc936997cbc0f))
+* use raw output from jq to install cosign again ([#312](https://github.com/ublue-os/main/issues/312)) ([9b12fd5](https://github.com/ublue-os/main/commit/9b12fd58401c9118ca24c6de5d79076455d5ad93))
+
 ## [1.9.0](https://github.com/ublue-os/main/compare/v1.8.0...v1.9.0) (2023-08-16)
 
 
