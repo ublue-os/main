@@ -29,7 +29,7 @@ jobs:
           - mate
           - vauxite
         major_version: [37, 38, 39]
-        build_target: [main, legacy]
+        build_target: [nokmods, kmods]
         include:
           - major_version: 37
             is_latest_version: false
@@ -57,7 +57,7 @@ jobs:
           # THE FOLLOWING EXCLUDE IS MESSY BUT TEMPORARY UNTIL F38 IS GONE
           # see: https://github.com/ublue-os/main/issues/369
           # Fedora 39+ images do not include custom kmods (legacy)
-          - build_target: legacy
+          - build_target: kmods
             major_version: 39
     steps:
       - name: Maximize build space
@@ -78,11 +78,11 @@ jobs:
           # THE FOLLOWING IS MESSY BUT TEMPORARY UNTIL F38 IS GONE
           # see: https://github.com/ublue-os/main/issues/369
           # Fedora 39+ images do not include custom kmods (legacy)
-          if [[ "${{ matrix.major_version}}" -ge "39" && "${{ matrix.build_target }}" == "main" ]]; then
+          if [[ "${{ matrix.major_version}}" -ge "39" && "${{ matrix.build_target }}" == "nokmods" ]]; then
               export IMAGE_FLAVOR=main
-          elif [[ "${{ matrix.major_version}}" -lt "39" && "${{ matrix.build_target }}" == "main" ]]; then
+          elif [[ "${{ matrix.major_version}}" -lt "39" && "${{ matrix.build_target }}" == "nokmods" ]]; then
               export IMAGE_FLAVOR=nokmods
-          elif [[ "${{ matrix.major_version}}" -lt "39" && "${{ matrix.build_target }}" == "legacy" ]]; then
+          elif [[ "${{ matrix.major_version}}" -lt "39" && "${{ matrix.build_target }}" == "kmods" ]]; then
               export IMAGE_FLAVOR=main
           else
               echo "ERROR: invalid workflow request - ${{ matrix.major_version }} - ${{ matrix.build_target }}"

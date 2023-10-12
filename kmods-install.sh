@@ -2,7 +2,9 @@
 
 set -ouex pipefail
 
-echo "DEPRECATED: Universal Blue will not include kmods in *-main images for Fedora ${FEDORA_MAJOR_VERSION} and newer."
+# !!! WARNING - KMODS IN MAIN IMAGES ARE DEPRECATED !!!
+
+echo "DEPRECATED: Universal Blue will not include kmods in *-main images for Fedora 39 and newer."
 
 # Only run if FEDORA_MAJOR_VERSION is less than 39
 if [[ ${FEDORA_MAJOR_VERSION} -gt 38 ]]; then \
@@ -12,8 +14,8 @@ fi
 # proceed with rest of script without further version checks
 
 
-# copy legacy (akmods) related files into image filesystem
-cp -rf /tmp/legacy/* /
+# copy kmods related files into image filesystem
+cp -rf /tmp/kmods-files/* /
 
 
 rpm-ostree install /tmp/akmods-rpms/ublue-os/ublue-os-akmods-addons*.rpm

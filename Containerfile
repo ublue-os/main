@@ -3,7 +3,7 @@ ARG SOURCE_IMAGE="${SOURCE_IMAGE:-silverblue}"
 ARG BASE_IMAGE="quay.io/fedora-ostree-desktops/${SOURCE_IMAGE}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
 
-FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS main
+FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS nokmods
 
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
@@ -32,20 +32,21 @@ RUN wget https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-$(
     mkdir -p /var/tmp && chmod -R 1777 /var/tmp
 
 
-# !!!WARNING!!!
-# Only "legacy (Fedora 38 and older) have custom kmods pre-build in the "main" repo.
-FROM main AS legacy
+# !!! WARNING - KMODS IN MAIN IMAGES ARE DEPRECATED !!!
+
+# Only "legacy" (Fedora 38 and older) have custom kmods included in the "main" images.
+FROM nokmods AS kmods
 
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
 
-COPY legacy-install.sh /tmp/legacy-install.sh
-COPY legacy-sys_files /tmp/legacy
+COPY kmods-install.sh /tmp/kmods-install.sh
+COPY kmods-sys_files /tmp/kmods-files
 
 COPY --from=ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} /rpms /tmp/akmods-rpms
 
-# legacy-install.sh will error if running in Fedora 39 or newer.
-RUN /tmp/legacy-install.sh && \
+# kmods-install.sh will error if running in Fedora 39 or newer.
+RUN /tmp/kmods-install.sh && \
     rm -rf /tmp/* /var/* && \
     ostree container commit && \
     mkdir -p /var/tmp && chmod -R 1777 /var/tmp
