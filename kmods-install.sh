@@ -34,7 +34,6 @@ fi
 
 rpm-ostree install \
     kernel-devel-matched \
-    kernel-tools \
     /tmp/akmods-rpms/kmods/*xpadneo*.rpm \
     /tmp/akmods-rpms/kmods/*xpad-noone*.rpm \
     /tmp/akmods-rpms/kmods/*xone*.rpm \
