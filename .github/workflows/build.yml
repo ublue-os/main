@@ -154,7 +154,7 @@ jobs:
       # Generate image metadata
       - name: Image Metadata
         uses: docker/metadata-action@v5
-        id: meta-main
+        id: meta
         with:
           images: |
             ${{ env.IMAGE_NAME }}
@@ -167,7 +167,7 @@ jobs:
 
       # Build image using Buildah action
       - name: Build Image
-        id: build_image-main
+        id: build_image
         uses: redhat-actions/buildah-build@v2
         with:
           containerfiles: |
@@ -179,7 +179,7 @@ jobs:
             IMAGE_NAME=${{ matrix.image_name }}
             SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
             FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
-          labels: ${{ steps.meta-main.outputs.labels }}
+          labels: ${{ steps.meta.outputs.labels }}
           oci: false
           extra-args: |
             --target=${{ matrix.build_target }}
@@ -192,33 +192,16 @@ jobs:
         with:
           string: ${{ env.IMAGE_REGISTRY }}
 
-      # Push the image to GHCR (Image Registry)
-      - name: Push Base To GHCR
+      - name: Push To GHCR
         uses: redhat-actions/push-to-registry@v2
-        id: push-base
+        id: push
         if: github.event_name != 'pull_request'
         env:
           REGISTRY_USER: ${{ github.actor }}
           REGISTRY_PASSWORD: ${{ github.token }}
         with:
-          image: ${{ steps.build_image-base.outputs.image }}
-          tags: ${{ steps.build_image-base.outputs.tags }}
-          registry: ${{ steps.registry_case.outputs.lowercase }}
-          username: ${{ env.REGISTRY_USER }}
-          password: ${{ env.REGISTRY_PASSWORD }}
-          extra-args: |
-            --disable-content-trust
-
-      - name: Push Main To GHCR
-        uses: redhat-actions/push-to-registry@v2
-        id: push-main
-        if: github.event_name != 'pull_request'
-        env:
-          REGISTRY_USER: ${{ github.actor }}
-          REGISTRY_PASSWORD: ${{ github.token }}
-        with:
-          image: ${{ steps.build_image-main.outputs.image }}
-          tags: ${{ steps.build_image-main.outputs.tags }}
+          image: ${{ steps.build_image.outputs.image }}
+          tags: ${{ steps.build_image.outputs.tags }}
           registry: ${{ steps.registry_case.outputs.lowercase }}
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
@@ -237,29 +220,19 @@ jobs:
       - uses: sigstore/cosign-installer@v3.1.2
         if: github.event_name != 'pull_request'
 
-      - name: Sign Base container image
+      - name: Sign container image
         if: github.event_name != 'pull_request'
         run: |
-          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image-base.outputs.image }}@${TAGS}
+          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image.outputs.image }}@${TAGS}
         env:
-          TAGS: ${{ steps.push-base.outputs.digest }}
-          COSIGN_EXPERIMENTAL: false
-          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
-
-      - name: Sign Main container image
-        if: github.event_name != 'pull_request'
-        run: |
-          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image-main.outputs.image }}@${TAGS}
-        env:
-          TAGS: ${{ steps.push-main.outputs.digest }}
+          TAGS: ${{ steps.push.outputs.digest }}
           COSIGN_EXPERIMENTAL: false
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
 
       - name: Echo outputs
         if: github.event_name != 'pull_request'
         run: |
-          echo "${{ toJSON(steps.push-base.outputs) }}"
-          echo "${{ toJSON(steps.push-main.outputs) }}"
+          echo "${{ toJSON(steps.push.outputs) }}"
 
   check:
     name: Check all builds successful
