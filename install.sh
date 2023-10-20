@@ -20,23 +20,6 @@ if [[ "${FEDORA_MAJOR_VERSION}" -ge 39 ]]; then
     sed -i 's%free/fedora/releases%free/fedora/development%' /etc/yum.repos.d/rpmfusion-*.repo
 fi
 
-if [[ "${FEDORA_MAJOR_VERSION}" -ge 39 ]]; then
-    sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/fedora-updates-testing.repo
-    rpm-ostree override \
-    --experimental replace \
-    --from repo=updates-testing \
-        pipewire-libs \
-        pipewire \
-        pipewire-pulseaudio \
-        pipewire-alsa \
-        pipewire-jack-audio-connection-kit-libs \
-        pipewire-jack-audio-connection-kit \
-        pipewire-gstreamer \
-        pipewire-utils \
-        pipewire-jack-audio-connection-kit-libs.i686
-    sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-updates-testing.repo
-fi
-
 # run common packages script
 /tmp/packages.sh
 
