@@ -43,6 +43,8 @@
                 "tcpdump",
                 "tmux",
                 "traceroute",
+                "neovim",
+                "wl-clipboard",
                 "zstd",
                 "wireguard-tools"
             ],
