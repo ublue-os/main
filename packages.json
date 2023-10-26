@@ -43,7 +43,6 @@
                 "tcpdump",
                 "tmux",
                 "traceroute",
-                "vim",
                 "zstd",
                 "wireguard-tools"
             ],
