@@ -48,6 +48,9 @@
                 "zsh",
                 "zsh-autosuggestions",
                 "zsh-syntax-highlighting",
+                "mpc",
+                "mpd",
+                "ncmpcpp",
                 "zstd",
                 "wireguard-tools"
             ],
