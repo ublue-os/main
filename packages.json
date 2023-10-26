@@ -45,6 +45,9 @@
                 "traceroute",
                 "neovim",
                 "wl-clipboard",
+                "zsh",
+                "zsh-autosuggestions",
+                "zsh-syntax-highlighting",
                 "zstd",
                 "wireguard-tools"
             ],
