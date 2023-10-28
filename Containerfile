@@ -18,8 +18,7 @@ COPY github-release-install.sh \
 COPY --from=ghcr.io/ublue-os/config:latest /rpms /tmp/rpms
 COPY --from=ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} /rpms/ublue-os /tmp/rpms
 
-# vim neovim symlink
-RUN ln -s /usr/bin/nvim /usr/bin/vim
+
 
 # remove nano
 RUN rpm-ostree override remove nano nano-default-editor
