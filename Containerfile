@@ -15,7 +15,7 @@ COPY github-release-install.sh \
      packages.json \
         /tmp/
 
-COPY --from=ghcr.io/ublue-os/config:latest /rpms /tmp/rpms
+COPY --from=ghcr.io/renner0e/config:latest /rpms /tmp/rpms
 COPY --from=ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} /rpms/ublue-os /tmp/rpms
 
 
