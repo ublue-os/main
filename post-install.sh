@@ -11,5 +11,6 @@ cp /usr/share/ublue-os/update-services/etc/rpm-ostreed.conf /etc/rpm-ostreed.con
 
 ln -s "/usr/share/fonts/google-noto-sans-cjk-fonts" "/usr/share/fonts/noto-cjk"
 
-# vim neovim symlink
-#ln -s /usr/bin/nvim /usr/bin/vim
+# vim vi neovim symlink
+ln -s /usr/bin/nvim /usr/bin/vim
+ln -s /usr/bin/nvim /usr/bin/vi

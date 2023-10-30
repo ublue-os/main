@@ -217,6 +217,15 @@
                 "libswresample-free",
                 "libswscale-free",
                 "mesa-va-drivers",
+                "nano",
+                "vim",
+                "vim-default-editor",
+                "vim-minimal",
+                "default-editor",
+                "vi",
+                "nano-default-editor",
+                "firefox",
+                "firefox-langpacks",
                 "google-noto-sans-cjk-vf-fonts"
             ],
             "kinoite": [
