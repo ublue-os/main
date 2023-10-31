@@ -69,7 +69,7 @@ jobs:
         shell: bash
         run: |
           if [[ "${{ matrix.fedora_version }}" -ge "39" ]] && \
-             grep "${{ matrix.image_name }}" <<< "silverblue, kinoite, onyx, sericea"; then
+            grep "${{ matrix.image_name }}" <<< "silverblue, kinoite, sericea"; then
               echo "SOURCE_ORG=fedora" >> $GITHUB_ENV
               echo "SOURCE_IMAGE=fedora-${{ matrix.image_name }}" >> $GITHUB_ENV
           else
@@ -154,7 +154,7 @@ jobs:
       - name: Get current version
         id: labels
         run: |
-          ver=$(skopeo inspect docker://quay.io/fedora-ostree-desktops/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
+          ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
           echo "VERSION=$ver" >> $GITHUB_OUTPUT
 
       # Generate image metadata
