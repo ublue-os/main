@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.12.0](https://github.com/Renner0E/main/compare/v1.11.0...v1.12.0) (2023-11-03)
+
+
+### Features
+
+* **f39:** Use official images for Silverblue, Kinoite, and Sericea ([#407](https://github.com/Renner0E/main/issues/407)) ([5062628](https://github.com/Renner0E/main/commit/50626281e7cb2a31e5c1f5829f8540df487a8ddd))
+* re-add libheif-freeworld ([#408](https://github.com/Renner0E/main/issues/408)) ([cb0dd8f](https://github.com/Renner0E/main/commit/cb0dd8fc02413958df31b3d6d29ce79e905a48a9))
+
+
+### Bug Fixes
+
+* stop excluding kwrite ([#401](https://github.com/Renner0E/main/issues/401)) ([b866e6e](https://github.com/Renner0E/main/commit/b866e6e538d01c1847694fcaebecec5a16dec2a3))
+* Target Fedora 40 for official images, revert 39 to ci-test ([#410](https://github.com/Renner0E/main/issues/410)) ([bfd786e](https://github.com/Renner0E/main/commit/bfd786e8988faa374438d632fa1e34282a59a067))
+
 ## [1.11.0](https://github.com/Renner0E/main/compare/v1.10.0...v1.11.0) (2023-10-26)
 
 
