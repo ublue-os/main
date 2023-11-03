@@ -17,6 +17,7 @@
                 "intel-media-driver",
                 "just",
                 "kernel-tools",
+                "libheif-freeworld",
                 "libheif-tools",
                 "libratbag-ratbagd",
                 "libva-intel-driver",
@@ -230,8 +231,7 @@
             ],
             "kinoite": [
                 "plasma-discover-rpm-ostree",
-                "ffmpegthumbnailer",
-                "kwrite"
+                "ffmpegthumbnailer"
             ],
             "mate": [
                 "python3-unbound",
