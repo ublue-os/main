@@ -17,6 +17,7 @@
                 "intel-media-driver",
                 "just",
                 "kernel-tools",
+                "libheif-freeworld",
                 "libheif-tools",
                 "libratbag-ratbagd",
                 "libva-intel-driver",
@@ -24,6 +25,9 @@
                 "lshw",
                 "mesa-va-drivers-freeworld",
                 "net-tools",
+                "pam_yubico",
+                "pam-u2f",
+                "pamu2fcfg",
                 "google-noto-sans-javanese-fonts",
                 "google-noto-sans-balinese-fonts",
                 "google-noto-sans-sundanese-fonts",
@@ -211,8 +215,7 @@
             ],
             "kinoite": [
                 "plasma-discover-rpm-ostree",
-                "ffmpegthumbnailer",
-                "kwrite"
+                "ffmpegthumbnailer"
             ],
             "mate": [
                 "python3-unbound",
