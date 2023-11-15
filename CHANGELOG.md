@@ -1,16 +1,30 @@
 # Changelog
 
+<<<<<<< HEAD
 ## [1.12.0](https://github.com/Renner0E/main/compare/v1.11.0...v1.12.0) (2023-11-03)
+=======
+## [1.11.0](https://github.com/ublue-os/main/compare/v1.10.0...v1.11.0) (2023-11-08)
+>>>>>>> 3ca1798cca6ffefeca3d070ebe98a1df2c310975
 
 
 ### Features
 
+<<<<<<< HEAD
 * **f39:** Use official images for Silverblue, Kinoite, and Sericea ([#407](https://github.com/Renner0E/main/issues/407)) ([5062628](https://github.com/Renner0E/main/commit/50626281e7cb2a31e5c1f5829f8540df487a8ddd))
 * re-add libheif-freeworld ([#408](https://github.com/Renner0E/main/issues/408)) ([cb0dd8f](https://github.com/Renner0E/main/commit/cb0dd8fc02413958df31b3d6d29ce79e905a48a9))
+=======
+* Add PAM modules for YubiKey support ([#397](https://github.com/ublue-os/main/issues/397)) ([49b02bd](https://github.com/ublue-os/main/commit/49b02bd9e5373401da8204e915bce6691af43e35))
+* Exclude kmods from Fedora 39 and future images ([#375](https://github.com/ublue-os/main/issues/375)) ([4bec2a4](https://github.com/ublue-os/main/commit/4bec2a4283f17c8a2e3e0dfe4617e9bd23d90560))
+* **f39:** Use official images for Silverblue, Kinoite, and Sericea ([#407](https://github.com/ublue-os/main/issues/407)) ([5062628](https://github.com/ublue-os/main/commit/50626281e7cb2a31e5c1f5829f8540df487a8ddd))
+* Mark Fedora 39 images as stable and roll out gts ([#391](https://github.com/ublue-os/main/issues/391)) ([ff78ed2](https://github.com/ublue-os/main/commit/ff78ed26295d0a8d1ad2d9fd5d607bae7fd3cf7e))
+* re-add libheif-freeworld ([#408](https://github.com/ublue-os/main/issues/408)) ([cb0dd8f](https://github.com/ublue-os/main/commit/cb0dd8fc02413958df31b3d6d29ce79e905a48a9))
+* turn on F39 for vauxite ([#392](https://github.com/ublue-os/main/issues/392)) ([3db7257](https://github.com/ublue-os/main/commit/3db725760df890225b581c81164eb83605c85f6b))
+>>>>>>> 3ca1798cca6ffefeca3d070ebe98a1df2c310975
 
 
 ### Bug Fixes
 
+<<<<<<< HEAD
 * stop excluding kwrite ([#401](https://github.com/Renner0E/main/issues/401)) ([b866e6e](https://github.com/Renner0E/main/commit/b866e6e538d01c1847694fcaebecec5a16dec2a3))
 * Target Fedora 40 for official images, revert 39 to ci-test ([#410](https://github.com/Renner0E/main/issues/410)) ([bfd786e](https://github.com/Renner0E/main/commit/bfd786e8988faa374438d632fa1e34282a59a067))
 
@@ -142,6 +156,11 @@
 * "fix: Revert to older version of ostree to fix Flatpak installations ([#261](https://github.com/Renner0E/main/issues/261))" ([#265](https://github.com/Renner0E/main/issues/265)) ([f2c2a31](https://github.com/Renner0E/main/commit/f2c2a314b57b585c467ebc6bbbb40febfd40a11f))
 * "fix: temporarily disable mesa-va-drivers-freeworld for f38" ([#166](https://github.com/Renner0E/main/issues/166)) ([32b29ac](https://github.com/Renner0E/main/commit/32b29ac8299919b2e97e16058a6c94e66410ef10))
 * "revert: "fix: Revert to older version of ostree to fix Flatpak installations ([#261](https://github.com/Renner0E/main/issues/261))"" ([#266](https://github.com/Renner0E/main/issues/266)) ([36711fa](https://github.com/Renner0E/main/commit/36711fa635afba4dcb2be667fadc96a8d9feeb48))
+=======
+* **f39:** temp: Install pipewire from testing ([#396](https://github.com/ublue-os/main/issues/396)) ([b4d73c1](https://github.com/ublue-os/main/commit/b4d73c1eb5e0ff6e740e543ac68c1e0530e194e0))
+* stop excluding kwrite ([#401](https://github.com/ublue-os/main/issues/401)) ([b866e6e](https://github.com/ublue-os/main/commit/b866e6e538d01c1847694fcaebecec5a16dec2a3))
+* Target Fedora 40 for official images, revert 39 to ci-test ([#410](https://github.com/ublue-os/main/issues/410)) ([bfd786e](https://github.com/ublue-os/main/commit/bfd786e8988faa374438d632fa1e34282a59a067))
+>>>>>>> 3ca1798cca6ffefeca3d070ebe98a1df2c310975
 
 ## [1.10.0](https://github.com/ublue-os/main/compare/v1.9.0...v1.10.0) (2023-10-11)
 

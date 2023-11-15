@@ -31,12 +31,12 @@ jobs:
             is_stable_version: true
             is_gts_version: false
           - major_version: 38
-            is_latest_version: true
+            is_latest_version: false
             is_stable_version: true
             is_gts_version: true
           - major_version: 39
             is_latest_version: true
-            is_stable_version: false
+            is_stable_version: true
             is_gts_version: false
         exclude:
           # There is no Fedora 37 version of sericea
@@ -219,7 +219,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # Sign container
-      - uses: sigstore/cosign-installer@v3.1.2
+      - uses: sigstore/cosign-installer@v3.2.0
         if: github.event_name != 'pull_request'
 
       - name: Sign container image

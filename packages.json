@@ -28,6 +28,7 @@
                 "pam_yubico",
                 "pam-u2f",
                 "pamu2fcfg",
+                "google-noto-sans-cjk-fonts",
                 "google-noto-sans-javanese-fonts",
                 "google-noto-sans-balinese-fonts",
                 "google-noto-sans-sundanese-fonts",
@@ -241,9 +242,7 @@
     },
     "37": {
         "include": {
-            "all": [
-                "google-noto-sans-cjk-fonts"
-            ],
+            "all": [],
             "silverblue": [
                 "raw-thumbnailer"
             ],
@@ -264,9 +263,7 @@
     },
     "38": {
         "include": {
-            "all": [
-                "google-noto-sans-cjk-fonts"
-            ],
+            "all": [],
             "silverblue": [
                 "raw-thumbnailer"
             ],
