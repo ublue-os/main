@@ -26,6 +26,7 @@ RUN wget https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-$(
     rm -f /etc/yum.repos.d/_copr_ublue-os_staging.repo && \
     rm -f /etc/yum.repos.d/_copr_kylegospo_oversteer.repo && \
     rm -rf /tmp/* /var/* && \
+    if [[ "$IMAGE_NAME" == "base" ]]; then systemctl enable getty@tty1; fi && \
     ostree container commit && \
     mkdir -p /var/tmp && chmod -R 1777 /var/tmp
 
