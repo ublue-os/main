@@ -247,7 +247,9 @@
     },
     "38": {
         "include": {
-            "all": [],
+            "all": [
+                "bootc"
+            ],
             "silverblue": [
                 "raw-thumbnailer"
             ],
@@ -271,7 +273,9 @@
     },
     "39": {
         "include": {
-            "all": [],
+            "all": [
+                "bootc"
+            ],
             "kinoite": [
                 "xwaylandvideobridge"
             ]
