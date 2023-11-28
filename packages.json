@@ -38,7 +38,6 @@
                 "solaar-udev",
                 "openssl",
                 "oversteer-udev",
-                "podman-compose",
                 "pipewire-codec-aptx",
                 "smartmontools",
                 "symlinks",
