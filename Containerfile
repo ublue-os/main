@@ -44,6 +44,9 @@ COPY kmods-sys_files /tmp/kmods-files
 
 COPY --from=ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} /rpms /tmp/akmods-rpms
 
+# Workaround for podman issue upstream.
+RUN rpm-ostree override replace https://bodhi.fedoraproject.org/updates/FEDORA-2023-00c78aad58
+
 # kmods-install.sh will error if running in Fedora 39 or newer.
 RUN /tmp/kmods-install.sh && \
     rm -rf /tmp/* /var/* && \
