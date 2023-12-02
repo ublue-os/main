@@ -22,8 +22,6 @@ COPY --from=ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} /rpms/ublue-os 
 # # Workaround for podman issue upstream - https://github.com/containers/podman/issues/20872
 RUN if [ "$FEDORA_MAJOR_VERSION" = "39" ]; then \
         rpm-ostree override replace https://bodhi.fedoraproject.org/updates/FEDORA-2023-00c78aad58; \
-    elif [ "$FEDORA_MAJOR_VERSION" = "38" ]; then \
-        rpm-ostree override replace https://bodhi.fedoraproject.org/updates/FEDORA-2023-c72015807c; \
     fi
 
 RUN wget https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-$(rpm -E %fedora)/ublue-os-staging-fedora-$(rpm -E %fedora).repo -O /etc/yum.repos.d/_copr_ublue-os_staging.repo && \
