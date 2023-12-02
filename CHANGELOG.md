@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.0.1](https://github.com/ublue-os/main/compare/v2.0.0...v2.0.1) (2023-12-02)
+
+
+### Bug Fixes
+
+* **ci:** never skip successful builds check ([#436](https://github.com/ublue-os/main/issues/436)) ([d7f2918](https://github.com/ublue-os/main/commit/d7f29187ef253beb097bb88d7337c61c9db4d44d))
+* Correct upstream podman issue ([#438](https://github.com/ublue-os/main/issues/438)) ([bfee8ab](https://github.com/ublue-os/main/commit/bfee8abfc16348fb4efde971df4351e7268346d7))
+* enable boot to tty for base image ([#424](https://github.com/ublue-os/main/issues/424)) ([82ccb30](https://github.com/ublue-os/main/commit/82ccb3090864279453a7871c236402715b10be03))
+* **f39:** Restore cjk fonts ([#417](https://github.com/ublue-os/main/issues/417)) ([3b3358e](https://github.com/ublue-os/main/commit/3b3358ea0aabdd04539bae95668249a3a21f94e6))
+* remove podman-compose ([#432](https://github.com/ublue-os/main/issues/432)) ([2d7b47b](https://github.com/ublue-os/main/commit/2d7b47b84e7153058a0cc72050ab97b84bb08436))
+* switch to distro bootc for F38 and F39 ([#426](https://github.com/ublue-os/main/issues/426)) ([2bc3101](https://github.com/ublue-os/main/commit/2bc3101c1a1bdffd45e2b0022e1946c10e175de4))
+
 ## [1.11.0](https://github.com/ublue-os/main/compare/v1.10.0...v1.11.0) (2023-11-08)
 
 
