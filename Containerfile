@@ -19,6 +19,9 @@ COPY github-release-install.sh \
 COPY --from=ghcr.io/ublue-os/config:latest /rpms /tmp/rpms
 COPY --from=ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} /rpms/ublue-os /tmp/rpms
 
+# Workaround for podman issue upstream.
+RUN rpm-ostree override replace https://bodhi.fedoraproject.org/updates/FEDORA-2023-00c78aad58
+
 RUN wget https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-$(rpm -E %fedora)/ublue-os-staging-fedora-$(rpm -E %fedora).repo -O /etc/yum.repos.d/_copr_ublue-os_staging.repo && \
     wget https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-$(rpm -E %fedora)/kylegospo-oversteer-fedora-$(rpm -E %fedora).repo -O /etc/yum.repos.d/_copr_kylegospo_oversteer.repo && \
     /tmp/install.sh && \
@@ -43,9 +46,6 @@ COPY kmods-install.sh /tmp/kmods-install.sh
 COPY kmods-sys_files /tmp/kmods-files
 
 COPY --from=ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} /rpms /tmp/akmods-rpms
-
-# Workaround for podman issue upstream.
-RUN rpm-ostree override replace https://bodhi.fedoraproject.org/updates/FEDORA-2023-00c78aad58
 
 # kmods-install.sh will error if running in Fedora 39 or newer.
 RUN /tmp/kmods-install.sh && \
