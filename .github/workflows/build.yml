@@ -28,13 +28,9 @@ jobs:
           - lxqt
           - mate
           - vauxite
-        major_version: [37, 38, 39]
+        major_version: [38, 39]
         build_target: [nokmods, kmods]
         include:
-          - major_version: 37
-            is_latest_version: false
-            is_stable_version: true
-            is_gts_version: false
           - major_version: 38
             is_latest_version: false
             is_stable_version: true
@@ -44,12 +40,7 @@ jobs:
             is_stable_version: true
             is_gts_version: false
         exclude:
-          # There is no Fedora 37 version of sericea
-          - image_name: sericea
-            major_version: 37
-          # There is no Fedora 37 or 38 version of onyx
-          - image_name: onyx
-            major_version: 37
+          # There is no Fedora 38 version of onyx
           - image_name: onyx
             major_version: 38
           # THE FOLLOWING EXCLUDE IS MESSY BUT TEMPORARY UNTIL F38 IS GONE

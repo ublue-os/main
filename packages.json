@@ -223,27 +223,6 @@
             ]
         }
     },
-    "37": {
-        "include": {
-            "all": [],
-            "silverblue": [
-                "raw-thumbnailer"
-            ],
-            "mate": [
-                "f37-backgrounds-base",
-                "f37-backgrounds-extras-base",
-                "f37-backgrounds-extras-mate",
-                "f37-backgrounds-mate",
-                "raw-thumbnailer"
-            ],
-            "vauxite": [
-                "raw-thumbnailer"
-            ]
-        },
-        "exclude": {
-            "all": []
-        }
-    },
     "38": {
         "include": {
             "all": [
