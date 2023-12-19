@@ -23,6 +23,7 @@
                 "libva-intel-driver",
                 "libva-utils",
                 "lshw",
+                "mesa-filesystem",
                 "mesa-va-drivers-freeworld",
                 "net-tools",
                 "pam_yubico",
