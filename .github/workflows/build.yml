@@ -41,8 +41,10 @@ jobs:
             is_stable_version: true
             is_gts_version: false
         exclude:
-          # There is no Fedora 38 version of onyx
+          # There is no Fedora 38 version of onyx or lazurite
           - image_name: onyx
+            major_version: 38
+          - image_name: lazurite
             major_version: 38
           # THE FOLLOWING EXCLUDE IS MESSY BUT TEMPORARY UNTIL F38 IS GONE
           # see: https://github.com/ublue-os/main/issues/369
