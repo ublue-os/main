@@ -51,7 +51,8 @@
             ],
             "silverblue": [
                 "adw-gtk3-theme",
-                "gnome-tweaks"
+                "gnome-tweaks",
+                "avif-pixbuf-loader",
             ],
             "kinoite": [
                 "icoutils",
