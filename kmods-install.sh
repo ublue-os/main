@@ -23,6 +23,10 @@ for REPO in $(rpm -ql ublue-os-akmods-addons|grep ^"/etc"|grep repo$); do
     sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' ${REPO}
 done
 
+# force use of single rpmfusion mirror
+sed -i.bak 's%^metalink=%#metalink=%' /etc/yum.repos.d/rpmfusion-*.repo
+sed -i 's%^#baseurl=http://download1.rpmfusion.org%baseurl=http://mirrors.ocf.berkeley.edu/rpmfusion%' /etc/yum.repos.d/rpmfusion-*.repo
+
 rpm-ostree install \
     kernel-devel-matched \
     /tmp/akmods-rpms/kmods/*xpadneo*.rpm \
@@ -36,3 +40,6 @@ for REPO in $(rpm -ql ublue-os-akmods-addons|grep ^"/etc"|grep repo$); do
     echo "akmods: disable per defaults: ${REPO}"
     sed -i 's@enabled=1@enabled=0@g' ${REPO}
 done
+
+# reset forced use of single rpmfusion mirror
+rename -v .repo.bak .repo /etc/yum.repos.d/rpmfusion-*repo.bak
