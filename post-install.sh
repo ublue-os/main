@@ -2,11 +2,7 @@
 
 set -ouex pipefail
 
-systemctl enable rpm-ostreed-automatic.timer
-systemctl enable flatpak-system-update.timer
+ln -s "/usr/share/fonts/google-noto-sans-cjk-fonts" "/usr/share/fonts/noto-cjk"
 
-systemctl --global enable flatpak-user-update.timer
-
-cp /usr/share/ublue-os/update-services/etc/rpm-ostreed.conf /etc/rpm-ostreed.conf
-
-ln -s "/usr/share/fonts/google-noto-sans-cjk-fonts" "/usr/share/fonts/noto-cjk" 
+sed -i "s@enabled=1@enabled=0@g" /etc/yum.repos.d/fedora-cisco-openh264.repo \
+                                 /etc/yum.repos.d/rpmfusion-*.repo
