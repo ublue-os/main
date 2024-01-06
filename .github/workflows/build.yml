@@ -22,13 +22,6 @@ jobs:
         image_name:
           - silverblue
           - kinoite
-          - sericea
-          - onyx
-          - base
-          - lxqt
-          - mate
-          - vauxite
-          - lazurite
         major_version: [38, 39]
         build_target: [nokmods, kmods]
         include:
