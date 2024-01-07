@@ -1,6 +1,6 @@
 # Main
 
-[![build-ublue](https://github.com/ublue-os/main/actions/workflows/build.yml/badge.svg)](https://github.com/ublue-os/main/actions/workflows/build.yml)
+[![build-ublue](https://github.com/joshua-stone/rose-os/actions/workflows/build.yml/badge.svg)](https://github.com/joshua-stone/rose-os/actions/workflows/build.yml)
 
 A common main image for all other uBlue images, with minimal (but important) adjustments to Fedora. <3  
 
