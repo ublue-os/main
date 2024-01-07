@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image_name: [silverblue, kinoite, vauxite, sericea, base, lxqt, mate]
+        image_name: [silverblue, kinoite]
         major_version: [37, 38]
         include:
           - major_version: 37
