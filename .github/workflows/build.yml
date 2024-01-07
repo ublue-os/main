@@ -23,23 +23,11 @@ jobs:
           - silverblue
           - kinoite
         major_version: [39]
-        build_target: [nokmods]
         include:
           - major_version: 39
             is_latest_version: true
             is_stable_version: true
             is_gts_version: false
-        exclude:
-          # There is no Fedora 38 version of onyx or lazurite
-          - image_name: onyx
-            major_version: 38
-          - image_name: lazurite
-            major_version: 38
-          # THE FOLLOWING EXCLUDE IS MESSY BUT TEMPORARY UNTIL F38 IS GONE
-          # see: https://github.com/ublue-os/main/issues/369
-          # Fedora 39+ images do not include custom kmods (legacy)
-          - build_target: kmods
-            major_version: 39
     steps:
       - name: Maximize build space
         uses: ublue-os/remove-unwanted-software@v6
@@ -67,16 +55,7 @@ jobs:
           # THE FOLLOWING IS MESSY BUT TEMPORARY UNTIL F38 IS GONE
           # see: https://github.com/ublue-os/main/issues/369
           # Fedora 39+ images do not include custom kmods (legacy)
-          if [[ "${{ matrix.major_version}}" -ge "39" && "${{ matrix.build_target }}" == "nokmods" ]]; then
-              export IMAGE_FLAVOR=main
-          elif [[ "${{ matrix.major_version}}" -lt "39" && "${{ matrix.build_target }}" == "nokmods" ]]; then
-              export IMAGE_FLAVOR=nokmods
-          elif [[ "${{ matrix.major_version}}" -lt "39" && "${{ matrix.build_target }}" == "kmods" ]]; then
-              export IMAGE_FLAVOR=main
-          else
-              echo "ERROR: invalid workflow request - ${{ matrix.major_version }} - ${{ matrix.build_target }}"
-              exit 1
-          fi
+          export IMAGE_FLAVOR=main
           echo "IMAGE_NAME=${{ matrix.image_name }}-${IMAGE_FLAVOR}" >> $GITHUB_ENV
 
       - name: Generate tags
@@ -171,8 +150,8 @@ jobs:
             FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
-          extra-args: |
-            --target=${{ matrix.build_target }}
+          #extra-args: |
+          #  --target=main
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
