@@ -11,6 +11,10 @@
                 "ffmpeg-libs",
                 "ffmpegthumbnailer",
                 "fzf",
+                "google-noto-sans-balinese-fonts",
+                "google-noto-sans-cjk-fonts",
+                "google-noto-sans-javanese-fonts",
+                "google-noto-sans-sundanese-fonts",
                 "grub2-tools-extra",
                 "heif-pixbuf-loader",
                 "htop",
@@ -25,28 +29,24 @@
                 "lshw",
                 "mesa-va-drivers-freeworld.x86_64",
                 "net-tools",
-                "pam_yubico",
-                "pam-u2f",
-                "pamu2fcfg",
-                "google-noto-sans-cjk-fonts",
-                "google-noto-sans-javanese-fonts",
-                "google-noto-sans-balinese-fonts",
-                "google-noto-sans-sundanese-fonts",
                 "nvme-cli",
                 "nvtop",
                 "openrgb-udev-rules",
-                "solaar-udev",
                 "openssl",
                 "oversteer-udev",
+                "pam-u2f",
+                "pam_yubico",
+                "pamu2fcfg",
                 "pipewire-codec-aptx",
                 "smartmontools",
+                "solaar-udev",
                 "symlinks",
                 "tcpdump",
                 "tmux",
                 "traceroute",
                 "vim",
-                "zstd",
-                "wireguard-tools"
+                "wireguard-tools",
+                "zstd"
             ],
             "silverblue": [
                 "adw-gtk3-theme",
@@ -98,7 +98,6 @@
                 "xdg-user-dirs"
             ],
             "mate": [
-                "xdg-desktop-portal-gtk",
                 "NetworkManager-adsl",
                 "NetworkManager-openconnect-gnome",
                 "NetworkManager-openvpn-gnome",
@@ -188,13 +187,14 @@
                 "system-config-printer",
                 "system-config-printer-applet",
                 "usermode-gtk",
+                "xdg-desktop-portal-gtk",
                 "xdg-user-dirs-gtk",
                 "xmodmap",
                 "xrdb"
             ],
             "sericea": [
-                "tumbler",
-                "clipman"
+                "clipman",
+                "tumbler"
             ],
             "vauxite": [
                 "xfce4-clipman-plugin",
@@ -203,6 +203,7 @@
         },
         "exclude": {
             "all": [
+                "google-noto-sans-cjk-vf-fonts",
                 "libavcodec-free",
                 "libavdevice-free",
                 "libavfilter-free",
@@ -211,12 +212,11 @@
                 "libpostproc-free",
                 "libswresample-free",
                 "libswscale-free",
-                "mesa-va-drivers",
-                "google-noto-sans-cjk-vf-fonts"
+                "mesa-va-drivers"
             ],
             "kinoite": [
-                "plasma-discover-rpm-ostree",
-                "ffmpegthumbnailer"
+                "ffmpegthumbnailer",
+                "plasma-discover-rpm-ostree"
             ],
             "mate": [
                 "python3-unbound",
