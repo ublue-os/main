@@ -3,11 +3,13 @@ ARG SOURCE_IMAGE="${SOURCE_IMAGE:-silverblue}"
 ARG SOURCE_ORG="${SOURCE_ORG:-fedora-ostree-desktops}"
 ARG BASE_IMAGE="quay.io/${SOURCE_ORG}/${SOURCE_IMAGE}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-39}"
+ARG ARCH="${ARCH:-amd64}"
 
-FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS nokmods
+FROM --platform=linux/${ARCH} ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS nokmods
 
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-39}"
+ARG ARCH="${ARCH:-amd64}"
 
 COPY github-release-install.sh \
      install.sh \
@@ -38,6 +40,7 @@ FROM nokmods AS kmods
 
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
+ARG ARCH="${ARCH:-amd64}"
 
 COPY kmods-install.sh /tmp/kmods-install.sh
 COPY kmods-sys_files /tmp/kmods-files

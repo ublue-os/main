@@ -31,6 +31,7 @@ jobs:
           - vauxite
         major_version: [38, 39]
         build_target: [nokmods, kmods]
+        arch: [amd64, aarch64]
         include:
           - major_version: 38
             is_latest_version: false
@@ -92,6 +93,7 @@ jobs:
               exit 1
           fi
           echo "IMAGE_NAME=${{ matrix.image_name }}-${IMAGE_FLAVOR}" >> $GITHUB_ENV
+          echo "BUILD_ARCH=${{ matrix.arch }}" >> $GITHUB_ENV
 
       - name: Generate tags
         id: generate-tags
@@ -99,7 +101,9 @@ jobs:
         run: |
           # Generate a timestamp for creating an image version history
           TIMESTAMP="$(date +%Y%m%d)"
-          VARIANT="${{ matrix.major_version }}"
+          VARIANT="${{ matrix.major_version }}"-"${{ matrix.arch }}"
+          MAJOR_VER="${{ matrix.major_version }}"
+          ARCH="${{ matrix.arch }}"
 
           COMMIT_TAGS=()
           BUILD_TAGS=()
@@ -116,6 +120,8 @@ jobs:
           fi
 
           BUILD_TAGS=("${VARIANT}")
+          BUILD_TAGS+=("${ARCH}")
+          BUILD_TAGS+=("${MAJOR_VER}")
 
           # Append matching timestamp tags to keep a version history
           for TAG in "${BUILD_TAGS[@]}"; do
@@ -123,10 +129,12 @@ jobs:
           done
 
           if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
-             [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
+             [[ "${{ matrix.is_stable_version }}" == "true" ]] && \
+             [[ "${{ matrix.arch }}" == "amd64" ]]; then
               BUILD_TAGS+=("${TIMESTAMP}")
               BUILD_TAGS+=("latest")
-          elif [[ "${{ matrix.is_gts_version }}" == "true" ]]; then
+          elif [[ "${{ matrix.is_gts_version }}" == "true" ]] && \
+               [[ "${{ matrix.arch }}" == "amd64" ]]; then
               BUILD_TAGS+=("gts-${TIMESTAMP}")
               BUILD_TAGS+=("gts")
           fi
@@ -183,10 +191,11 @@ jobs:
             SOURCE_ORG=${{ env.SOURCE_ORG }}
             SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
             FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
+            ARCH=${{ matrix.arch }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
           extra-args: |
-            --target=${{ matrix.build_target }}
+            --target=${{ matrix.build_target }} --arch=${{ matrix.arch }}
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
