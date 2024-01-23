@@ -196,7 +196,7 @@ jobs:
           oci: false
           archs: ${{ matrix.arch }}
           extra-args: |
-            --target=${{ matrix.build_target }} \
+            --target=${{ matrix.build_target }}
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
