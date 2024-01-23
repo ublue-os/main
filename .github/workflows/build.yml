@@ -31,7 +31,7 @@ jobs:
           - vauxite
         major_version: [38, 39]
         build_target: [nokmods, kmods]
-        arch: [amd64, aarch64]
+        arch: [amd64, arm64]
         include:
           - major_version: 38
             is_latest_version: false
