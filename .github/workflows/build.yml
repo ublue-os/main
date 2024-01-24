@@ -31,7 +31,6 @@ jobs:
           - vauxite
         major_version: [38, 39]
         build_target: [nokmods, kmods]
-        arch: [amd64, arm64]
         include:
           - major_version: 38
             is_latest_version: false
@@ -102,7 +101,6 @@ jobs:
           # Generate a timestamp for creating an image version history
           TIMESTAMP="$(date +%Y%m%d)"
           VARIANT="${{ matrix.major_version }}"
-          ARCH="${{ matrix.arch }}"
 
           COMMIT_TAGS=()
           BUILD_TAGS=()
@@ -119,7 +117,6 @@ jobs:
           fi
 
           BUILD_TAGS=("${VARIANT}")
-          BUILD_TAGS+=("${ARCH}")
 
           # Append matching timestamp tags to keep a version history
           for TAG in "${BUILD_TAGS[@]}"; do
@@ -189,10 +186,9 @@ jobs:
             SOURCE_ORG=${{ env.SOURCE_ORG }}
             SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
             FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
-            ARCH=${{ matrix.arch }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
-          platforms: linux/${{ matrix.arch }}
+          platforms: linux/x86_64,linux/arm64
           extra-args: |
             --target=${{ matrix.build_target }}
 
