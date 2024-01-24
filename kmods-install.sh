@@ -30,7 +30,6 @@ sed -i 's%^#baseurl=http://download1.rpmfusion.org%baseurl=http://mirrors.ocf.be
 rpm-ostree install \
     kernel-devel-matched \
     /tmp/akmods-rpms/kmods/*xpadneo*.rpm \
-    /tmp/akmods-rpms/kmods/*xpad-noone*.rpm \
     /tmp/akmods-rpms/kmods/*xone*.rpm \
     /tmp/akmods-rpms/kmods/*openrazer*.rpm \
     /tmp/akmods-rpms/kmods/*v4l2loopback*.rpm \
