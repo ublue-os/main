@@ -101,8 +101,7 @@ jobs:
         run: |
           # Generate a timestamp for creating an image version history
           TIMESTAMP="$(date +%Y%m%d)"
-          VARIANT="${{ matrix.major_version }}"-"${{ matrix.arch }}"
-          MAJOR_VER="${{ matrix.major_version }}"
+          VARIANT="${{ matrix.major_version }}"
           ARCH="${{ matrix.arch }}"
 
           COMMIT_TAGS=()
@@ -121,7 +120,6 @@ jobs:
 
           BUILD_TAGS=("${VARIANT}")
           BUILD_TAGS+=("${ARCH}")
-          BUILD_TAGS+=("${MAJOR_VER}")
 
           # Append matching timestamp tags to keep a version history
           for TAG in "${BUILD_TAGS[@]}"; do
@@ -194,7 +192,7 @@ jobs:
             ARCH=${{ matrix.arch }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
-          archs: ${{ matrix.arch }}
+          platforms: linux/${{ matrix.arch }}
           extra-args: |
             --target=${{ matrix.build_target }}
 
