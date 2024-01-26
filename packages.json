@@ -54,6 +54,7 @@
                 "gnome-tweaks"
             ],
             "kinoite": [
+                "ddcutil",
                 "icoutils",
                 "kate",
                 "kcron",
