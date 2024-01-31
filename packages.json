@@ -51,7 +51,8 @@
             "silverblue": [
                 "adw-gtk3-theme",
                 "gnome-epub-thumbnailer",
-                "gnome-tweaks"
+                "gnome-tweaks",
+                "gvfs-nfs"
             ],
             "kinoite": [
                 "icoutils",
