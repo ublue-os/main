@@ -150,8 +150,14 @@ jobs:
 
       - name: Get current version
         id: labels
+        shell: bash
         run: |
+          set -eo pipefail
           ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
+          if [ -z "$ver" ] || [ "null" = "$ver" ]; then
+            echo "inspected image version must not be empty or null"
+            exit 1
+          fi
           echo "VERSION=$ver" >> $GITHUB_OUTPUT
 
       # Generate image metadata
