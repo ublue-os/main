@@ -201,8 +201,13 @@ jobs:
       - name: Verify container image
         if: github.event_name != 'pull_request'
         run: |
-          cosign verify --key cosign.pub ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image.outputs.image }}@${TAGS}
-          TAGS: ${{ steps.push.outputs.digest }}
+          echo "$TAGS"
+          echo "$TAGS[@]}"
+          for TAG in "${TAGS[@]}"; do
+              cosign verify --key cosign.pub ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image.outputs.image }}:${TAG}
+          done
+        env:
+          TAGS: ${{ steps.build_image.outputs.tags }}
 
       - name: Echo outputs
         if: github.event_name != 'pull_request'
