@@ -7,6 +7,7 @@
                 "ffmpeg-libs",
                 "ffmpegthumbnailer",
                 "heif-pixbuf-loader",
+                "igt-gpu-tools",
                 "intel-media-driver",
                 "langpacks-en",
                 "libheif-freeworld",
@@ -15,6 +16,7 @@
                 "libva-intel-driver",
                 "libva-utils",
                 "lshw",
+		"make",
                 "mesa-filesystem",
                 "mesa-va-drivers-freeworld",
                 "net-tools",
@@ -42,7 +44,8 @@
             "silverblue": [
                 "adw-gtk3-theme",
                 "gnome-epub-thumbnailer",
-                "gnome-tweaks"
+                "gnome-tweaks",
+                "tilix"
             ],
             "kinoite": [
                 "icoutils",
@@ -65,6 +68,8 @@
                 "libswresample-free",
                 "libswscale-free",
                 "mesa-va-drivers",
+                "gnome-terminal",
+                "gnome-terminal-nautilus",
                 "google-noto-sans-cjk-vf-fonts"
             ],
             "silverblue": [
