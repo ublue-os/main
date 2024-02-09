@@ -6,6 +6,7 @@
                 "ffmpeg",
                 "ffmpeg-libs",
                 "ffmpegthumbnailer",
+                "gh",
                 "heif-pixbuf-loader",
                 "igt-gpu-tools",
                 "intel-media-driver",
