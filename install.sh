@@ -29,5 +29,8 @@ fi
 ## install packages direct from github
 /tmp/github-release-install.sh sigstore/cosign x86_64
 
-# reset forced use of single rpmfusion mirror
-rename -v .repo.bak .repo /etc/yum.repos.d/rpmfusion-*repo.bak
+if [ -n "${RPMFUSION_MIRROR}" ]; then
+    # reset forced use of single rpmfusion mirror
+    echo "Revert from single rpmfusion mirror: ${RPMFUSION_MIRROR}"
+    rename -v .repo.bak .repo /etc/yum.repos.d/rpmfusion-*repo.bak
+fi
