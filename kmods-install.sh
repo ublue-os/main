@@ -43,5 +43,8 @@ for REPO in $(rpm -ql ublue-os-akmods-addons|grep ^"/etc"|grep repo$); do
     sed -i 's@enabled=1@enabled=0@g' ${REPO}
 done
 
-# reset forced use of single rpmfusion mirror
-rename -v .repo.bak .repo /etc/yum.repos.d/rpmfusion-*repo.bak
+if [ -n "${RPMFUSION_MIRROR}" ]; then
+    # reset forced use of single rpmfusion mirror
+    echo "Revert from single rpmfusion mirror: ${RPMFUSION_MIRROR}"
+    rename -v .repo.bak .repo /etc/yum.repos.d/rpmfusion-*repo.bak
+fi
