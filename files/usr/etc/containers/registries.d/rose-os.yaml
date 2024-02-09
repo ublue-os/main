@@ -1,0 +1,3 @@
+docker:
+  ghcr.io/joshua-stone:
+    use-sigstore-attachments: true
