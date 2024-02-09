@@ -23,6 +23,12 @@ for REPO in $(rpm -ql ublue-os-akmods-addons|grep ^"/etc"|grep repo$); do
     sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' ${REPO}
 done
 
+if [[ "${FEDORA_MAJOR_VERSION}" -ge 39 ]]; then
+    # note: this is done before single mirror hack to ensure this persists in image and is not reset
+    echo "Enable rpmfusion-(non)free-updates-testing with low priority for Fedora ${FEDORA_MAJOR_VERSION}"
+    sed -i '0,/enabled=0/{s/enabled=0/enabled=1\npriority=110/}' /etc/yum.repos.d/rpmfusion-*-updates-testing.repo
+fi
+
 if [ -n "${RPMFUSION_MIRROR}" ]; then
     # force use of single rpmfusion mirror
     echo "Using single rpmfusion mirror: ${RPMFUSION_MIRROR}"
