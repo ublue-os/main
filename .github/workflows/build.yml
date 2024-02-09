@@ -198,6 +198,12 @@ jobs:
           COSIGN_EXPERIMENTAL: false
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
 
+      - name: Verify container image
+        if: github.event_name != 'pull_request'
+        run: |
+          cosign verify --key cosign.pub ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image.outputs.image }}@${TAGS}
+          TAGS: ${{ steps.push.outputs.digest }}
+
       - name: Echo outputs
         if: github.event_name != 'pull_request'
         run: |
