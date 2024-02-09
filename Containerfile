@@ -8,6 +8,7 @@ FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS nokmods
 
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-39}"
+ARG RPMFUSION_MIRROR=""
 
 COPY github-release-install.sh \
      install.sh \
@@ -38,6 +39,7 @@ FROM nokmods AS kmods
 
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
+ARG RPMFUSION_MIRROR=""
 
 COPY kmods-install.sh /tmp/kmods-install.sh
 COPY kmods-sys_files /tmp/kmods-files
