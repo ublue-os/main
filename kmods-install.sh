@@ -23,9 +23,12 @@ for REPO in $(rpm -ql ublue-os-akmods-addons|grep ^"/etc"|grep repo$); do
     sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' ${REPO}
 done
 
-# force use of single rpmfusion mirror
-sed -i.bak 's%^metalink=%#metalink=%' /etc/yum.repos.d/rpmfusion-*.repo
-sed -i 's%^#baseurl=http://download1.rpmfusion.org%baseurl=http://mirrors.ocf.berkeley.edu/rpmfusion%' /etc/yum.repos.d/rpmfusion-*.repo
+if [ -n "${RPMFUSION_MIRROR}" ]; then
+    # force use of single rpmfusion mirror
+    echo "Using single rpmfusion mirror: ${RPMFUSION_MIRROR}"
+    sed -i.bak "s%^metalink=%#metalink=%" /etc/yum.repos.d/rpmfusion-*.repo
+    sed -i "s%^#baseurl=http://download1.rpmfusion.org%baseurl=${RPMFUSION_MIRROR}%" /etc/yum.repos.d/rpmfusion-*.repo
+fi
 
 rpm-ostree install \
     kernel-devel-matched \
