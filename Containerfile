@@ -9,7 +9,9 @@ FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-39}"
 
-COPY github-release-install.sh \
+COPY files \
+     cosign.pub \
+     github-release-install.sh \
      install.sh \
      post-install.sh \
      packages.sh \
