@@ -117,7 +117,7 @@ jobs:
       - name: Retrieve GPG key
         if: github.event_name != 'pull_request'
         run: |
-          echo "${{ secrets.GPG_PRIVKEY }}" > gpg/RPM-GPG-KEY-rose-os.priv
+          echo "${{ secrets.GPG_PRIVKEY }}" | base64 -d > gpg/RPM-GPG-KEY-rose-os.priv
           wc -c gpg/RPM-GPG-KEY-rose-os.priv
 
       - name: Get current version
