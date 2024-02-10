@@ -1,0 +1,5 @@
+%_tmppath %{_topdir}/tmp
+%_signature gpg
+%_gpg_path /tmp/gnupg
+%_gpg_name Joshua Stone
+%_gpgbin /usr/bin/gpg2

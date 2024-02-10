@@ -22,7 +22,7 @@ Adds files and keys for signing rose-os images
 %build
 mkdir -p -m0755 %{buildroot}%{_datadir}/%{VENDOR}
 mkdir -p -m0755 %{buildroot}%{_exec_prefix}/etc/containers/registries.d
-mkdir -p -m0755 %{buildroot}%{_exec_prefix}/etc/pki
+mkdir -p -m0755 %{buildroot}%{_exec_prefix}/etc/pki/rpm-gpg
 
 tar xf %{SOURCE0} -C %{buildroot}%{_datadir}/%{VENDOR} --strip-components=1
 tar xf %{SOURCE0} -C %{buildroot} --strip-components=2
@@ -32,10 +32,16 @@ tar xf %{SOURCE0} -C %{buildroot} --strip-components=2
 %attr(0644,root,root) %{_datadir}/%{VENDOR}/%{sub_name}/%{_exec_prefix}/etc/containers/policy.json
 %attr(0644,root,root) %{_datadir}/%{VENDOR}/%{sub_name}/%{_exec_prefix}/etc/containers/registries.d/rose-os.yaml
 %attr(0644,root,root) %{_datadir}/%{VENDOR}/%{sub_name}/%{_exec_prefix}/etc/pki/containers/rose-os.pub
+%attr(0644,root,root) %{_datadir}/%{VENDOR}/%{sub_name}/%{_exec_prefix}/etc/pki/rpm-gpg/RPM-GPG-KEY-rose-os
 %attr(0644,root,root) %{_exec_prefix}/etc/containers/policy.json
 %attr(0644,root,root) %{_exec_prefix}/etc/containers/registries.d/rose-os.yaml
 %attr(0644,root,root) %{_exec_prefix}/etc/pki/containers/rose-os.pub
+%attr(0644,root,root) %{_exec_prefix}/etc/pki/rpm-gpg/RPM-GPG-KEY-rose-os
+
 
 %changelog
+* Fri Feb 9 2024 Joshua Stone <joshua.gage.stone@gmail.com> - 0.2
+- Add GPG key for signing RPMs
+
 * Fri Feb 9 2024 Joshua Stone <joshua.gage.stone@gmail.com> - 0.1
 - Add package for signing files and keys
