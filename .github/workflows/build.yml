@@ -113,6 +113,13 @@ jobs:
 
           echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
 
+
+      - name: Retrieve GPG key
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "${{ secrets.GPG_PRIVKEY }}" > gpg/RPM-GPG-KEY-rose-os.priv
+          wc -c gpg/RPM-GPG-KEY-rose-os.priv
+
       - name: Get current version
         id: labels
         run: |

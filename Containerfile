@@ -9,9 +9,14 @@ FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} as builder
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-39}"
 
-COPY build.sh /tmp
-COPY files/usr/etc/containers /tmp/rose-os/signing/usr/etc/containers
-COPY cosign.pub /tmp/rose-os/signing/usr/etc/pki/containers/rose-os.pub
+COPY build.sh \
+     rpmmacros \ 
+     /tmp/
+
+COPY files/usr/etc/containers     /tmp/rose-os/signing/usr/etc/containers
+COPY gpg/RPM-GPG-KEY-rose-os.pub  /tmp/rose-os/signing/usr/etc/pki/rpm-gpg/RPM-GPG-KEY-rose-os
+COPY gpg/RPM-GPG-KEY-rose-os.priv /tmp/RPM-GPG-KEY-rose-os.priv
+COPY cosign.pub                   /tmp/rose-os/signing/usr/etc/pki/containers/rose-os.pub
 
 COPY rpmspec/*.spec /tmp/rose-os
 
@@ -27,7 +32,7 @@ COPY github-release-install.sh \
      post-install.sh \
      packages.sh \
      packages.json \
-        /tmp/
+     /tmp/
 
 COPY --from=builder /tmp/rose-os/rpmbuild/RPMS/noarch /tmp/rpms
 COPY --from=builder /var/cache/rpm-ostree /var/cache/rpm-ostree
