@@ -174,23 +174,19 @@ jobs:
       # Build image using Buildah action
       - name: Build Image
         id: build_image
-        uses: redhat-actions/buildah-build@v2
-        with:
-          containerfiles: |
-            ./Containerfile
-          image: ${{ env.IMAGE_NAME }}
-          tags: |
-            ${{ steps.generate-tags.outputs.alias_tags }}
-          build-args: |
-            IMAGE_NAME=${{ matrix.image_name }}
-            SOURCE_ORG=${{ env.SOURCE_ORG }}
-            SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
-            FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
-            RPMFUSION_MIRROR=${{ vars.RPMFUSION_MIRROR }}
-          labels: ${{ steps.meta.outputs.labels }}
-          oci: false
-          extra-args: |
-            --target=${{ matrix.build_target }}
+        env:
+          IMAGE_NAME: ${{ matrix.image_name }}
+          SOURCE_ORG: ${{ env.SOURCE_ORG }}
+          SOURCE_IMAGE: ${{ env.SOURCE_IMAGE }}
+          FEDORA_MAJOR_VERSION: ${{ matrix.major_version }}
+          RPMFUSION_MIRROR: ${{ vars.RPMFUSION_MIRROR }}
+          IMAGE_TAGS: ${{ steps.generate-tags.outputs.alias_tags }}
+          IMAGE_LABELS: ${{ steps.meta.outputs.labels }}
+          TARGET_STAGE: ${{ matrix.build_target }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y buildah
+          bash ./Containerfile.sh
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
@@ -208,8 +204,8 @@ jobs:
           REGISTRY_USER: ${{ github.actor }}
           REGISTRY_PASSWORD: ${{ github.token }}
         with:
-          image: ${{ steps.build_image.outputs.image }}
-          tags: ${{ steps.build_image.outputs.tags }}
+          image: ${{ matrix.image_name }}
+          tags: ${{ steps.generate-tags.outputs.alias_tags }}
           registry: ${{ steps.registry_case.outputs.lowercase }}
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
@@ -231,7 +227,7 @@ jobs:
       - name: Sign container image
         if: github.event_name != 'pull_request'
         run: |
-          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image.outputs.image }}@${TAGS}
+          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ matrix.image_name }}@${TAGS}
         env:
           TAGS: ${{ steps.push.outputs.digest }}
           COSIGN_EXPERIMENTAL: false
