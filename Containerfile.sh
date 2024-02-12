@@ -24,6 +24,20 @@ IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-39}"
 RPMFUSION_MIRROR=""
 
+buildah config \
+    --env IMAGE_NAME=${IMAGE_NAME} \
+    --env SOURCE_IMAGE=${SOURCE_IMAGE} \
+    --env SOURCE_ORG=${SOURCE_ORG} \
+    --env BASE_IMAGE=${BASE_IMAGE} \
+    --env FEDORA_MAJOR_VERSION=${FEDORA_MAJOR_VERSION} \
+    --env RPMFUSION_MIRROR=${RPMFUSION_MIRROR} \
+    $container_nokmods
+
+for label in $IMAGE_LABELS
+do
+    buildah config --label $label $container_nokmods
+done
+
 buildah copy $container_nokmods \
     github-release-install.sh \
     install.sh \
@@ -36,16 +50,39 @@ buildah copy --from=ghcr.io/ublue-os/config:latest $container_nokmods /rpms /tmp
 buildah copy --from=ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} $container_nokmods /rpms/ublue-os /tmp/rpms
 
 buildah run $container_nokmods \
-    wget https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-$(rpm -E %fedora)/ublue-os-staging-fedora-$(rpm -E %fedora).repo -O /etc/yum.repos.d/_copr_ublue-os_staging.repo && \
-    wget https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-$(rpm -E %fedora)/kylegospo-oversteer-fedora-$(rpm -E %fedora).repo -O /etc/yum.repos.d/_copr_kylegospo_oversteer.repo && \
-    /tmp/install.sh && \
-    /tmp/post-install.sh && \
-    rm -f /etc/yum.repos.d/_copr_ublue-os_staging.repo && \
-    rm -f /etc/yum.repos.d/_copr_kylegospo_oversteer.repo && \
-    rm -rf /tmp/* /var/* && \
-    if [[ "$IMAGE_NAME" == "base" ]]; then systemctl enable getty@tty1; fi && \
-    ostree container commit && \
-    mkdir -p /var/tmp && chmod -R 1777 /var/tmp
+    wget https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-${FEDORA_MAJOR_VERSION}/ublue-os-staging-fedora-${FEDORA_MAJOR_VERSION}.repo -O /etc/yum.repos.d/_copr_ublue-os_staging.repo
+
+buildah run $container_nokmods \
+    wget https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-${FEDORA_MAJOR_VERSION}/kylegospo-oversteer-fedora-${FEDORA_MAJOR_VERSION}.repo -O /etc/yum.repos.d/_copr_kylegospo_oversteer.repo
+
+buildah run $container_nokmods \
+    /tmp/install.sh
+
+buildah run $container_nokmods \
+    /tmp/post-install.sh
+
+buildah run $container_nokmods \
+    rm -f /etc/yum.repos.d/_copr_ublue-os_staging.repo
+
+buildah run $container_nokmods \
+    rm -f /etc/yum.repos.d/_copr_kylegospo_oversteer.repo
+
+buildah run $container_nokmods \
+    rm -rf /tmp/* /var/*
+
+if [[ "$IMAGE_NAME" == "base" ]]
+then
+  buildah run $container_nokmods systemctl enable getty@tty1
+fi
+
+buildah run $container_nokmods \
+    ostree container commit
+
+buildah run $container_nokmods \
+    mkdir -p /var/tmp
+
+buildah run $container_nokmods \
+    chmod -R 1777 /var/tmp
 
 if [[ $TARGET_STAGE == "nokmods" ]]
 then
@@ -62,6 +99,12 @@ IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-38}"
 RPMFUSION_MIRROR=""
 
+buildah config \
+    --env IMAGE_NAME=${IMAGE_NAME} \
+    --env FEDORA_MAJOR_VERSION=${FEDORA_MAJOR_VERSION} \
+    --env RPMFUSION_MIRROR=${RPMFUSION_MIRROR} \
+    $container_kmods
+
 buildah copy $container_kmods kmods-install.sh /tmp/kmods-install.sh
 buildah copy $container_kmods kmods-sys_files /tmp/kmods-files
 
@@ -69,9 +112,14 @@ buildah copy --from=ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} $contai
 
 # kmods-install.sh will error if running in Fedora 39 or newer.
 buildah run $container_kmods \
-    /tmp/kmods-install.sh && \
-    rm -rf /tmp/* /var/* && \
-    ostree container commit && \
-    mkdir -p /var/tmp && chmod -R 1777 /var/tmp
+    /tmp/kmods-install.sh
+buildah run $container_kmods \
+    rm -rf /tmp/* /var/*
+buildah run $container_kmods \
+    ostree container commit
+buildah run $container_kmods \
+    mkdir -p /var/tmp
+buildah run $container_kmods \
+    chmod -R 1777 /var/tmp
 
 done_building $container_kmods
