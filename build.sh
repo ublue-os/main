@@ -8,6 +8,7 @@ rpm-ostree install rpm-build rpm-sign
 
 mkdir -p /tmp/rose-os/rpmbuild/SOURCES
 tar cf /tmp/rose-os/rpmbuild/SOURCES/rose-os-signing.tar.gz -C /tmp rose-os/signing
+tar cf /tmp/rose-os/rpmbuild/SOURCES/rose-os-just.tar.gz    -C /tmp rose-os/just
 
 rpmbuild -ba \
     --define '_topdir /tmp/rose-os/rpmbuild' \
