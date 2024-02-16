@@ -1,4 +1,4 @@
-name: build-ublue
+name: build-rose-os
 on:
   pull_request:
   merge_group:
@@ -40,7 +40,7 @@ jobs:
         shell: bash
         run: |
           if [[ "${{ matrix.major_version }}" -ge "40" ]] && \
-            grep "${{ matrix.image_name }}" <<< "silverblue, kinoite, sericea"; then
+            grep "${{ matrix.image_name }}" <<< "silverblue, kinoite"; then
               echo "SOURCE_ORG=fedora" >> $GITHUB_ENV
               echo "SOURCE_IMAGE=fedora-${{ matrix.image_name }}" >> $GITHUB_ENV
           else
@@ -52,11 +52,8 @@ jobs:
               echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV
           fi
 
-          # THE FOLLOWING IS MESSY BUT TEMPORARY UNTIL F38 IS GONE
-          # see: https://github.com/ublue-os/main/issues/369
-          # Fedora 39+ images do not include custom kmods (legacy)
-          export IMAGE_FLAVOR=main
-          echo "IMAGE_NAME=${{ matrix.image_name }}-${IMAGE_FLAVOR}" >> $GITHUB_ENV
+          export IMAGE_FLAVOR=rose-os
+          echo "IMAGE_NAME=${IMAGE_FLAVOR}-${{ matrix.image_name }}" >> $GITHUB_ENV
 
       - name: Generate tags
         id: generate-tags
@@ -136,9 +133,8 @@ jobs:
           labels: |
             org.opencontainers.image.title=${{ env.IMAGE_NAME }}
             org.opencontainers.image.version=${{ steps.labels.outputs.VERSION }}
-            org.opencontainers.image.description=A base Universal Blue ${{ matrix.image_name }} image with batteries included
+            org.opencontainers.image.description=A Silverblue image with batteries included
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/main/README.md
-            io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/120078124?s=200&v=4
 
       # Build image using Buildah action
       - name: Build Image
