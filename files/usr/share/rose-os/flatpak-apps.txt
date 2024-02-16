@@ -1,0 +1,17 @@
+io.github.pwr_solaar.solaar
+com.discordapp.Discord
+md.obsidian.Obsidian
+org.gnome.Boxes
+org.gnome.clocks
+org.gnome.Calculator
+org.gnome.Calendar
+org.gnome.Evince
+org.gnome.Loupe
+org.gnome.Maps
+org.gnome.Snapshot
+org.gnome.TextEditor
+org.gnome.Weather
+org.kde.krita
+org.libreoffice.LibreOffice
+org.mozilla.firefox
+org.signal.Signal
