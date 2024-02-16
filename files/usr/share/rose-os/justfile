@@ -1,5 +1,2 @@
-default:
-    @just --list
-
 setup-flatpak-apps:
     /usr/share/rose-os/just/setup-flatpak-apps.sh

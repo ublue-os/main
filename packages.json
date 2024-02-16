@@ -53,6 +53,7 @@
         },
         "exclude": {
             "all": [
+                "fedora-flathub-remote",
                 "firefox",
                 "firefox-langpacks",
                 "libavcodec-free",
@@ -68,9 +69,11 @@
             ],
             "silverblue": [
                 "gnome-classic-session",
+                "gnome-shell-extension-background-logo",
                 "gnome-terminal",
                 "gnome-terminal-nautilus",
                 "gnome-session-xsession",
+                "sushi",
                 "xorg-x11-drv-amdgpu",
                 "xorg-x11-drv-ati",
                 "xorg-x11-drv-evdev",
