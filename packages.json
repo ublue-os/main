@@ -41,6 +41,7 @@
                 "adw-gtk3-theme",
                 "gnome-epub-thumbnailer",
                 "gnome-tweaks",
+                "sushi",
                 "tilix"
             ],
             "kinoite": [
@@ -72,7 +73,6 @@
                 "gnome-terminal",
                 "gnome-terminal-nautilus",
                 "gnome-session-xsession",
-                "sushi",
                 "xorg-x11-drv-amdgpu",
                 "xorg-x11-drv-ati",
                 "xorg-x11-drv-evdev",
