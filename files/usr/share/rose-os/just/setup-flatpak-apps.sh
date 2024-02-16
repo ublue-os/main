@@ -17,4 +17,6 @@ done
 
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
+flatpak remotes --columns=name | grep -q "^flathub$" || flatpak remote-modify flathub --enable
+
 flatpak install --noninteractive ${FLATPAK_APPS[@]}

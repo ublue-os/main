@@ -53,7 +53,6 @@
         },
         "exclude": {
             "all": [
-                "fedora-flathub-remote",
                 "firefox",
                 "firefox-langpacks",
                 "libavcodec-free",
