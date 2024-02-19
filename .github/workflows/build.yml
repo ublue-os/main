@@ -147,15 +147,18 @@ jobs:
 
       - name: Get current version
         id: labels
-        shell: bash
-        run: |
-          set -eo pipefail
-          ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
-          if [ -z "$ver" ] || [ "null" = "$ver" ]; then
-            echo "inspected image version must not be empty or null"
-            exit 1
-          fi
-          echo "VERSION=$ver" >> $GITHUB_OUTPUT
+        uses: Wandalen/wretry.action@v1.4.4
+        with:
+          attempt_limit: 3
+          attempt_delay: 15000
+          command: |
+            set -eo pipefail
+            ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
+            if [ -z "$ver" ] || [ "null" = "$ver" ]; then
+              echo "inspected image version must not be empty or null"
+              exit 1
+            fi
+            echo "SOURCE_IMAGE_VERSION=$ver" >> $GITHUB_ENV
 
       # Generate image metadata
       - name: Image Metadata
@@ -166,32 +169,68 @@ jobs:
             ${{ env.IMAGE_NAME }}
           labels: |
             org.opencontainers.image.title=${{ env.IMAGE_NAME }}
-            org.opencontainers.image.version=${{ steps.labels.outputs.VERSION }}
+            org.opencontainers.image.version=${{ env.SOURCE_IMAGE_VERSION }}
             org.opencontainers.image.description=A base Universal Blue ${{ matrix.image_name }} image with batteries included
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/main/README.md
             io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/120078124?s=200&v=4
 
+      # Workaround to fix indentation for the labels so that retries work.
+      - name: Left pad labels
+        id: left_pad_labels
+        shell: bash
+        env:
+          LABELS: ${{steps.meta.outputs.labels}}
+        run: |
+          echo "Labels:"
+          echo "${LABELS}"
+          export TRANSFORMED=$(echo "$LABELS" | sed 's,^,  ,g')
+          echo "Transformed:"
+          echo "${TRANSFORMED}"
+          echo "LABELS<<EOF" >> $GITHUB_ENV
+          echo "$TRANSFORMED" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          
       # Build image using Buildah action
       - name: Build Image
         id: build_image
-        uses: redhat-actions/buildah-build@v2
+        uses: Wandalen/wretry.action@master
         with:
-          containerfiles: |
-            ./Containerfile
-          image: ${{ env.IMAGE_NAME }}
-          tags: |
-            ${{ steps.generate-tags.outputs.alias_tags }}
-          build-args: |
-            IMAGE_NAME=${{ matrix.image_name }}
-            SOURCE_ORG=${{ env.SOURCE_ORG }}
-            SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
-            FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
-            RPMFUSION_MIRROR=${{ vars.RPMFUSION_MIRROR }}
-          labels: ${{ steps.meta.outputs.labels }}
-          oci: false
-          extra-args: |
-            --target=${{ matrix.build_target }}
+          action: redhat-actions/buildah-build@v2
+          attempt_limit: 3
+          attempt_delay: 2000
+          with: |
+            containerfiles: |
+              ./Containerfile
+            image: |
+              ${{ env.IMAGE_NAME }}
+            tags: |
+              ${{ steps.generate-tags.outputs.alias_tags }}
+            build-args: |
+              IMAGE_NAME=${{ matrix.image_name }}
+              SOURCE_ORG=${{ env.SOURCE_ORG }}
+              SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
+              FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
+              RPMFUSION_MIRROR=${{ vars.RPMFUSION_MIRROR }}
+            oci: |
+              false
+            extra-args: |
+              --target=${{ matrix.build_target }}
+            labels: |
+            ${{ env.LABELS }}
 
+      # These are for troubleshooting only and are not strictly needed.
+      - name: Echo outputs of image build
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "${{ toJSON(steps.build_image.outputs) }}"
+
+      - name: Show parsed outputs of image build
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "${{ steps.build_image.outputs.outputs && fromJSON(steps.build_image.outputs.outputs).image }}"
+          echo "${{ steps.build_image.outputs.outputs && fromJSON(steps.build_image.outputs.outputs).tags }}"
+          echo "${{ steps.build_image.outputs.outputs && fromJSON(steps.build_image.outputs.outputs).image-with-tag }}"
+          
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
       - name: Lowercase Registry
@@ -201,20 +240,29 @@ jobs:
           string: ${{ env.IMAGE_REGISTRY }}
 
       - name: Push To GHCR
-        uses: redhat-actions/push-to-registry@v2
+        uses: Wandalen/wretry.action@v1.4.4
         id: push
         if: github.event_name != 'pull_request'
         env:
           REGISTRY_USER: ${{ github.actor }}
           REGISTRY_PASSWORD: ${{ github.token }}
         with:
-          image: ${{ steps.build_image.outputs.image }}
-          tags: ${{ steps.build_image.outputs.tags }}
-          registry: ${{ steps.registry_case.outputs.lowercase }}
-          username: ${{ env.REGISTRY_USER }}
-          password: ${{ env.REGISTRY_PASSWORD }}
-          extra-args: |
-            --disable-content-trust
+          action: redhat-actions/push-to-registry@v2
+          attempt_limit: 3
+          attempt_delay: 15000
+          with: |
+            image: ${{ steps.build_image.outputs.outputs && fromJSON(steps.build_image.outputs.outputs).image }}
+            tags: ${{ steps.build_image.outputs.outputs && fromJSON(steps.build_image.outputs.outputs).tags }}
+            registry: ${{ steps.registry_case.outputs.lowercase }}
+            username: ${{ env.REGISTRY_USER }}
+            password: ${{ env.REGISTRY_PASSWORD }}
+            extra-args: |
+              --disable-content-trust
+
+      - name: Echo outputs of push to GHCR
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "${{ steps.push.outputs.outputs && toJSON(steps.push.outputs) }}"
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -233,14 +281,9 @@ jobs:
         run: |
           cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image.outputs.image }}@${TAGS}
         env:
-          TAGS: ${{ steps.push.outputs.digest }}
+          TAGS: ${{ fromJSON(steps.push.outputs.outputs).digest }}
           COSIGN_EXPERIMENTAL: false
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
-
-      - name: Echo outputs
-        if: github.event_name != 'pull_request'
-        run: |
-          echo "${{ toJSON(steps.push.outputs) }}"
 
   check:
     name: Check all builds successful
