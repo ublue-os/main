@@ -193,7 +193,7 @@ jobs:
       # Build image using Buildah action
       - name: Build Image
         id: build_image
-        uses: Wandalen/wretry.action@master
+        uses: Wandalen/wretry.action@v1.4.4
         with:
           action: redhat-actions/buildah-build@v2
           attempt_limit: 3
