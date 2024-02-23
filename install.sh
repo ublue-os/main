@@ -4,9 +4,14 @@ set -ouex pipefail
 
 RELEASE="$(rpm -E %fedora)"
 
+RPMFUSION_MIRROR_RPMS="https://mirrors.rpmfusion.org"
+if [ -n "${RPMFUSION_MIRROR}" ]; then
+    RPMFUSION_MIRROR_RPMS=${RPMFUSION_MIRROR}
+fi
+
 wget -P /tmp/rpms \
-    https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${RELEASE}.noarch.rpm \
-    https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${RELEASE}.noarch.rpm
+    ${RPMFUSION_MIRROR_RPMS}/free/fedora/rpmfusion-free-release-${RELEASE}.noarch.rpm \
+    ${RPMFUSION_MIRROR_RPMS}/nonfree/fedora/rpmfusion-nonfree-release-${RELEASE}.noarch.rpm
 
 rpm-ostree install \
     /tmp/rpms/*.rpm \
