@@ -6,7 +6,8 @@ sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
 
 rpm-ostree install rpm-build rpm-sign
 
-mkdir -p /tmp/rose-os/rpmbuild/SOURCES
+mkdir -p /tmp/rose-os/rpmbuild/SOURCES /tmp/rpms
+
 tar cf /tmp/rose-os/rpmbuild/SOURCES/rose-os-signing.tar.gz -C /tmp rose-os/signing
 tar cf /tmp/rose-os/rpmbuild/SOURCES/rose-os-just.tar.gz    -C /tmp rose-os/just
 
@@ -14,6 +15,10 @@ rpmbuild -ba \
     --define '_topdir /tmp/rose-os/rpmbuild' \
     --load /tmp/rpmmacros \
     /tmp/rose-os/*.spec
+
+find /tmp/rose-os/rpmbuild/RPMS -name '*.rpm' -exec cp {} /tmp/rpms \;
+
+/tmp/github-release-install.sh sigstore/cosign x86_64
 
 if [[ -s /tmp/RPM-GPG-KEY-rose-os.priv ]]; then
     mkdir -p -m 700 /tmp/gnupg
@@ -27,13 +32,13 @@ if [[ -s /tmp/RPM-GPG-KEY-rose-os.priv ]]; then
 
     rpm --addsign \
 	--load /tmp/rpmmacros \
-        /tmp/rose-os/rpmbuild/RPMS/noarch/*.rpm
+        /tmp/rpms/*.rpm
 
-    rpm -qi /tmp/rose-os/rpmbuild/RPMS/noarch/*.rpm
+    rpm -qi /tmp/rpms/*.rpm
 
     rpm --checksig \
         --load /tmp/rpmmacros \
-        /tmp/rose-os/rpmbuild/RPMS/noarch/*.rpm
+        /tmp/rpms/*.rpm
 else
     echo "No GPG key found. Skipping RPM signing."
 fi

@@ -10,7 +10,8 @@ ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-39}"
 
 COPY build.sh \
-     rpmmacros \ 
+     github-release-install.sh \
+     rpmmacros \
      /tmp/
 
 COPY files/usr/etc/containers     /tmp/rose-os/signing/usr/etc/containers
@@ -30,14 +31,13 @@ FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-39}"
 
-COPY github-release-install.sh \
-     install.sh \
+COPY install.sh \
      post-install.sh \
      packages.sh \
      packages.json \
      /tmp/
 
-COPY --from=builder /tmp/rose-os/rpmbuild/RPMS/noarch /tmp/rpms
+COPY --from=builder /tmp/rpms             /tmp/rpms
 COPY --from=builder /var/cache/rpm-ostree /var/cache/rpm-ostree
 
 RUN /tmp/install.sh && \

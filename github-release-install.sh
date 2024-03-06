@@ -43,6 +43,6 @@ RPM_URLS=$(curl --retry 3 --retry-delay 3 --retry-all-errors -sL ${API} \
 for URL in ${RPM_URLS}; do
   # WARNING: in case of multiple matches, this only installs the first matched release
   echo "execute: rpm-ostree install \"${URL}\""
-  rpm-ostree install "${URL}"
+  wget -P /tmp/rpms "${URL}"
   break
 done

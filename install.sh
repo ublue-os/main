@@ -23,5 +23,4 @@ fi
 /tmp/packages.sh
 
 ## install packages direct from github
-/tmp/github-release-install.sh sigstore/cosign x86_64
-
+# /tmp/github-release-install.sh sigstore/cosign x86_64
