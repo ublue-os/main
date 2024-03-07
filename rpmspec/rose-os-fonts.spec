@@ -1,18 +1,21 @@
-%define    ORG          rose-os
-%define    CABSDIR      cab
-%define    DOWNLOADSDIR downloads
+%define        ORG          rose-os
+%define        CABSDIR      cabs
+%define        DOWNLOADSDIR downloads
 
-Name:      %{ORG}-fonts
-Packager:  %{ORG}
-Vendor:    %{ORG}
-Version:   0.1
-Release:   1%{?dist}
-Summary:   Add extra fonts for for rose-os
-License:   MIT
-URL:       https://github.com/jostone-stone/rose-os
-BuildArch: noarch
+Name:          %{ORG}-fonts
+Packager:      %{ORG}
+Vendor:        %{ORG}
+Version:       0.1
+Release:       1%{?dist}
+Summary:       Add extra fonts for for rose-os
+License:       MIT
+URL:           https://github.com/jostone-stone/rose-os
+BuildArch:     noarch
 
-%define    FONTSDIR     %{buildroot}%{_datadir}/fonts/%{NAME}
+BuildRequires: cabextract
+Requires:      fontconfig
+
+%define        FONTSDIR     %{buildroot}%{_datadir}/fonts/%{NAME}
 
 %description
 Add additional fonts not available in Fedora repos
@@ -35,26 +38,26 @@ URLS=(
 )
 
 cat << EOL > downloads.sha256sum
-6b87cd7e67d45f9fcfece7a834a0cbf6afee2ccdaec3438e93d031b3cda5c6d5  cabs/ppviewer.cab
-b4212c25d40b992b5fb341794d5b0e90108943e99c35e54b064622da684f570b  cabs/viewer1.cab
-0524fe42951adc3a7eb870e32f0920313c71f170c859b5f770d82b4ee111e970  downloads/andale32.exe
-a425f0ffb6a1a5ede5b979ed6177f4f4f4fdef6ae7c302a7b7720ef332fec0a8  downloads/arialb32.exe
-9c6df3feefde26d4e41d4a4fe5db2a89f9123a772594d7f59afd062625cd204e  downloads/comic32.exe
-bb511d861655dde879ae552eb86b134d6fae67cb58502e6ff73ec5d9151f3384  downloads/courie32.exe
-464dd2cd5f09f489f9ac86ea7790b7b8548fc4e46d9f889b68d2cdce47e09ea8  downloads/EUupdate.EXE
-2c2c7dcda6606ea5cf08918fb7cd3f3359e9e84338dc690013f20cd42e930301  downloads/georgi32.exe
-6061ef3b7401d9642f5dfdb5f2b376aa14663f6275e60a51207ad4facf2fccfb  downloads/impact32.exe
-c4e753548d3092ffd7dd3849105e0a26d9b5a1afe46e6e667fe7c6887893701f  downloads/PowerPointViewer.exe
-f61126a6d17b2d126a7f31b142504dce4934f7989c55f1c13c6477b3fe80b3d2  downloads/wd97vwr32.exe
-64595b5abc1080fba8610c5c34fab5863408e806aafe84653ca8575bed17d75a  downloads/webdin32.exe
+6b87cd7e67d45f9fcfece7a834a0cbf6afee2ccdaec3438e93d031b3cda5c6d5  %{CABSDIR}/ppviewer.cab
+b4212c25d40b992b5fb341794d5b0e90108943e99c35e54b064622da684f570b  %{CABSDIR}/viewer1.cab
+0524fe42951adc3a7eb870e32f0920313c71f170c859b5f770d82b4ee111e970  %{DOWNLOADSDIR}/andale32.exe
+a425f0ffb6a1a5ede5b979ed6177f4f4f4fdef6ae7c302a7b7720ef332fec0a8  %{DOWNLOADSDIR}/arialb32.exe
+9c6df3feefde26d4e41d4a4fe5db2a89f9123a772594d7f59afd062625cd204e  %{DOWNLOADSDIR}/comic32.exe
+bb511d861655dde879ae552eb86b134d6fae67cb58502e6ff73ec5d9151f3384  %{DOWNLOADSDIR}/courie32.exe
+464dd2cd5f09f489f9ac86ea7790b7b8548fc4e46d9f889b68d2cdce47e09ea8  %{DOWNLOADSDIR}/EUupdate.EXE
+2c2c7dcda6606ea5cf08918fb7cd3f3359e9e84338dc690013f20cd42e930301  %{DOWNLOADSDIR}/georgi32.exe
+6061ef3b7401d9642f5dfdb5f2b376aa14663f6275e60a51207ad4facf2fccfb  %{DOWNLOADSDIR}/impact32.exe
+c4e753548d3092ffd7dd3849105e0a26d9b5a1afe46e6e667fe7c6887893701f  %{DOWNLOADSDIR}/PowerPointViewer.exe
+f61126a6d17b2d126a7f31b142504dce4934f7989c55f1c13c6477b3fe80b3d2  %{DOWNLOADSDIR}/wd97vwr32.exe
+64595b5abc1080fba8610c5c34fab5863408e806aafe84653ca8575bed17d75a  %{DOWNLOADSDIR}/webdin32.exe
 EOL
 
-mkdir -p "%{CABSDIR}" "%{DOWNLOADDIR}"
+mkdir -p "%{CABSDIR}" "%{DOWNLOADSDIR}"
 
 for URL in "${URLS[@]}"; do
     FILE="${URL##*/}"
-    wget --verbose "${URL}/download" -O "%{DOWNLOADDIR}/${FILE}"
-    cabextract "%{DOWNLOADDIR}/${FILE}" --lowercase --filter "*.cab" --directory "%{CABSDIR}"
+    wget --verbose "${URL}/download" -O "%{DOWNLOADSDIR}/${FILE}"
+    cabextract "%{DOWNLOADSDIR}/${FILE}" --lowercase --filter "*.cab" --directory "%{CABSDIR}"
 done
 
 sha256sum --check downloads.sha256sum
@@ -120,7 +123,7 @@ EOL
 
 mkdir -p "%{FONTSDIR}"
 
-find "%{CABSDIR}" "%{DOWNLOADDIR}"  -type f -exec cabextract {} --lowercase --filter "*.ttf" --directory "%{FONTSDIR}" \;
+find "%{CABSDIR}" "%{DOWNLOADSDIR}"  -type f -exec cabextract {} --lowercase --filter "*.ttf" --directory "%{FONTSDIR}" \;
 sha256sum --check fonts.sha256sum
 
 %clean
