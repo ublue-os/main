@@ -4,7 +4,7 @@ set -ouex pipefail
 
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
 
-rpm-ostree install rpm-build rpm-sign
+rpm-ostree install cabextract rpm-build rpm-sign
 
 mkdir -p /tmp/rose-os/rpmbuild/SOURCES /tmp/rpms
 
@@ -19,8 +19,6 @@ rpmbuild -ba \
 find /tmp/rose-os/rpmbuild/RPMS -name '*.rpm' -exec cp {} /tmp/rpms \;
 
 /tmp/github-release-install.sh sigstore/cosign x86_64
-
-wget -P /tmp/rpms https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
 
 if [[ -s /tmp/RPM-GPG-KEY-rose-os.priv ]]; then
     mkdir -p -m 700 /tmp/gnupg
