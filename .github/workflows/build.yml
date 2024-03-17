@@ -55,6 +55,9 @@ jobs:
             major_version: 39
           - image_name: lxqt
             major_version: 40
+          # There is currently no Fedora 40 version of mate
+          - image_name: mate
+            major_version: 40
           # THE FOLLOWING EXCLUDE IS MESSY BUT TEMPORARY UNTIL F38 IS GONE
           # see: https://github.com/ublue-os/main/issues/369
           # Fedora 39+ images do not include custom kmods (legacy)
@@ -70,7 +73,7 @@ jobs:
       - name: Matrix Variables
         shell: bash
         run: |
-          if [[ "${{ matrix.major_version }}" -ge "40" ]] && \
+          if [[ "${{ matrix.major_version }}" -ge "41" ]] && \
             grep "${{ matrix.image_name }}" <<< "silverblue, kinoite, sericea"; then
               echo "SOURCE_ORG=fedora" >> $GITHUB_ENV
               echo "SOURCE_IMAGE=fedora-${{ matrix.image_name }}" >> $GITHUB_ENV
