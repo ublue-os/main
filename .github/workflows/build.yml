@@ -29,7 +29,7 @@ jobs:
           - lazurite
           - mate
           - vauxite
-        major_version: [38, 39]
+        major_version: [38, 39, 40]
         build_target: [nokmods, kmods]
         include:
           - major_version: 38
@@ -40,20 +40,28 @@ jobs:
             is_latest_version: true
             is_stable_version: true
             is_gts_version: false
+          - major_version: 40
+            is_latest_version: false
+            is_stable_version: false
+            is_gts_version: false
         exclude:
           # There is no Fedora 38 version of onyx or lazurite
           - image_name: onyx
             major_version: 38
           - image_name: lazurite
             major_version: 38
-          # There is no Fedora 39 version of lxqt as it was replaced by lazurite
+          # There is no Fedora 39+ version of lxqt as it was replaced by lazurite
           - image_name: lxqt
             major_version: 39
+          - image_name: lxqt
+            major_version: 40
           # THE FOLLOWING EXCLUDE IS MESSY BUT TEMPORARY UNTIL F38 IS GONE
           # see: https://github.com/ublue-os/main/issues/369
           # Fedora 39+ images do not include custom kmods (legacy)
           - build_target: kmods
             major_version: 39
+          - build_target: kmods
+            major_version: 40
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
