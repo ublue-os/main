@@ -265,5 +265,16 @@
                 "default-fonts-cjk-sans"
             ]
         }
+    },
+    "40": {
+        "include": {
+            "all": [],
+            "kinoite": []
+        },
+        "exclude": {
+            "all": [
+                "default-fonts-cjk-sans"
+            ]
+        }
     }
 }
