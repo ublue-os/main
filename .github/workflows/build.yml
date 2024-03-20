@@ -74,7 +74,7 @@ jobs:
         shell: bash
         run: |
           if [[ "${{ matrix.major_version }}" -ge "41" ]] && \
-            grep "${{ matrix.image_name }}" <<< "silverblue, kinoite, sericea"; then
+            grep "${{ matrix.image_name }}" <<< "silverblue, kinoite, sericea, onyx"; then
               echo "SOURCE_ORG=fedora" >> $GITHUB_ENV
               echo "SOURCE_IMAGE=fedora-${{ matrix.image_name }}" >> $GITHUB_ENV
           else
