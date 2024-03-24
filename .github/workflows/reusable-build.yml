@@ -211,7 +211,7 @@ jobs:
             IMAGE_NAME=${{ matrix.image_name }}
             SOURCE_ORG=${{ env.SOURCE_ORG }}
             SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
-            FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
+            FEDORA_MAJOR_VERSION=${{ matrix.fedora_version }}
             RPMFUSION_MIRROR=${{ vars.RPMFUSION_MIRROR }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
