@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  ublue-38:
-    name: "build ublue-os/*-main:38"
+  build:
+    name: build
     uses: ./.github/workflows/reusable-build.yml
     secrets: inherit
     with:
