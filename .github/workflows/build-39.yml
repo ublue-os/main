@@ -1,0 +1,14 @@
+name: ublue-39
+on:
+  pull_request:
+  merge_group:
+  schedule:
+    - cron: '0 5 * * *'  # 3pm UTC everyday (timed against official fedora container pushes)
+  workflow_dispatch:
+
+jobs:
+  build-39:
+    uses: ./.github/workflows/reusable-build.yml
+    secrets: inherit
+    with:
+      fedora_version: 39

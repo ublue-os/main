@@ -1,15 +1,16 @@
 name: build-ublue
 on:
-  pull_request:
-  merge_group:
-  schedule:
-    - cron: '0 15 * * *'  # 3pm UTC everyday (timed against official fedora container pushes)
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      fedora_version:
+        description: 'The Fedora release version: 38, 39, 40, etc'
+        required: true
+        type: string
 env:
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
 jobs:
-  push-ghcr:
+  build_ublue:
     name: main image
     runs-on: ubuntu-22.04
     permissions:
@@ -29,42 +30,41 @@ jobs:
           - lazurite
           - mate
           - vauxite
-        major_version: [38, 39, 40]
         build_target: [nokmods, kmods]
         include:
-          - major_version: 38
+          - fedora_version: 38
             is_latest_version: false
             is_stable_version: true
             is_gts_version: true
-          - major_version: 39
+          - fedora_version: 39
             is_latest_version: true
             is_stable_version: true
             is_gts_version: false
-          - major_version: 40
+          - fedora_version: 40
             is_latest_version: false
             is_stable_version: false
             is_gts_version: false
         exclude:
           # There is no Fedora 38 version of onyx or lazurite
           - image_name: onyx
-            major_version: 38
+            fedora_version: 38
           - image_name: lazurite
-            major_version: 38
+            fedora_version: 38
           # There is no Fedora 39+ version of lxqt as it was replaced by lazurite
           - image_name: lxqt
-            major_version: 39
+            fedora_version: 39
           - image_name: lxqt
-            major_version: 40
+            fedora_version: 40
           # There is currently no Fedora 40 version of mate
           - image_name: mate
-            major_version: 40
+            fedora_version: 40
           # THE FOLLOWING EXCLUDE IS MESSY BUT TEMPORARY UNTIL F38 IS GONE
           # see: https://github.com/ublue-os/main/issues/369
           # Fedora 39+ images do not include custom kmods (legacy)
           - build_target: kmods
-            major_version: 39
+            fedora_version: 39
           - build_target: kmods
-            major_version: 40
+            fedora_version: 40
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
@@ -73,7 +73,7 @@ jobs:
       - name: Matrix Variables
         shell: bash
         run: |
-          if [[ "${{ matrix.major_version }}" -ge "41" ]] && \
+          if [[ "${{ matrix.fedora_version }}" -ge "41" ]] && \
             grep "${{ matrix.image_name }}" <<< "silverblue, kinoite, sericea, onyx"; then
               echo "SOURCE_ORG=fedora" >> $GITHUB_ENV
               echo "SOURCE_IMAGE=fedora-${{ matrix.image_name }}" >> $GITHUB_ENV
@@ -89,14 +89,14 @@ jobs:
           # THE FOLLOWING IS MESSY BUT TEMPORARY UNTIL F38 IS GONE
           # see: https://github.com/ublue-os/main/issues/369
           # Fedora 39+ images do not include custom kmods (legacy)
-          if [[ "${{ matrix.major_version}}" -ge "39" && "${{ matrix.build_target }}" == "nokmods" ]]; then
+          if [[ "${{ matrix.fedora_version}}" -ge "39" && "${{ matrix.build_target }}" == "nokmods" ]]; then
               export IMAGE_FLAVOR=main
-          elif [[ "${{ matrix.major_version}}" -lt "39" && "${{ matrix.build_target }}" == "nokmods" ]]; then
+          elif [[ "${{ matrix.fedora_version}}" -lt "39" && "${{ matrix.build_target }}" == "nokmods" ]]; then
               export IMAGE_FLAVOR=nokmods
-          elif [[ "${{ matrix.major_version}}" -lt "39" && "${{ matrix.build_target }}" == "kmods" ]]; then
+          elif [[ "${{ matrix.fedora_version}}" -lt "39" && "${{ matrix.build_target }}" == "kmods" ]]; then
               export IMAGE_FLAVOR=main
           else
-              echo "ERROR: invalid workflow request - ${{ matrix.major_version }} - ${{ matrix.build_target }}"
+              echo "ERROR: invalid workflow request - ${{ matrix.fedora_version }} - ${{ matrix.build_target }}"
               exit 1
           fi
           echo "IMAGE_NAME=${{ matrix.image_name }}-${IMAGE_FLAVOR}" >> $GITHUB_ENV
@@ -107,7 +107,7 @@ jobs:
         run: |
           # Generate a timestamp for creating an image version history
           TIMESTAMP="$(date +%Y%m%d)"
-          VARIANT="${{ matrix.major_version }}"
+          VARIANT="${{ matrix.fedora_version }}"
 
           COMMIT_TAGS=()
           BUILD_TAGS=()
@@ -164,7 +164,7 @@ jobs:
           attempt_delay: 15000
           command: |
             set -eo pipefail
-            ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
+            ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
             if [ -z "$ver" ] || [ "null" = "$ver" ]; then
               echo "inspected image version must not be empty or null"
               exit 1
@@ -193,7 +193,7 @@ jobs:
           command: |
             # pull the base image used for FROM in containerfile so
             # we can retry on that unfortunately common failure case
-            podman pull quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }}
+            podman pull quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
 
       # Build image using Buildah action
       - name: Build Image
@@ -274,7 +274,7 @@ jobs:
     name: Check all builds successful
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
-    needs: [push-ghcr]
+    needs: [build_ublue]
     steps:
       - name: Exit on failure
         if: ${{ needs.push-ghcr.result == 'failure' }}
