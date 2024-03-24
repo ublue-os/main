@@ -8,6 +8,7 @@ on:
 
 jobs:
   ublue-38:
+    name: "build ublue-os/*-main:38"
     uses: ./.github/workflows/reusable-build.yml
     secrets: inherit
     with:

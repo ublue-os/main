@@ -11,7 +11,7 @@ env:
 
 jobs:
   build_ublue:
-    name: main image
+    name: image
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -274,7 +274,7 @@ jobs:
           echo "${{ toJSON(steps.push.outputs) }}"
 
   check:
-    name: Check all ${{ matrix.fedora_version }} builds successful
+    name: Check all ${{ inputs.fedora_version }} builds successful
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     needs: [build_ublue]
