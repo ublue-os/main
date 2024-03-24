@@ -20,6 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        fedora_version: ${{ inputs.fedora_version }}
         image_name:
           - silverblue
           - kinoite
@@ -32,7 +33,6 @@ jobs:
           - vauxite
         build_target: [nokmods, kmods]
         include:
-          - fedora_version: ${{ inputs.fedora_version }}
           - fedora_version: 38
             is_latest_version: false
             is_stable_version: true
