@@ -1,4 +1,4 @@
-name: build ublue 40
+name: ublue main 40
 on:
   pull_request:
   merge_group:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-ublue-40:
+  ublue-40:
     uses: ./.github/workflows/reusable-build.yml
     secrets: inherit
     with:
