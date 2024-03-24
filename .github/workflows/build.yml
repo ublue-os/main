@@ -30,6 +30,7 @@ jobs:
           - mate
           - vauxite
         major_version: [38, 39, 40]
+        build_arch: [aarch64, x86_64]
         build_target: [nokmods, kmods]
         include:
           - major_version: 38
@@ -65,6 +66,22 @@ jobs:
             major_version: 39
           - build_target: kmods
             major_version: 40
+          # Only build aarch64 images for F39/40, F38 is approaching EOL
+          - build_arch: aarch64
+            major_version: 38
+          # Disable images without aarch64 support
+          - build_arch: aarch64
+            image_name: onyx
+          - build_arch: aarch64
+            image_name: base
+          - build_arch: aarch64
+            image_name: lxqt
+          - build_arch: aarch64
+            image_name: lazurite
+          - build_arch: aarch64
+            image_name: mate
+          - build_arch: aarch64
+            image_name: vauxite
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
@@ -73,27 +90,34 @@ jobs:
       - name: Matrix Variables
         shell: bash
         run: |
-          if [[ "${{ matrix.major_version }}" -ge "41" ]] && \
-            grep "${{ matrix.image_name }}" <<< "silverblue, kinoite, sericea, onyx"; then
+          if [[ "${{ matrix.build_arch }}" == "aarch64" ]]; then
+              echo "TARGET_CONTAINERFILE=./Containerfile.aarch64" >> $GITHUB_ENV
               echo "SOURCE_ORG=fedora" >> $GITHUB_ENV
               echo "SOURCE_IMAGE=fedora-${{ matrix.image_name }}" >> $GITHUB_ENV
           else
-              if [[ "${{ matrix.image_name }}" == "lxqt" || "${{ matrix.image_name }}" == "mate" ]]; then
-                  echo "SOURCE_IMAGE=base" >> $GITHUB_ENV
+              echo "TARGET_CONTAINERFILE=./Containerfile.x86_64" >> $GITHUB_ENV
+              if [[ "${{ matrix.major_version }}" -ge "41" ]] && \
+                grep "${{ matrix.image_name }}" <<< "silverblue, kinoite, sericea"; then
+                  echo "SOURCE_ORG=fedora" >> $GITHUB_ENV
+                  echo "SOURCE_IMAGE=fedora-${{ matrix.image_name }}" >> $GITHUB_ENV
               else
-                  echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
+                  if [[ "${{ matrix.image_name }}" == "lxqt" || "${{ matrix.image_name }}" == "mate" ]]; then
+                      echo "SOURCE_IMAGE=base" >> $GITHUB_ENV
+                  else
+                    echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
+                  fi
+                  echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV
               fi
-              echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV
           fi
 
           # THE FOLLOWING IS MESSY BUT TEMPORARY UNTIL F38 IS GONE
           # see: https://github.com/ublue-os/main/issues/369
           # Fedora 39+ images do not include custom kmods (legacy)
-          if [[ "${{ matrix.major_version}}" -ge "39" && "${{ matrix.build_target }}" == "nokmods" ]]; then
+          if [[ "${{ matrix.major_version }}" -ge "39" && "${{ matrix.build_target }}" == "nokmods" ]]; then
               export IMAGE_FLAVOR=main
-          elif [[ "${{ matrix.major_version}}" -lt "39" && "${{ matrix.build_target }}" == "nokmods" ]]; then
+          elif [[ "${{ matrix.major_version }}" -lt "39" && "${{ matrix.build_target }}" == "nokmods" ]]; then
               export IMAGE_FLAVOR=nokmods
-          elif [[ "${{ matrix.major_version}}" -lt "39" && "${{ matrix.build_target }}" == "kmods" ]]; then
+          elif [[ "${{ matrix.major_version }}" -lt "39" && "${{ matrix.build_target }}" == "kmods" ]]; then
               export IMAGE_FLAVOR=main
           else
               echo "ERROR: invalid workflow request - ${{ matrix.major_version }} - ${{ matrix.build_target }}"
@@ -193,7 +217,7 @@ jobs:
           command: |
             # pull the base image used for FROM in containerfile so
             # we can retry on that unfortunately common failure case
-            podman pull quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }}
+            docker pull --platform linux/${{ matrix.build_arch }} quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.major_version }}
 
       # Build image using Buildah action
       - name: Build Image
@@ -201,8 +225,9 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           containerfiles: |
-            ./Containerfile
+            ${{ env.TARGET_CONTAINERFILE }}
           image: ${{ env.IMAGE_NAME }}
+          arch: ${{ matrix.build_arch }}
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
