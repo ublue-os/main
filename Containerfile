@@ -21,11 +21,15 @@ COPY --from=ghcr.io/ublue-os/config:latest /rpms /tmp/rpms
 COPY --from=ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} /rpms/ublue-os /tmp/rpms
 COPY sys_files/usr /usr
 
-RUN /tmp/install.sh && \
+RUN mkdir -p /var/lib/alternatives && \
+    /tmp/install.sh && \
     /tmp/post-install.sh && \
+    mv /var/lib/alternatives /staged-alternatives && \
     rm -rf /tmp/* /var/* && \
     ostree container commit && \
-    mkdir -p /var/tmp && chmod -R 1777 /var/tmp
+    mkdir -p /var/lib && mv /staged-alternatives /var/lib/alternatives && \
+    mkdir -p /tmp /var/tmp && \
+    chmod -R 1777 /tmp /var/tmp
 
 
 # !!! WARNING - KMODS IN MAIN IMAGES ARE DEPRECATED !!!
