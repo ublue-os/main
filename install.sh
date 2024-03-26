@@ -13,6 +13,9 @@ wget -P /tmp/rpms \
     ${RPMFUSION_MIRROR_RPMS}/free/fedora/rpmfusion-free-release-${RELEASE}.noarch.rpm \
     ${RPMFUSION_MIRROR_RPMS}/nonfree/fedora/rpmfusion-nonfree-release-${RELEASE}.noarch.rpm
 
+wget https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-${RELEASE}/ublue-os-staging-fedora-${RELEASE}.repo -O /etc/yum.repos.d/_copr_ublue-os_staging.repo 
+wget https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-${RELEASE}/kylegospo-oversteer-fedora-${RELEASE}.repo -O /etc/yum.repos.d/_copr_kylegospo_oversteer.repo
+
 rpm-ostree install \
     /tmp/rpms/*.rpm \
     fedora-repos-archive
