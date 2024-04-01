@@ -103,8 +103,9 @@ jobs:
         id: build
         with:
           ARCH: x86_64
-          IMAGE_NAME: ${{ matrix.image_name }}
+          IMAGE_NAME: ${{ matrix.image_name }}-main
           IMAGE_REPO: ${{ env.IMAGE_REGISTRY }}
+          VARIANT: ${{ env.IMAGE_FLAVOR }}
           VERSION: ${{ matrix.fedora_version }}
           IMAGE_TAG: ${{ matrix.fedora_version }}
           SECURE_BOOT_KEY_URL: 'https://github.com/ublue-os/akmods/raw/main/certs/public_key.der'
@@ -114,7 +115,7 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.image_name }}-${{ matrix.fedora_version}}
+          name: ${{ matrix.image_name }}-main-${{ matrix.fedora_version}}
           path: ${{ steps.build.outputs.output-directory }}
           if-no-files-found: error
           retention-days: 0
