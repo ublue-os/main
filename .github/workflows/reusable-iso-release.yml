@@ -119,21 +119,10 @@ jobs:
           SECURE_BOOT_KEY_URL: 'https://github.com/ublue-os/akmods/raw/main/certs/public_key.der'
           ENROLLMENT_PASSWORD: 'ublue-os'
 
-      - name: Upload ISOs and Checksum to Job Artifacts
-        if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.IMAGE_NAME }}
-          path: ${{ steps.build.outputs.output-directory }}
-          if-no-files-found: error
-          retention-days: 0
-          compression-level: 0
-          overwrite: true
-
       - name: Upload file to archive.org
-        uses: qoijjj/internet-archive-upload@v4
+        uses: qoijjj/internet-archive-upload@v5
         with:
           access-key: ${{ secrets.IA_ACCESS_KEY }}
           secret-key: ${{ secrets.IA_SECRET_KEY }}
-          identifier: ${{ matrix.image_name }}-${{ matrix.fedora_version}}
+          identifier: ${{ env.IMAGE_NAME }}-${{ matrix.fedora_version}}
           files: ${{ steps.build.outputs.output-directory }}
