@@ -103,6 +103,8 @@ jobs:
           else
             export IMAGE_VARIANT=Kinoite
           fi
+          echo "IMAGE_VARIANT=${IMAGE_VARIANT}" >> $GITHUB_ENV
+
 
       - name: Build ISOs
         uses: ublue-os/isogenerator@1.0.9
