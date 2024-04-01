@@ -7,7 +7,7 @@ on:
         required: true
         type: string
 env:
-    IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+    IMAGE_REGISTRY: ghcr.io/ublue-os # hardcoded for testing
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.fedora_version }}
     cancel-in-progress: true
@@ -19,6 +19,11 @@ jobs:
       contents: read
       packages: write
       id-token: write
+    container:
+      image: fedora:${{ matrix.fedora_version }}
+      options: "--privileged"
+      volumes:
+        - "/:/host"
     strategy:
       fail-fast: false
       matrix:
