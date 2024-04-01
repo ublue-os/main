@@ -1,0 +1,10 @@
+name: ublue iso 39
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    name: build
+    uses: ./.github/workflows/reusable-iso-release.yml
+    secrets: inherit
+    with:
+      fedora_version: 39

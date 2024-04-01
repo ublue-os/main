@@ -1,0 +1,125 @@
+name: ublue iso release
+on:
+  workflow_call:
+    inputs:
+      fedora_version:
+        description: 'The Fedora release version: 38, 39, 40, etc'
+        required: true
+        type: string
+env:
+    IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.fedora_version }}
+    cancel-in-progress: true
+jobs:
+  build-and-upload-iso:  
+    name: main
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        fedora_version:
+          - ${{ inputs.fedora_version }}
+        image_name:
+          - silverblue
+          # commenting out these to reduce load on archive.org for testing
+          # - kinoite
+          # - sericea
+          # - onyx
+          # - base
+          # - lxqt
+          # - lazurite
+          # - mate
+          # - vauxite
+        build_target: [nokmods, kmods]
+        exclude:
+          # There is no Fedora 38 version of onyx or lazurite
+          - image_name: onyx
+            fedora_version: 38
+          - image_name: lazurite
+            fedora_version: 38
+          # There is no Fedora 39+ version of lxqt as it was replaced by lazurite
+          - image_name: lxqt
+            fedora_version: 39
+          - image_name: lxqt
+            fedora_version: 40
+          # There is currently no Fedora 40 version of mate
+          - image_name: mate
+            fedora_version: 40
+          # THE FOLLOWING EXCLUDE IS MESSY BUT TEMPORARY UNTIL F38 IS GONE
+          # see: https://github.com/ublue-os/main/issues/369
+          # Fedora 39+ images do not include custom kmods (legacy)
+          - build_target: kmods
+            fedora_version: 39
+          - build_target: kmods
+            fedora_version: 40
+    steps:
+      # Checkout push-to-registry action GitHub repository
+      - name: Checkout Push to Registry action
+        uses: actions/checkout@v4
+
+      - name: Matrix Variables
+        shell: bash
+        run: |
+          if [[ "${{ matrix.fedora_version }}" -ge "41" ]] && \
+            grep "${{ matrix.image_name }}" <<< "silverblue, kinoite, sericea, onyx"; then
+              echo "SOURCE_ORG=fedora" >> $GITHUB_ENV
+              echo "SOURCE_IMAGE=fedora-${{ matrix.image_name }}" >> $GITHUB_ENV
+          else
+              if [[ "${{ matrix.image_name }}" == "lxqt" || "${{ matrix.image_name }}" == "mate" ]]; then
+                  echo "SOURCE_IMAGE=base" >> $GITHUB_ENV
+              else
+                  echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
+              fi
+              echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV
+          fi
+
+          # THE FOLLOWING IS MESSY BUT TEMPORARY UNTIL F38 IS GONE
+          # see: https://github.com/ublue-os/main/issues/369
+          # Fedora 39+ images do not include custom kmods (legacy)
+          if [[ "${{ matrix.fedora_version}}" -ge "39" && "${{ matrix.build_target }}" == "nokmods" ]]; then
+              export IMAGE_FLAVOR=main
+          elif [[ "${{ matrix.fedora_version}}" -lt "39" && "${{ matrix.build_target }}" == "nokmods" ]]; then
+              export IMAGE_FLAVOR=nokmods
+          elif [[ "${{ matrix.fedora_version}}" -lt "39" && "${{ matrix.build_target }}" == "kmods" ]]; then
+              export IMAGE_FLAVOR=main
+          else
+              echo "ERROR: invalid workflow request - ${{ matrix.fedora_version }} - ${{ matrix.build_target }}"
+              exit 1
+          fi
+          echo "IMAGE_NAME=${{ matrix.image_name }}-${IMAGE_FLAVOR}" >> $GITHUB_ENV
+          
+      - name: Build ISOs
+        uses: ublue-os/isogenerator@1.0.9
+        id: build
+        with:
+          ARCH: x86_64
+          IMAGE_NAME: ${{ matrix.image_name }}
+          IMAGE_REPO: ${{ env.IMAGE_REGISTRY }}
+          VERSION: ${{ matrix.fedora_version }}
+          IMAGE_TAG: ${{ matrix.fedora_version }}
+          SECURE_BOOT_KEY_URL: 'https://github.com/ublue-os/akmods/raw/main/certs/public_key.der'
+          ENROLLMENT_PASSWORD: 'ublue-os'
+
+      - name: Upload ISOs and Checksum to Job Artifacts
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.image_name }}-${{ matrix.fedora_version}}
+          path: ${{ steps.build.outputs.output-directory }}
+          if-no-files-found: error
+          retention-days: 0
+          compression-level: 0
+          overwrite: true
+
+      - name: Upload file to archive.org
+        uses: qoijjj/internet-archive-upload@v1
+        with:
+          access-key: ${{ secrets.IA_ACCESS_KEY }}
+          secret-key: ${{ secrets.IA_SECRET_KEY }}
+          identifier: ${{ matrix.image_name }}-${{ matrix.fedora_version}}
+          files: ${{ steps.build.outputs.output-directory }}
