@@ -131,7 +131,7 @@ jobs:
           overwrite: true
 
       - name: Upload file to archive.org
-        uses: qoijjj/internet-archive-upload@v3
+        uses: qoijjj/internet-archive-upload@v4
         with:
           access-key: ${{ secrets.IA_ACCESS_KEY }}
           secret-key: ${{ secrets.IA_SECRET_KEY }}
