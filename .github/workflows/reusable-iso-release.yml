@@ -119,8 +119,8 @@ jobs:
           SECURE_BOOT_KEY_URL: 'https://github.com/ublue-os/akmods/raw/main/certs/public_key.der'
           ENROLLMENT_PASSWORD: 'ublue-os'
 
-      - name: Upload file to archive.org
-        uses: qoijjj/internet-archive-upload@v6
+      - name: Upload ISO to archive.org
+        uses: qoijjj/internet-archive-upload@v7
         with:
           access-key: ${{ secrets.IA_ACCESS_KEY }}
           secret-key: ${{ secrets.IA_SECRET_KEY }}
