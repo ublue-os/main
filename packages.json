@@ -113,6 +113,20 @@
             ]
         }
     },
+    "40": {
+        "include": {
+            "all": [
+            ]
+        },
+        "exclude": {
+            "all": [
+                "default-fonts-cjk-sans"
+            ],
+            "silverblue": [
+                "gnome-classic-session-xsession"
+            ]
+        }
+    },
     "39": {
         "include": {
             "all": [
