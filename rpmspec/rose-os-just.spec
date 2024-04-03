@@ -24,7 +24,7 @@ mkdir -p -m0755 %{buildroot}%{_datadir}/%{VENDOR}
 mkdir -p -m0755 %{buildroot}%{_exec_prefix}/etc/profile.d
 mkdir -p -m0755 %{buildroot}%{_exec_prefix}/usr/share/rose-os/just
 
-tar xf %{SOURCE0} -C %{buildroot} --strip-components=2
+tar xf %{SOURCE0} -C %{buildroot} --strip-components=2 --no-overwrite-dir
 
 %files
 %attr(0755,root,root) %{_exec_prefix}/etc/profile.d/rose-os-just.sh
