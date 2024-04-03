@@ -20,10 +20,12 @@ Adds justfiles to rose-os images
 %setup -q -c -T
 
 %build
-mkdir -p -m0755 %{buildroot}%{_datadir}/%{VENDOR}
-mkdir -p -m0755 %{buildroot}%{_exec_prefix}/etc/profile.d
-mkdir -p -m0755 %{buildroot}%{_exec_prefix}/usr/share/rose-os/just
+mkdir %{buildroot}
+# mkdir -p -m0755 %{buildroot}%{_datadir}/%{VENDOR}
+# mkdir -p -m0755 %{buildroot}%{_exec_prefix}/etc/profile.d
+# mkdir -p -m0755 %{buildroot}%{_exec_prefix}/usr/share/rose-os/just
 
+tar tvf %{SOURCE0}
 tar xf %{SOURCE0} -C %{buildroot} --strip-components=2 --no-overwrite-dir
 
 %files
