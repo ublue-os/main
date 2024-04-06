@@ -37,13 +37,16 @@
                 "smartmontools",
                 "solaar-udev",
                 "symlinks",
+                "tcpdump",
                 "traceroute",
                 "vim",
                 "wireguard-tools",
                 "zstd"
             ],
             "silverblue": [
+                "adw-gtk3-theme",
                 "gnome-epub-thumbnailer",
+                "gnome-tweaks",
                 "gvfs-nfs"
             ],
             "kinoite": [
