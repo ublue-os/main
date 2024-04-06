@@ -4,20 +4,16 @@
             "all": [
                 "alsa-firmware",
                 "android-udev-rules",
-                "apr",
-                "apr-util",
                 "distrobox",
                 "ffmpeg",
                 "ffmpeg-libs",
                 "ffmpegthumbnailer",
-                "fzf",
                 "google-noto-sans-balinese-fonts",
                 "google-noto-sans-cjk-fonts",
                 "google-noto-sans-javanese-fonts",
                 "google-noto-sans-sundanese-fonts",
                 "grub2-tools-extra",
                 "heif-pixbuf-loader",
-                "htop",
                 "intel-media-driver",
                 "just",
                 "kernel-tools",
@@ -41,17 +37,13 @@
                 "smartmontools",
                 "solaar-udev",
                 "symlinks",
-                "tcpdump",
-                "tmux",
                 "traceroute",
                 "vim",
                 "wireguard-tools",
                 "zstd"
             ],
             "silverblue": [
-                "adw-gtk3-theme",
                 "gnome-epub-thumbnailer",
-                "gnome-tweaks",
                 "gvfs-nfs"
             ],
             "kinoite": [
@@ -194,7 +186,6 @@
                 "xrdb"
             ],
             "sericea": [
-                "clipman",
                 "gvfs-mtp",
                 "thunar-volman",
                 "tumbler"
