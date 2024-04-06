@@ -38,6 +38,8 @@
                 "pam_yubico",
                 "pamu2fcfg",
                 "pipewire-codec-aptx",
+                "setools",
+                "setroubleshoot",
                 "smartmontools",
                 "solaar-udev",
                 "symlinks",
