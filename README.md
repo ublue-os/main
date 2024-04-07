@@ -7,3 +7,4 @@ A common main image for all other uBlue images, with minimal (but important) adj
 # Documentation
 
 - [Main website and documentation](https://universal-blue.org)
+- [Scope document](https://universal-blue.discourse.group/t/universal-blue-project-governance/51)
