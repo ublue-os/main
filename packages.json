@@ -21,6 +21,7 @@
                 "intel-media-driver",
                 "just",
                 "kernel-tools",
+                "libavcodec-freeworld",
                 "libheif-freeworld",
                 "libheif-tools",
                 "libratbag-ratbagd",
