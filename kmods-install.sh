@@ -41,8 +41,10 @@ rpm-ostree install \
     /tmp/akmods-rpms/kmods/*xpadneo*.rpm \
     /tmp/akmods-rpms/kmods/*xone*.rpm \
     /tmp/akmods-rpms/kmods/*openrazer*.rpm \
-    /tmp/akmods-rpms/kmods/*v4l2loopback*.rpm \
     /tmp/akmods-rpms/kmods/*wl*.rpm
+
+#    Disabled due to failure to build on 6.8
+#    /tmp/akmods-rpms/kmods/*v4l2loopback*.rpm \
 
 for REPO in $(rpm -ql ublue-os-akmods-addons|grep ^"/etc"|grep repo$); do
     echo "akmods: disable per defaults: ${REPO}"
