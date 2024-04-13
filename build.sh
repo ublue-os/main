@@ -9,7 +9,18 @@ rpm-ostree install cabextract rpm-build rpm-sign
 mkdir -p /tmp/rose-os/rpmbuild/SOURCES /tmp/rpms
 
 tar cf /tmp/rose-os/rpmbuild/SOURCES/rose-os-signing.tar.gz -C /tmp rose-os/signing
-tar cf /tmp/rose-os/rpmbuild/SOURCES/rose-os-just.tar.gz    -C /tmp rose-os/just
+
+cp /tmp/rose-os/signing/usr/etc/containers/policy.json \
+   /tmp/rose-os/signing/usr/etc/containers/registries.d/rose-os.yaml \
+   /tmp/rose-os/signing/usr/etc/pki/containers/rose-os.pub \
+   /tmp/rose-os/signing/usr/etc/pki/rpm-gpg/RPM-GPG-KEY-rose-os \
+   /tmp/rose-os/rpmbuild/SOURCES
+
+cp /tmp/rose-os/just/usr/etc/profile.d/rose-os-just.sh \
+   /tmp/rose-os/just/usr/share/rose-os/flatpak-apps.txt \
+   /tmp/rose-os/just/usr/share/rose-os/justfile \
+   /tmp/rose-os/just/usr/share/rose-os/just/setup-flatpak-apps.sh \
+   /tmp/rose-os/rpmbuild/SOURCES
 
 rpmbuild -ba \
     --define '_topdir /tmp/rose-os/rpmbuild' \

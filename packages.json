@@ -65,7 +65,8 @@
                 "libswresample-free",
                 "libswscale-free",
                 "mesa-va-drivers",
-                "google-noto-sans-cjk-vf-fonts"
+                "google-noto-sans-cjk-vf-fonts",
+		"default-fonts-cjk-sans"
             ],
             "silverblue": [
                 "gnome-classic-session",
@@ -109,6 +110,20 @@
                 "xorg-x11-drv-wacom-serial-support",
                 "xorg-x11-server-Xorg",
                 "xorg-x11-server-common"
+            ]
+        }
+    },
+    "40": {
+        "include": {
+            "all": [
+            ]
+        },
+        "exclude": {
+            "all": [
+                "default-fonts-cjk-sans"
+            ],
+            "silverblue": [
+                "gnome-classic-session-xsession"
             ]
         }
     },
