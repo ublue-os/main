@@ -28,7 +28,7 @@ install -Dm644 %{SOURCE1} %{buildroot}%{_datadir}/%{VENDOR}/%{sub_name}/%{_exec_
 install -Dm644 %{SOURCE2} %{buildroot}%{_datadir}/%{VENDOR}/%{sub_name}/%{_exec_prefix}/etc/pki/containers/rose-os.pub
 install -Dm644 %{SOURCE3} %{buildroot}%{_datadir}/%{VENDOR}/%{sub_name}/%{_exec_prefix}/etc/pki/rpm-gpg/RPM-GPG-KEY-rose-os
 
-install -Dm644 %{SOURCE1} %{buildroot}%{_exec_prefix}/etc/containers/policy.json
+install -Dm644 %{SOURCE0} %{buildroot}%{_exec_prefix}/etc/containers/policy.json
 install -Dm644 %{SOURCE1} %{buildroot}%{_exec_prefix}/etc/containers/registries.d/rose-os.yaml
 install -Dm644 %{SOURCE2} %{buildroot}%{_exec_prefix}/etc/pki/containers/rose-os.pub
 install -Dm644 %{SOURCE3} %{buildroot}%{_exec_prefix}/etc/pki/rpm-gpg/RPM-GPG-KEY-rose-os
