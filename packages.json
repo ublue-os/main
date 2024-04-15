@@ -6,6 +6,7 @@
                 "android-udev-rules",
                 "apr",
                 "apr-util",
+                "clevis-dracut",
                 "distrobox",
                 "ffmpeg",
                 "ffmpeg-libs",
