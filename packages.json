@@ -69,6 +69,9 @@
 		"default-fonts-cjk-sans"
             ],
             "silverblue": [
+                "fedora-third-party",
+                "fedora-workstation-repositories",
+                "fedora-flathub-remote",
                 "gnome-classic-session",
                 "gnome-shell-extension-background-logo",
                 "gnome-terminal",
