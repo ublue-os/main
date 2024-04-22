@@ -3,7 +3,7 @@ on:
   workflow_call:
     inputs:
       fedora_version:
-        description: 'The Fedora release version: 38, 39, 40, etc'
+        description: 'The Fedora release version: 39, 40, 41 etc'
         required: true
         type: string
 env:
@@ -36,28 +36,11 @@ jobs:
           - lazurite
           - mate
           - vauxite
-        build_target: [nokmods, kmods]
         exclude:
-          # There is no Fedora 38 version of onyx or lazurite
-          - image_name: onyx
-            fedora_version: 38
-          - image_name: lazurite
-            fedora_version: 38
-          # There is no Fedora 39+ version of lxqt as it was replaced by lazurite
-          - image_name: lxqt
-            fedora_version: 39
-          - image_name: lxqt
-            fedora_version: 40
           # There is currently no Fedora 40 version of mate
           - image_name: mate
             fedora_version: 40
-          # THE FOLLOWING EXCLUDE IS MESSY BUT TEMPORARY UNTIL F38 IS GONE
-          # see: https://github.com/ublue-os/main/issues/369
-          # Fedora 39+ images do not include custom kmods (legacy)
-          - build_target: kmods
-            fedora_version: 39
-          - build_target: kmods
-            fedora_version: 40
+
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
@@ -72,21 +55,7 @@ jobs:
               echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
           fi
           echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV
-
-          # THE FOLLOWING IS MESSY BUT TEMPORARY UNTIL F38 IS GONE
-          # see: https://github.com/ublue-os/main/issues/369
-          # Fedora 39+ images do not include custom kmods (legacy)
-          if [[ "${{ matrix.fedora_version}}" -ge "39" && "${{ matrix.build_target }}" == "nokmods" ]]; then
-              export IMAGE_FLAVOR=main
-          elif [[ "${{ matrix.fedora_version}}" -lt "39" && "${{ matrix.build_target }}" == "nokmods" ]]; then
-              export IMAGE_FLAVOR=nokmods
-          elif [[ "${{ matrix.fedora_version}}" -lt "39" && "${{ matrix.build_target }}" == "kmods" ]]; then
-              export IMAGE_FLAVOR=main
-          else
-              echo "ERROR: invalid workflow request - ${{ matrix.fedora_version }} - ${{ matrix.build_target }}"
-              exit 1
-          fi
-          echo "IMAGE_NAME=${{ matrix.image_name }}-${IMAGE_FLAVOR}" >> $GITHUB_ENV
+          echo "IMAGE_NAME=${{ matrix.image_name }}-main" >> $GITHUB_ENV
 
       - name: Generate tags
         id: generate-tags
@@ -96,15 +65,15 @@ jobs:
           TIMESTAMP="$(date +%Y%m%d)"
           VARIANT="${{ matrix.fedora_version }}"
 
-          if [[ "${{ matrix.fedora_version }}" -eq "38" ]]; then
+          if [[ "${{ matrix.fedora_version }}" -eq "39" ]]; then
             IS_LATEST_VERSION=false
             IS_STABLE_VERSION=true
             IS_GTS_VERSION=true
-          elif [[ "${{ matrix.fedora_version }}" -eq "39" ]]; then
+          elif [[ "${{ matrix.fedora_version }}" -eq "40" ]]; then
             IS_LATEST_VERSION=true
             IS_STABLE_VERSION=true
             IS_GTS_VERSION=false
-          elif [[ "${{ matrix.fedora_version }}" -eq "40" ]]; then
+          elif [[ "${{ matrix.fedora_version }}" -eq "41" ]]; then
             IS_LATEST_VERSION=false
             IS_STABLE_VERSION=false
             IS_GTS_VERSION=false

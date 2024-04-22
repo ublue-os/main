@@ -227,32 +227,6 @@
             ]
         }
     },
-    "38": {
-        "include": {
-            "all": [
-                "bootc"
-            ],
-            "silverblue": [
-                "raw-thumbnailer"
-            ],
-            "mate": [
-                "f38-backgrounds-base",
-                "f38-backgrounds-extras-base",
-                "f38-backgrounds-extras-mate",
-                "f38-backgrounds-mate",
-                "raw-thumbnailer"
-            ],
-            "vauxite": [
-                "raw-thumbnailer"
-            ],
-            "kinoite": [
-                "xwaylandvideobridge"
-            ]
-        },
-        "exclude": {
-            "all": []
-        }
-    },
     "39": {
         "include": {
             "all": [
