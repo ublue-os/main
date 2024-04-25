@@ -32,7 +32,6 @@ jobs:
           - sericea
           - onyx
           - base
-          - lxqt
           - lazurite
           - mate
           - vauxite
@@ -49,7 +48,7 @@ jobs:
       - name: Matrix Variables
         shell: bash
         run: |
-          if [[ "${{ matrix.image_name }}" == "lxqt" || "${{ matrix.image_name }}" == "mate" ]]; then
+          if [[ "${{ matrix.image_name }}" == "mate" ]]; then
               echo "SOURCE_IMAGE=base" >> $GITHUB_ENV
           else
               echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
