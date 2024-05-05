@@ -38,6 +38,7 @@
                 "pam_yubico",
                 "pamu2fcfg",
                 "pipewire-codec-aptx",
+                "powerstat",
                 "smartmontools",
                 "solaar-udev",
                 "symlinks",
