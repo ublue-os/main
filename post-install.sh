@@ -2,8 +2,12 @@
 
 set -ouex pipefail
 
-if [[ "$IMAGE_NAME" == "base" ]]; then
+if [ "$IMAGE_NAME" == "base" ]; then
     systemctl enable getty@tty1
+fi
+
+if [ "$FEDORA_MAJOR_VERSION" -ge "40" ]; then
+    /usr/bin/bootupctl backend generate-update-metadata
 fi
 
 systemctl enable rpm-ostreed-automatic.timer
