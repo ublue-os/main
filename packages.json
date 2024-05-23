@@ -126,7 +126,8 @@
         },
         "exclude": {
             "all": [
-                "default-fonts-cjk-sans"
+                "default-fonts-cjk-sans",
+                "ffmpeg-free"
             ],
             "silverblue": [
                 "gnome-classic-session-xsession"
