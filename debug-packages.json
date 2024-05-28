@@ -1,0 +1,77 @@
+{
+    "all": {
+        "include": {
+            "all": [
+		"binutils",
+                "gdb",
+                "heaptrack",
+                "sysprof",
+                "valgrind"
+            ],
+            "silverblue": [
+                "cairo-debuginfo",
+                "colord-debuginfo",
+                "colord-libs-debuginfo",
+                "fontconfig-debuginfo",
+                "gdk-pixbuf2-debuginfo",
+                "gjs-debuginfo",
+                "glib2-debuginfo",
+                "glibc-debuginfo",
+                "gnome-shell-debuginfo",
+                "gnutls-debuginfo",
+                "gvfs-client-debuginfo",
+                "gvfs-debuginfo",
+                "harfbuzz-debuginfo",
+                "libdisplay-info-debuginfo",
+                "libffi-debuginfo",
+                "libgweather-debuginfo",
+                "librsvg2-debuginfo",
+                "libsoup3-debuginfo",
+                "libwayland-server-debuginfo",
+                "libxcb-debuginfo",
+                "libxml2-debuginfo",
+                "mozjs115-debuginfo",
+                "mutter-debuginfo",
+                "p11-kit-debuginfo",
+                "pango-debuginfo",
+                "rsvg-pixbuf-loader-debuginfo",
+                "startup-notification-debuginfo",
+                "wayland-debuginfo"
+            ],
+            "kinoite": [
+            ]
+        },
+        "exclude": {
+            "all": [
+            ],
+            "silverblue": [
+            ],
+            "kinoite": [
+            ]
+        }
+    },
+    "40": {
+        "include": {
+            "all": [
+            ]
+        },
+        "exclude": {
+            "all": [
+            ],
+            "silverblue": [
+            ]
+        }
+    },
+    "39": {
+        "include": {
+            "all": [
+            ],
+            "kinoite": [
+            ]
+        },
+        "exclude": {
+            "all": [
+            ]
+        }
+    }
+}

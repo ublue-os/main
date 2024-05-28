@@ -154,8 +154,6 @@ jobs:
             FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
-          #extra-args: |
-          #  --target=main
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
@@ -165,7 +163,7 @@ jobs:
         with:
           string: ${{ env.IMAGE_REGISTRY }}
 
-      - name: Push To GHCR
+      - name: Push Image To GHCR
         uses: redhat-actions/push-to-registry@v2
         id: push
         if: github.event_name != 'pull_request'
@@ -211,10 +209,62 @@ jobs:
         env:
           TAGS: ${{ steps.build_image.outputs.tags }}
 
+      - name: Build Debug Image
+        id: build_image_debug
+        uses: redhat-actions/buildah-build@v2
+        with:
+          containerfiles: |
+            ./debug.Containerfile
+          image: ${{ env.IMAGE_NAME }}-debug
+          tags: |
+            ${{ steps.generate-tags.outputs.alias_tags }}
+          build-args: |
+            IMAGE_NAME=rose-os-${{ matrix.image_name }}
+            SOURCE_ORG=joshua-stone
+            SOURCE_IMAGE=rose-os-${{ matrix.image_name }}
+            FEDORA_MAJOR_VERSION=${{ matrix.major_version }}
+          labels: ${{ steps.meta.outputs.labels }}
+          oci: false
+
+      - name: Push Debug Image To GHCR
+        uses: redhat-actions/push-to-registry@v2
+        id: push_debug
+        if: github.event_name != 'pull_request'
+        env:
+          REGISTRY_USER: ${{ github.actor }}
+          REGISTRY_PASSWORD: ${{ github.token }}
+        with:
+          image: ${{ steps.build_image_debug.outputs.image }}
+          tags: ${{ steps.build_image_debug.outputs.tags }}
+          registry: ${{ steps.registry_case.outputs.lowercase }}
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+          extra-args: |
+            --disable-content-trust
+
+      - name: Sign debug container image
+        if: github.event_name != 'pull_request'
+        run: |
+          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image_debug.outputs.image }}@${TAGS}
+        env:
+          TAGS: ${{ steps.push_debug.outputs.digest }}
+          COSIGN_EXPERIMENTAL: false
+          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+
+      - name: Verify debug container image
+        if: github.event_name != 'pull_request'
+        run: |
+          for TAG in $TAGS; do
+              cosign verify --key cosign.pub ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image_debug.outputs.image }}:${TAG}
+          done
+        env:
+          TAGS: ${{ steps.build_image_debug.outputs.tags }}
+
       - name: Echo outputs
         if: github.event_name != 'pull_request'
         run: |
           echo "${{ toJSON(steps.push.outputs) }}"
+          echo "${{ toJSON(steps.push_debug.outputs) }}"
 
   check:
     name: Check all builds successful
