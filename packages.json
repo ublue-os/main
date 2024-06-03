@@ -10,6 +10,7 @@
                 "ffmpeg",
                 "ffmpeg-libs",
                 "ffmpegthumbnailer",
+                "flatpak-spawn",
                 "fzf",
                 "google-noto-sans-balinese-fonts",
                 "google-noto-sans-cjk-fonts",
