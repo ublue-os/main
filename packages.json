@@ -213,7 +213,7 @@
             "all": [],
             "kinoite": [
                 "kf6-kimageformats",
-				"qt6-qtimageformats"
+		"qt6-qtimageformats"
             ]
         },
         "exclude": {
