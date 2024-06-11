@@ -3,6 +3,7 @@
         "include": {
             "all": [
 		"binutils",
+                "egl-utils",
                 "gdb",
                 "heaptrack",
                 "sysprof",
