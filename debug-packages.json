@@ -9,7 +9,7 @@
                 "sysprof",
                 "valgrind"
             ],
-            "silverblue": [
+            "rose-os-silverblue": [
                 "cairo-debuginfo",
                 "colord-debuginfo",
                 "colord-libs-debuginfo",
