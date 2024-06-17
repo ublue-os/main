@@ -42,6 +42,7 @@
                 "powerstat",
                 "smartmontools",
                 "solaar-udev",
+		"squashfs-tools",
                 "symlinks",
                 "tcpdump",
                 "tmux",
