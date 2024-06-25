@@ -3,6 +3,8 @@
         "include": {
             "all": [
                 "alsa-firmware",
+                "bootc",
+                "bootupd",
                 "ffmpeg",
                 "ffmpeg-libs",
                 "ffmpegthumbnailer",
