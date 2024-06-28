@@ -7,7 +7,8 @@ if [[ "$IMAGE_NAME" == "base" ]]; then
 fi
 
 if [[ -f /usr/lib/udev/rules.d/61-gdm.rules ]]; then
-    ln -sf /etc/udev/rules.d/61-gdm.rules /dev/null
+    echo "L /etc/udev/rules.d/61-gdm.rules - - - - /dev/null" \
+        >> /usr/lib/tmpfiles.d/gdm-wayland.conf
 fi
 
 systemctl enable rpm-ostreed-automatic.timer
