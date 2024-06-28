@@ -1,9 +1,13 @@
-#!/bin/sh
+#!/usr/bin/bash
 
 set -ouex pipefail
 
 if [[ "$IMAGE_NAME" == "base" ]]; then
     systemctl enable getty@tty1
+fi
+
+if [[ -f /usr/lib/udev/rules.d/61-gdm.rules ]]; then
+    ln -sf /etc/udev/rules.d/61-gdm.rules /dev/null
 fi
 
 systemctl enable rpm-ostreed-automatic.timer
