@@ -10,6 +10,7 @@
                 "ffmpeg",
                 "ffmpeg-libs",
                 "ffmpegthumbnailer",
+                "flatpak-spawn",
                 "fzf",
                 "google-noto-sans-balinese-fonts",
                 "google-noto-sans-cjk-fonts",
@@ -41,6 +42,7 @@
                 "powerstat",
                 "smartmontools",
                 "solaar-udev",
+		"squashfs-tools",
                 "symlinks",
                 "tcpdump",
                 "tmux",
@@ -170,6 +172,7 @@
         },
         "exclude": {
             "all": [
+                "ffmpeg-free",
                 "google-noto-sans-cjk-vf-fonts",
                 "libavcodec-free",
                 "libavdevice-free",
@@ -209,7 +212,10 @@
     "40": {
         "include": {
             "all": [],
-            "kinoite": []
+            "kinoite": [
+                "kf6-kimageformats",
+		"qt6-qtimageformats"
+            ]
         },
         "exclude": {
             "all": [
