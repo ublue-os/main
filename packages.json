@@ -6,6 +6,7 @@
                 "android-udev-rules",
                 "apr",
                 "apr-util",
+		        "bootc",
                 "distrobox",
                 "ffmpeg",
                 "ffmpeg-libs",
@@ -196,9 +197,7 @@
     },
     "39": {
         "include": {
-            "all": [
-                "bootc"
-            ],
+            "all": [],
             "kinoite": [
                 "xwaylandvideobridge"
             ]
