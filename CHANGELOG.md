@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.2.0](https://github.com/ublue-os/main/compare/v2.1.0...v2.2.0) (2024-06-29)
+
+
+### Features
+
+* Add flatpak-spawn package by default ([#583](https://github.com/ublue-os/main/issues/583)) ([2d8dca6](https://github.com/ublue-os/main/commit/2d8dca6e7d9b54b8637be49a2f0d0d80f3eb0bfc))
+* Add squashfs-tools ([#586](https://github.com/ublue-os/main/issues/586)) ([0afd8cf](https://github.com/ublue-os/main/commit/0afd8cf0caf9f4109bf10e12fae0ab0795e6ac3b))
+* **dev:** add justfile for local testing and integration with vscode ([#578](https://github.com/ublue-os/main/issues/578)) ([7e07358](https://github.com/ublue-os/main/commit/7e073587cee57db4d77ca7677cf80d07f5bc0583))
+* set dracut zstd compression for initramfs regen ([#595](https://github.com/ublue-os/main/issues/595)) ([ea43f00](https://github.com/ublue-os/main/commit/ea43f00fd0fb4c3c4379d71fd30e00522df0fa4a))
+* Sign kernel with our akmods key ([#588](https://github.com/ublue-os/main/issues/588)) ([e72d5af](https://github.com/ublue-os/main/commit/e72d5afc246e45530bf9c56c1605c66ed1d11f11))
+
+
+### Bug Fixes
+
+* **ci:** Don't sign kernel on PR ([#590](https://github.com/ublue-os/main/issues/590)) ([a7dfe88](https://github.com/ublue-os/main/commit/a7dfe88f71b6db1fa540fdd5901cf2bee22e1ea9))
+* reduce gap between upstream builds and ublue builds ([#589](https://github.com/ublue-os/main/issues/589)) ([897a07b](https://github.com/ublue-os/main/commit/897a07b0a7a8df226197631b69af1d2999ca4302))
+* remove ffmpeg-free from all images ([#582](https://github.com/ublue-os/main/issues/582)) ([9f5b4e7](https://github.com/ublue-os/main/commit/9f5b4e74add8c053402e99a99fa37fe7f20b978e))
+
 ## [2.1.0](https://github.com/ublue-os/main/compare/v2.0.0...v2.1.0) (2024-05-07)
 
 
