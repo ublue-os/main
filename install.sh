@@ -22,7 +22,7 @@ rpm-ostree install \
 rpm-ostree cliwrap install-to-root /
 echo "Installing main kernel from cache"
 rpm-ostree override replace \
-    --expermintal \
+    --experimental \
     /tmp/kernel-rpms/kernel-[0-9]*.rpm \
     /tmp/kernel-rpms/kernel-core-*.rpm \
     /tmp/kernel-rpms/kernel-modules-*.rpm \
