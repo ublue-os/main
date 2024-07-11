@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/bash
 
 set -ouex pipefail
 
@@ -9,15 +9,29 @@ if [ -n "${RPMFUSION_MIRROR}" ]; then
     RPMFUSION_MIRROR_RPMS=${RPMFUSION_MIRROR}
 fi
 
-curl -Lo /tmp/rpms/rpmfusion-free-release-${RELEASE}.noarch.rpm ${RPMFUSION_MIRROR_RPMS}/free/fedora/rpmfusion-free-release-${RELEASE}.noarch.rpm
-curl -Lo /tmp/rpms/rpmfusion-nonfree-release-${RELEASE}.noarch.rpm ${RPMFUSION_MIRROR_RPMS}/nonfree/fedora/rpmfusion-nonfree-release-${RELEASE}.noarch.rpm
+curl -Lo /tmp/rpms/rpmfusion-free-release-"${RELEASE}".noarch.rpm "${RPMFUSION_MIRROR_RPMS}"/free/fedora/rpmfusion-free-release-"${RELEASE}".noarch.rpm
+curl -Lo /tmp/rpms/rpmfusion-nonfree-release-"${RELEASE}".noarch.rpm "${RPMFUSION_MIRROR_RPMS}"/nonfree/fedora/rpmfusion-nonfree-release-"${RELEASE}".noarch.rpm
 
-curl -Lo /etc/yum.repos.d/_copr_ublue-os_staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-${RELEASE}/ublue-os-staging-fedora-${RELEASE}.repo 
-curl -Lo /etc/yum.repos.d/_copr_kylegospo_oversteer.repo https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-${RELEASE}/kylegospo-oversteer-fedora-${RELEASE}.repo
+curl -Lo /etc/yum.repos.d/_copr_ublue-os_staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
+curl -Lo /etc/yum.repos.d/_copr_kylegospo_oversteer.repo https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-"${RELEASE}"/kylegospo-oversteer-fedora-"${RELEASE}".repo
 
 rpm-ostree install \
     /tmp/rpms/*.rpm \
     fedora-repos-archive
+
+podman pull ghcr.io/ublue-os/main-kernel:"${RELEASE}"
+podman create --name kernel-cache ghcr.io/ublue-os/main-kernel:"${RELEASE}"
+podman export kernel-cache > /tmp/kernel-cache.tar
+tar -xvf /tmp/kernel-cache.tar
+rpm-ostree cliwrap install-to-root /
+echo "Installing main kernel"
+rpm-ostree override replace \
+    --expermintal \
+    /tmp/rpms/kernel-[0-9]*.rpm \
+    /tmp/rpms/kernel-core-*.rpm \
+    /tmp/rpms/kernel-modules-*.rpm \
+    /tmp/rpms/kernel-uki-virt-*.rpm
+
 
 if [[ "${FEDORA_MAJOR_VERSION}" -ge 39 ]]; then
     # note: this is done before single mirror hack to ensure this persists in image and is not reset
