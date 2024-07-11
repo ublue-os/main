@@ -4,8 +4,9 @@ ARG SOURCE_ORG="${SOURCE_ORG:-fedora-ostree-desktops}"
 ARG BASE_IMAGE="quay.io/${SOURCE_ORG}/${SOURCE_IMAGE}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-40}"
 
-FROM ghcr.io/ublue-os/config:latest as config
-FROM ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} as akmods
+FROM ghcr.io/ublue-os/config:latest AS config
+FROM ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} AS akmods
+FROM ghcr.io/ublue-os/main-kernel:${FEDORA_MAJOR_VERSION} AS kernel
 
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}
 
@@ -22,6 +23,7 @@ COPY github-release-install.sh \
 
 COPY --from=config /rpms /tmp/rpms
 COPY --from=akmods /rpms/ublue-os /tmp/rpms
+COPY --from=kernel /tmp/rpms /tmp/kernel-rpms
 COPY sys_files/usr /usr
 
 RUN mkdir -p /var/lib/alternatives && \

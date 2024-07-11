@@ -19,19 +19,14 @@ rpm-ostree install \
     /tmp/rpms/*.rpm \
     fedora-repos-archive
 
-podman pull ghcr.io/ublue-os/main-kernel:"${RELEASE}"
-podman create --name kernel-cache ghcr.io/ublue-os/main-kernel:"${RELEASE}"
-podman export kernel-cache > /tmp/kernel-cache.tar
-tar -xvf /tmp/kernel-cache.tar
 rpm-ostree cliwrap install-to-root /
-echo "Installing main kernel"
+echo "Installing main kernel from cache"
 rpm-ostree override replace \
     --expermintal \
-    /tmp/rpms/kernel-[0-9]*.rpm \
-    /tmp/rpms/kernel-core-*.rpm \
-    /tmp/rpms/kernel-modules-*.rpm \
-    /tmp/rpms/kernel-uki-virt-*.rpm
-
+    /tmp/kernel-rpms/kernel-[0-9]*.rpm \
+    /tmp/kernel-rpms/kernel-core-*.rpm \
+    /tmp/kernel-rpms/kernel-modules-*.rpm \
+    /tmp/kernel-rpms/kernel-uki-virt-*.rpm
 
 if [[ "${FEDORA_MAJOR_VERSION}" -ge 39 ]]; then
     # note: this is done before single mirror hack to ensure this persists in image and is not reset
