@@ -28,12 +28,17 @@ COPY --from=akmods /rpms/ublue-os /tmp/rpms
 COPY --from=kernel /tmp/rpms /tmp/kernel-rpms
 COPY sys_files/usr /usr
 
-RUN mkdir -p /var/lib/alternatives && \
-    /tmp/install.sh && \
-    /tmp/post-install.sh && \
-    mv /var/lib/alternatives /staged-alternatives && \
-    rm -rf /tmp/* /var/* && \
-    ostree container commit && \
-    mkdir -p /var/lib && mv /staged-alternatives /var/lib/alternatives && \
-    mkdir -p /tmp /var/tmp && \
-    chmod -R 1777 /tmp /var/tmp
+RUN <<EOF
+set -eux
+
+mkdir -p /var/lib/alternatives
+/tmp/install.sh
+/tmp/post-install.sh
+mv /var/lib/alternatives /staged-alternatives
+rm -rf /tmp/* /var/*
+ostree container commit
+mkdir -p /var/lib
+mv /staged-alternatives /var/lib/alternatives
+mkdir -p /tmp /var/tmp
+chmod -R 1777 /tmp /var/tmp
+EOF
