@@ -22,10 +22,10 @@ ARG KERNEL_VERSION=6.9.7-200.fc40.x86_64
 COPY sys_files/usr /usr
 
 RUN --mount=type=bind,from=context,source=/,target=/buildcontext \
-    --mount=type=bind,from=config,source=/rpms,target=/buildcontext/rpms/config \
-    --mount=type=bind,from=akmods,source=/rpms/ublue-os,target=/buildcontext/rpms/akmods \
-    --mount=type=bind,from=kernel,source=/tmp/rpms,target=/buildcontext/kernel-rpms \
-    --mount=type=tmpfs,target=/buildcontext/rpms/tmp \
+    --mount=type=bind,from=config,source=/rpms,target=/rpms/config \
+    --mount=type=bind,from=akmods,source=/rpms/ublue-os,target=/rpms/akmods \
+    --mount=type=bind,from=kernel,source=/tmp/rpms,target=/kernel-rpms \
+    --mount=type=tmpfs,target=/rpms/tmp \
     <<EOF
 set -eux
 
