@@ -3,15 +3,18 @@ ARG SOURCE_IMAGE="${SOURCE_IMAGE:-silverblue}"
 ARG SOURCE_ORG="${SOURCE_ORG:-fedora-ostree-desktops}"
 ARG BASE_IMAGE="quay.io/${SOURCE_ORG}/${SOURCE_IMAGE}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-40}"
+ARG KERNEL_VERSION="${KERNEL_VERSION:-6.9.7-200.fc40.x86_64}"
 
-FROM ghcr.io/ublue-os/config:latest as config
-FROM ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} as akmods
+FROM ghcr.io/ublue-os/config:latest AS config
+FROM ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} AS akmods
+FROM ghcr.io/ublue-os/main-kernel:${KERNEL_VERSION} AS kernel
 
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}
 
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-40}"
-ARG RPMFUSION_MIRROR=""
+ARG RPMFUSION_MIRROR="${:-}"
+ARG KERNEL_VERSION="${KERNEL_VERSION:-6.9.7-200.fc40.x86_64}"
 
 COPY github-release-install.sh \
      install.sh \
@@ -22,6 +25,7 @@ COPY github-release-install.sh \
 
 COPY --from=config /rpms /tmp/rpms
 COPY --from=akmods /rpms/ublue-os /tmp/rpms
+COPY --from=kernel /tmp/rpms /tmp/kernel-rpms
 COPY sys_files/usr /usr
 
 RUN mkdir -p /var/lib/alternatives && \

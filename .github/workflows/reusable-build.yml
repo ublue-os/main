@@ -3,7 +3,7 @@ on:
   workflow_call:
     inputs:
       fedora_version:
-        description: 'The Fedora release version: 39, 40, 41 etc'
+        description: "The Fedora release version: 39, 40, 41 etc"
         required: true
         type: string
 env:
@@ -141,7 +141,26 @@ jobs:
               echo "inspected image version must not be empty or null"
               exit 1
             fi
+            linux=$(skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/main-kernel:${{ matrix.fedora_version }} | jq -r '.Labels["ostree.linux"]')
+            AKMODS_KERNEL_VERSION=$(skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/akmods:main-${{ matrix.fedora_version }} | jq -r '.Labels["ostree.linux"]')
+            if [[ "${linux}" != "${AKMODS_KERNEL_VERSION}" ]]; then
+              echo "Kernel Versions do not match between AKMODS and Cached-Kernel."
+              exit 1
+            fi
+            echo "KERNEL_VERSION=$linux" >> $GITHUB_ENV
             echo "SOURCE_IMAGE_VERSION=$ver" >> $GITHUB_ENV
+
+      - name: Pull Images
+        uses: Wandalen/wretry.action@v3.5.0
+        with:
+          attempt_limit: 3
+          attempt_delay: 15000
+          command: |
+            # pull the base image used for FROM in containerfile so
+            # we can retry on that unfortunately common failure case
+            podman pull quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
+            podman pull ${{ env.IMAGE_REGISTRY }}/akmods:main-${{ matrix.fedora_version }}
+            podman pull ghcr.io/ublue-os/main-kernel:${{ env.KERNEL_VERSION }}
 
       # Generate image metadata
       - name: Image Metadata
@@ -154,18 +173,9 @@ jobs:
             org.opencontainers.image.title=${{ env.IMAGE_NAME }}
             org.opencontainers.image.version=${{ env.SOURCE_IMAGE_VERSION }}
             org.opencontainers.image.description=A base Universal Blue ${{ matrix.image_name }} image with batteries included
+            ostree.linux=${{ env.KERNEL_VERSION }}
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/main/README.md
             io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/120078124?s=200&v=4
-
-      - name: Pull base image
-        uses: Wandalen/wretry.action@v3.5.0
-        with:
-          attempt_limit: 3
-          attempt_delay: 15000
-          command: |
-            # pull the base image used for FROM in containerfile so
-            # we can retry on that unfortunately common failure case
-            podman pull quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
 
       # Build image using Buildah action
       - name: Build Image
@@ -183,19 +193,23 @@ jobs:
             SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
             FEDORA_MAJOR_VERSION=${{ matrix.fedora_version }}
             RPMFUSION_MIRROR=${{ vars.RPMFUSION_MIRROR }}
+            KERNEL_VERSION=${{ env.KERNEL_VERSION }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
 
-      - name: Sign kernel
-        uses: ublue-os/kernel-signer@v0.2.3
-        if: github.event_name != 'pull_request'
-        with:
-          image: ${{ steps.build_image.outputs.image }}
-          default-tag: ${{ env.DEFAULT_TAG }}
-          privkey: ${{ secrets.AKMOD_PRIVKEY_20230518 }}
-          pubkey: /etc/pki/akmods/certs/akmods-ublue.der
-          tags: ${{ steps.build_image.outputs.tags }}
-          strip: false
+      # - name: Secureboot Signature Confirmation
+      #   id: secureboot_confirm
+      #   shell: bash
+      #   run: |
+      #     sudo apt-get update && sudo apt-get install -y sbsigntool curl openssl
+      #     curl -Lo /tmp/kernel-signing.der https://github.com/ublue-os/kernel-cache/raw/main/certs/public_key.der
+      #     curl -Lo /tmp/akmods-signing.der https://github.com/ublue-os/kernel-cache/raw/main/certs/public_key_2.der
+      #     openssl x509 -in /tmp/kernel-signing.der -out /tmp/kernel-signing.crt
+      #     openssl x509 -in /tmp/akmods-signing.der -out /tmp/akmods-signing.crt
+      #     /usr/bin/podman run --rm --entrypoint /bin/bash "${{ steps.build_image.outputs.image }}":"$(echo '${{ steps.build_image.outputs.tags }}' | cut -d ' ' -f 1)" -c "cat /usr/lib/modules/*/vmlinuz" > /tmp/extracted-kernel
+      #     sbverify --list /tmp/extracted-kernel
+      #     sbverify --cert /tmp/kernel-signing.crt /tmp/extracted-kernel || exit 1
+      #     sbverify --cert /tmp/akmods-signing.crt /tmp/extracted-kernel || exit 1
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
