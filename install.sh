@@ -21,7 +21,7 @@ rpm-ostree install \
     /tmp/rpms/*.rpm \
     fedora-repos-archive
 
-# TODO Handle Kernel Skew with override replace
+# Handle Kernel Skew with override replace
 rpm-ostree cliwrap install-to-root /
 if [[ "${KERNEL_VERSION}" == "${QUALIFIED_KERNEL}" ]]; then
     echo "Installing signed kernel from kernel-cache."
@@ -37,10 +37,6 @@ else
         /tmp/kernel-rpms/kernel-core-*.rpm \
         /tmp/kernel-rpms/kernel-modules-*.rpm
 fi
-
-# TODO Remove this before merging
-rpm-ostree install sbsigntools
-sbverify --list /usr/lib/modules/*/vmlinuz
 
 if [[ "${FEDORA_MAJOR_VERSION}" -ge 39 ]]; then
     # note: this is done before single mirror hack to ensure this persists in image and is not reset
