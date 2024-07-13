@@ -6,7 +6,7 @@ ARG FEDORA_MAJOR_VERSION=40
 ARG KERNEL_VERSION=6.9.7-200.fc40.x86_64
 
 # workaround for selinux denying direct access to mounted buildcontext
-FROM scratch as context
+FROM scratch as ctx
 COPY / /
 
 FROM ghcr.io/ublue-os/config:latest as config
@@ -21,13 +21,15 @@ ARG KERNEL_VERSION=6.9.7-200.fc40.x86_64
 
 COPY sys_files/usr /usr
 
-RUN --mount=type=bind,from=context,source=/,target=/buildcontext \
+RUN --mount=type=bind,from=ctx,source=/,target=/buildcontext \
     --mount=type=bind,from=config,source=/rpms,target=/rpms/config \
     --mount=type=bind,from=akmods,source=/rpms/ublue-os,target=/rpms/akmods \
-    --mount=type=bind,from=kernel,source=/tmp/rpms,target=/kernel-rpms \
-    --mount=type=tmpfs,target=/rpms/tmp \
+    --mount=type=bind,from=kernel,source=/tmp/rpms,target=/rpms/kernel \
     <<EOF
 set -eux
+
+export RPMS_DIR="/rpms"
+export BUILDCONTEXT_DIR="/buildcontext"
 
 mkdir -p /var/lib/alternatives
 /buildcontext/install.sh

@@ -2,15 +2,17 @@
 
 set -ouex pipefail
 
+PACKAGE_JSON_PATH="$BUILDCONTEXT_DIR/packages.json"
+
 # build list of all packages requested for inclusion
 INCLUDED_PACKAGES=($(jq -r "[(.all.include | (.all, select(.\"$IMAGE_NAME\" != null).\"$IMAGE_NAME\")[]), \
                              (select(.\"$FEDORA_MAJOR_VERSION\" != null).\"$FEDORA_MAJOR_VERSION\".include | (.all, select(.\"$IMAGE_NAME\" != null).\"$IMAGE_NAME\")[])] \
-                             | sort | unique[]" /buildcontext/packages.json))
+                             | sort | unique[]" "$PACKAGE_JSON_PATH"))
 
 # build list of all packages requested for exclusion
 EXCLUDED_PACKAGES=($(jq -r "[(.all.exclude | (.all, select(.\"$IMAGE_NAME\" != null).\"$IMAGE_NAME\")[]), \
                              (select(.\"$FEDORA_MAJOR_VERSION\" != null).\"$FEDORA_MAJOR_VERSION\".exclude | (.all, select(.\"$IMAGE_NAME\" != null).\"$IMAGE_NAME\")[])] \
-                             | sort | unique[]" /buildcontext/packages.json))
+                             | sort | unique[]" "$PACKAGE_JSON_PATH"))
 
 
 # ensure exclusion list only contains packages already present on image
@@ -38,7 +40,7 @@ fi
 # (this can happen if an included package pulls in a dependency)
 EXCLUDED_PACKAGES=($(jq -r "[(.all.exclude | (.all, select(.\"$IMAGE_NAME\" != null).\"$IMAGE_NAME\")[]), \
                              (select(.\"$FEDORA_MAJOR_VERSION\" != null).\"$FEDORA_MAJOR_VERSION\".exclude | (.all, select(.\"$IMAGE_NAME\" != null).\"$IMAGE_NAME\")[])] \
-                             | sort | unique[]" /buildcontext/packages.json))
+                             | sort | unique[]" "$PACKAGE_JSON_PATH"))
 
 if [[ "${#EXCLUDED_PACKAGES[@]}" -gt 0 ]]; then
     EXCLUDED_PACKAGES=($(rpm -qa --queryformat='%{NAME} ' ${EXCLUDED_PACKAGES[@]}))

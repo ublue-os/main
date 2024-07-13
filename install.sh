@@ -11,29 +11,28 @@ if [ -n "${RPMFUSION_MIRROR}" ]; then
     RPMFUSION_MIRROR_RPMS=${RPMFUSION_MIRROR}
 fi
 
-curl -Lo /rpms/tmp/rpmfusion-free-release-${RELEASE}.noarch.rpm ${RPMFUSION_MIRROR_RPMS}/free/fedora/rpmfusion-free-release-${RELEASE}.noarch.rpm
-curl -Lo /rpms/tmp/rpmfusion-nonfree-release-${RELEASE}.noarch.rpm ${RPMFUSION_MIRROR_RPMS}/nonfree/fedora/rpmfusion-nonfree-release-${RELEASE}.noarch.rpm
-
 curl -Lo /etc/yum.repos.d/_copr_ublue-os_staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
 curl -Lo /etc/yum.repos.d/_copr_kylegospo_oversteer.repo https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-"${RELEASE}"/kylegospo-oversteer-fedora-"${RELEASE}".repo
 
-rpm-ostree install fedora-repos-archive
-find /rpms/ -type f -name "*.rpm" -print0 | xargs -0 rpm-ostree install
+{
+    printf "%s\0" "${REPO_PACKAGES[@]}"
+    find "$RPMS_DIR"/{config,akmods} -type f -name "*.rpm" -print0
+} | xargs -0 rpm-ostree install
 
 # Handle Kernel Skew with override replace
 rpm-ostree cliwrap install-to-root /
 if [[ "${KERNEL_VERSION}" == "${QUALIFIED_KERNEL}" ]]; then
     echo "Installing signed kernel from kernel-cache."
     tmpdir="$(mktemp -d)"
-    rpm2cpio /kernel-rpms/kernel-core-*.rpm | ( cd "$tmpdir"; cpio -idmv )
+    rpm2cpio "$RPMS_DIR"/kernel/kernel-core-*.rpm | ( cd "$tmpdir"; cpio -idmv )
     cp "$tmpdir"/lib/modules/*/vmlinuz /usr/lib/modules/*/vmlinuz
 else
     echo "Install kernel version ${KERNEL_VERSION} from kernel-cache."
     rpm-ostree override replace \
         --experimental \
-        /kernel-rpms/kernel-[0-9]*.rpm \
-        /kernel-rpms/kernel-core-*.rpm \
-        /kernel-rpms/kernel-modules-*.rpm
+        "$RPMS_DIR"/kernel/kernel-[0-9]*.rpm \
+        "$RPMS_DIR"/kernel/kernel-core-*.rpm \
+        "$RPMS_DIR"/kernel/kernel-modules-*.rpm
 fi
 
 if [[ "${FEDORA_MAJOR_VERSION}" -ge 39 ]]; then
@@ -57,10 +56,10 @@ if [ -n "${RPMFUSION_MIRROR}" ]; then
 fi
 
 # run common packages script
-/buildcontext/packages.sh
+"$BUILDCONTEXT_DIR/packages.sh"
 
 ## install packages direct from github
-/buildcontext/github-release-install.sh sigstore/cosign x86_64
+"$BUILDCONTEXT_DIR/github-release-install.sh" sigstore/cosign x86_64
 
 if [ -n "${RPMFUSION_MIRROR}" ]; then
     # reset forced use of single rpmfusion mirror
