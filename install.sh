@@ -6,13 +6,10 @@ RELEASE="$(rpm -E %fedora)"
 KERNEL_SUFFIX=""
 QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\d+)' | sed -E 's/kernel-(|'"$KERNEL_SUFFIX"'-)//')"
 
-RPMFUSION_MIRROR_RPMS="https://mirrors.rpmfusion.org"
-if [ -n "${RPMFUSION_MIRROR}" ]; then
-    RPMFUSION_MIRROR_RPMS=${RPMFUSION_MIRROR}
-fi
+RPMFUSION_MIRROR_RPMS="${RPMFUSION_MIRROR:-https://mirrors.rpmfusion.org}"
 
-curl -Lo /etc/yum.repos.d/_copr_ublue-os_staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
-curl -Lo /etc/yum.repos.d/_copr_kylegospo_oversteer.repo https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-"${RELEASE}"/kylegospo-oversteer-fedora-"${RELEASE}".repo
+curl -fSsLo /etc/yum.repos.d/_copr_ublue-os_staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
+curl -fSsLo /etc/yum.repos.d/_copr_kylegospo_oversteer.repo https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-"${RELEASE}"/kylegospo-oversteer-fedora-"${RELEASE}".repo
 
 {
     printf "%s\0" "${REPO_PACKAGES[@]}"
