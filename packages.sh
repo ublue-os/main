@@ -4,6 +4,9 @@ set -ouex pipefail
 
 PACKAGE_JSON_PATH="$BUILDCONTEXT_DIR/packages.json"
 
+declare -a INCLUDED_PACKAGES
+declare -a EXCLUDED_PACKAGES
+
 # build list of all packages requested for inclusion
 INCLUDED_PACKAGES=($(jq -r "[(.all.include | (.all, select(.\"$IMAGE_NAME\" != null).\"$IMAGE_NAME\")[]), \
                              (select(.\"$FEDORA_MAJOR_VERSION\" != null).\"$FEDORA_MAJOR_VERSION\".include | (.all, select(.\"$IMAGE_NAME\" != null).\"$IMAGE_NAME\")[])] \
