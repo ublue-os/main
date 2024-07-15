@@ -6,11 +6,11 @@ ARG FEDORA_MAJOR_VERSION=40
 ARG KERNEL_VERSION=6.9.7-200.fc40.x86_64
 
 # workaround for selinux denying direct access to mounted buildcontext
-FROM scratch as ctx
+FROM scratch AS ctx
 COPY / /
 
-FROM ghcr.io/ublue-os/config:latest as config
-FROM ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} as akmods
+FROM ghcr.io/ublue-os/config:latest AS config
+FROM ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} AS akmods
 FROM ghcr.io/ublue-os/main-kernel:${KERNEL_VERSION} AS kernel
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}
 
