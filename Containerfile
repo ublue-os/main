@@ -23,7 +23,7 @@ COPY sys_files/usr /usr
 
 RUN --mount=type=bind,from=ctx,source=/,target=/buildcontext \
     --mount=type=bind,from=config,source=/rpms,target=/rpms/config \
-    --mount=type=bind,from=akmods,source=/rpms/ublue-os,target=/rpms/akmods \
+    --mount=type=bind,from=akmods,source=/rpms,target=/rpms/akmods \
     --mount=type=bind,from=kernel,source=/tmp/rpms,target=/rpms/kernel \
     <<EOF
 set -eux
