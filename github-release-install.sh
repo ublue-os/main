@@ -45,6 +45,9 @@ set -ouex pipefail
 API_JSON=$(mktemp /tmp/api-XXXXXXXX.json)
 API="https://api.github.com/repos/${ORG_PROJ}/releases/${RELTAG}"
 
+# ensure deletion of api json tempfile
+trap "[[ -f '$API_JSON' ]] && rm -v '$API_JSON'" EXIT
+
 # retry up to 5 times with 5 second delays for any error included HTTP 404 etc
 curl --fail --retry 5 --retry-delay 5 --retry-all-errors -sL ${API} -o ${API_JSON}
 RPM_URLS=$(cat ${API_JSON} \
