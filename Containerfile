@@ -4,10 +4,11 @@ ARG SOURCE_ORG="${SOURCE_ORG:-fedora-ostree-desktops}"
 ARG BASE_IMAGE="quay.io/${SOURCE_ORG}/${SOURCE_IMAGE}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-40}"
 ARG KERNEL_VERSION="${KERNEL_VERSION:-6.9.7-200.fc40.x86_64}"
+ARG IMAGE_REGISTRY=ghcr.io/ublue-os
 
-FROM ghcr.io/ublue-os/config:latest AS config
-FROM ghcr.io/ublue-os/akmods:main-${FEDORA_MAJOR_VERSION} AS akmods
-FROM ghcr.io/ublue-os/main-kernel:${KERNEL_VERSION} AS kernel
+FROM ${IMAGE_REGISTRY}/config:latest AS config
+FROM ${IMAGE_REGISTRY}/akmods:main-${FEDORA_MAJOR_VERSION} AS akmods
+FROM ${IMAGE_REGISTRY}/main-kernel:${KERNEL_VERSION} AS kernel
 
 FROM scratch AS ctx
 COPY / /
