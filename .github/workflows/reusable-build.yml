@@ -202,7 +202,6 @@ jobs:
               --security-opt=label=disable \
               --security-opt=seccomp=unconfined \
               --device=/dev/fuse:rw \
-              --device=/dev/kmsg:rw \
               -v /home/runner:/home/runner \
               -v "$GRAPH_ROOT":/var/lib/containers/storage \
               -v "$(pwd):"/builder \

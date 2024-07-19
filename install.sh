@@ -21,20 +21,11 @@ find "$RPMS_DIR"/{config,akmods/ublue-os} -type f -name "*.rpm" -print0 | xargs 
 rpm-ostree cliwrap install-to-root /
 if [[ "${KERNEL_VERSION}" == "${QUALIFIED_KERNEL}" ]]; then
     echo "Installing signed kernel from kernel-cache."
-    rpm-ostree override remove \
-        --install=zstd \
-        kernel \
-        kernel-core \
-        kernel-modules \
-        kernel-modules-core \
-        kernel-modules-extra
-    rpm-ostree override replace \
-        --experimental \
+    rpm-ostree install zstd
+    rpm --install --replacefiles --replacepkgs \
         "$RPMS_DIR"/kernel/kernel-[0-9]*.rpm \
         "$RPMS_DIR"/kernel/kernel-core-*.rpm \
-        "$RPMS_DIR"/kernel/kernel-modules-*.rpm \
-        --remove=kernel-debug-core \
-        --remove=kernel-debug-modules-core
+        "$RPMS_DIR"/kernel/kernel-modules-*.rpm
 else
     echo "Install kernel version ${KERNEL_VERSION} from kernel-cache."
     rpm-ostree override replace \
