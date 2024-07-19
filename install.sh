@@ -22,7 +22,7 @@ rpm-ostree cliwrap install-to-root /
 if [[ "${KERNEL_VERSION}" == "${QUALIFIED_KERNEL}" ]]; then
     echo "Installing signed kernel from kernel-cache."
     rpm-ostree override remove \
-        --install=zstd
+        --install=zstd \
         kernel \
         kernel-core \
         kernel-modules \
@@ -35,12 +35,11 @@ if [[ "${KERNEL_VERSION}" == "${QUALIFIED_KERNEL}" ]]; then
         "$RPMS_DIR"/kernel/kernel-modules-*.rpm \
         --remove=kernel-debug-core \
         --remove=kernel-debug-modules-core
-    cp "$tmpdir"/lib/modules/*/vmlinuz /usr/lib/modules/*/vmlinuz
 else
     echo "Install kernel version ${KERNEL_VERSION} from kernel-cache."
     rpm-ostree override replace \
         --experimental \
-        --install=zstd
+        --install=zstd \
         "$RPMS_DIR"/kernel/kernel-[0-9]*.rpm \
         "$RPMS_DIR"/kernel/kernel-core-*.rpm \
         "$RPMS_DIR"/kernel/kernel-modules-*.rpm
