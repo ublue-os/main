@@ -6,31 +6,36 @@ RELEASE="$(rpm -E %fedora)"
 KERNEL_SUFFIX=""
 QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\d+)' | sed -E 's/kernel-(|'"$KERNEL_SUFFIX"'-)//')"
 
-RPMFUSION_MIRROR_RPMS="${RPMFUSION_MIRROR:-https://mirrors.rpmfusion.org}"
+RPMFUSION_MIRROR_RPMS="https://mirrors.rpmfusion.org"
+if [ -n "${RPMFUSION_MIRROR}" ]; then
+    RPMFUSION_MIRROR_RPMS=${RPMFUSION_MIRROR}
+fi
 
-curl -fSsLo /etc/yum.repos.d/_copr_ublue-os_staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
-curl -fSsLo /etc/yum.repos.d/_copr_kylegospo_oversteer.repo https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-"${RELEASE}"/kylegospo-oversteer-fedora-"${RELEASE}".repo
+curl -Lo /tmp/rpms/rpmfusion-free-release-"${RELEASE}".noarch.rpm "${RPMFUSION_MIRROR_RPMS}"/free/fedora/rpmfusion-free-release-"${RELEASE}".noarch.rpm
+curl -Lo /tmp/rpms/rpmfusion-nonfree-release-"${RELEASE}".noarch.rpm "${RPMFUSION_MIRROR_RPMS}"/nonfree/fedora/rpmfusion-nonfree-release-"${RELEASE}".noarch.rpm
+
+curl -Lo /etc/yum.repos.d/_copr_ublue-os_staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
+curl -Lo /etc/yum.repos.d/_copr_kylegospo_oversteer.repo https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-"${RELEASE}"/kylegospo-oversteer-fedora-"${RELEASE}".repo
 
 rpm-ostree install \
-    fedora-repos-archive \
-    "${RPMFUSION_MIRROR_RPMS}/free/fedora/rpmfusion-free-release-${RELEASE}.noarch.rpm" \
-    "${RPMFUSION_MIRROR_RPMS}/nonfree/fedora/rpmfusion-nonfree-release-${RELEASE}.noarch.rpm"
-find "$RPMS_DIR"/{config,akmods/ublue-os} -type f -name "*.rpm" -print0 | xargs -0 rpm-ostree install
+    /tmp/rpms/*.rpm \
+    fedora-repos-archive
 
 # Handle Kernel Skew with override replace
 rpm-ostree cliwrap install-to-root /
 if [[ "${KERNEL_VERSION}" == "${QUALIFIED_KERNEL}" ]]; then
     echo "Installing signed kernel from kernel-cache."
-    tmpdir="$(mktemp -d)"
-    rpm2cpio "$RPMS_DIR"/kernel/kernel-core-*.rpm | ( cd "$tmpdir"; cpio -idmv )
-    cp "$tmpdir"/lib/modules/*/vmlinuz /usr/lib/modules/*/vmlinuz
+    cd /tmp/kernel-rpms
+    rpm2cpio /tmp/kernel-rpms/kernel-core-*.rpm | cpio -idmv
+    cp ./lib/modules/*/vmlinuz /usr/lib/modules/*/vmlinuz
+    cd /
 else
     echo "Install kernel version ${KERNEL_VERSION} from kernel-cache."
     rpm-ostree override replace \
         --experimental \
-        "$RPMS_DIR"/kernel/kernel-[0-9]*.rpm \
-        "$RPMS_DIR"/kernel/kernel-core-*.rpm \
-        "$RPMS_DIR"/kernel/kernel-modules-*.rpm
+        /tmp/kernel-rpms/kernel-[0-9]*.rpm \
+        /tmp/kernel-rpms/kernel-core-*.rpm \
+        /tmp/kernel-rpms/kernel-modules-*.rpm
 fi
 
 if [[ "${FEDORA_MAJOR_VERSION}" -ge 39 ]]; then
@@ -54,10 +59,10 @@ if [ -n "${RPMFUSION_MIRROR}" ]; then
 fi
 
 # run common packages script
-"$BUILDCONTEXT_DIR/packages.sh"
+/tmp/packages.sh
 
 ## install packages direct from github
-"$BUILDCONTEXT_DIR/github-release-install.sh" sigstore/cosign x86_64
+/tmp/github-release-install.sh sigstore/cosign x86_64
 
 if [ -n "${RPMFUSION_MIRROR}" ]; then
     # reset forced use of single rpmfusion mirror
