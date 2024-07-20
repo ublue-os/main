@@ -11,21 +11,24 @@ if [ -n "${RPMFUSION_MIRROR}" ]; then
     RPMFUSION_MIRROR_RPMS=${RPMFUSION_MIRROR}
 fi
 
-curl -Lo /tmp/rpms/rpmfusion-free-release-"${RELEASE}".noarch.rpm "${RPMFUSION_MIRROR_RPMS}"/free/fedora/rpmfusion-free-release-"${RELEASE}".noarch.rpm
-curl -Lo /tmp/rpms/rpmfusion-nonfree-release-"${RELEASE}".noarch.rpm "${RPMFUSION_MIRROR_RPMS}"/nonfree/fedora/rpmfusion-nonfree-release-"${RELEASE}".noarch.rpm
+mkdir -p /tmp/rpm-repos
+curl -Lo /tmp/rpm-repos/rpmfusion-free-release-"${RELEASE}".noarch.rpm "${RPMFUSION_MIRROR_RPMS}"/free/fedora/rpmfusion-free-release-"${RELEASE}".noarch.rpm
+curl -Lo /tmp/rpm-repos/rpmfusion-nonfree-release-"${RELEASE}".noarch.rpm "${RPMFUSION_MIRROR_RPMS}"/nonfree/fedora/rpmfusion-nonfree-release-"${RELEASE}".noarch.rpm
 
 curl -Lo /etc/yum.repos.d/_copr_ublue-os_staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
 curl -Lo /etc/yum.repos.d/_copr_kylegospo_oversteer.repo https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-"${RELEASE}"/kylegospo-oversteer-fedora-"${RELEASE}".repo
 
 rpm-ostree install \
     /tmp/rpms/*.rpm \
+    /tmp/rpm-repos/*.rpm \
+    /tmp/akmods-rpms/*.rpm \
     fedora-repos-archive
 
 # Handle Kernel Skew with override replace
 rpm-ostree cliwrap install-to-root /
 if [[ "${KERNEL_VERSION}" == "${QUALIFIED_KERNEL}" ]]; then
     echo "Installing signed kernel from kernel-cache."
-    cd /tmp/kernel-rpms
+    cd /tmp
     rpm2cpio /tmp/kernel-rpms/kernel-core-*.rpm | cpio -idmv
     cp ./lib/modules/*/vmlinuz /usr/lib/modules/*/vmlinuz
     cd /
