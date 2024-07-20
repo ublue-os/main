@@ -35,5 +35,5 @@ RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     rm -rf /var/* || true && \
     ostree container commit && \
     mkdir -p /var/lib && mv /staged-alternatives /var/lib/alternatives && \
-    mkdir -p /tmp /var/tmp && \
-    chmod -R 1777 /tmp /var/tmp
+    mkdir -p /var/tmp && \
+    chmod -R 1777 /var/tmp
