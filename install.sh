@@ -36,6 +36,7 @@ else
     echo "Install kernel version ${KERNEL_VERSION} from kernel-cache."
     rpm-ostree override replace \
         --experimental \
+        --install=zstd \
         /tmp/kernel-rpms/kernel-[0-9]*.rpm \
         /tmp/kernel-rpms/kernel-core-*.rpm \
         /tmp/kernel-rpms/kernel-modules-*.rpm
@@ -62,10 +63,14 @@ if [ -n "${RPMFUSION_MIRROR}" ]; then
 fi
 
 # run common packages script
-/tmp/packages.sh
+/ctx/packages.sh
 
 ## install packages direct from github
-/tmp/github-release-install.sh sigstore/cosign x86_64
+/ctx/github-release-install.sh sigstore/cosign x86_64
+
+if [[ "${KERNEL_VERSION}" == "${QUALIFIED_KERNEL}" ]]; then
+    /ctx/initramfs.sh
+fi
 
 if [ -n "${RPMFUSION_MIRROR}" ]; then
     # reset forced use of single rpmfusion mirror

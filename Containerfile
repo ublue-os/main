@@ -26,10 +26,9 @@ RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     --mount=type=bind,from=config,src=/rpms,dst=/tmp/rpms \
     --mount=type=bind,from=akmods,src=/rpms/ublue-os,dst=/tmp/akmods-rpms \
     --mount=type=bind,from=kernel,src=/tmp/rpms,dst=/tmp/kernel-rpms \
-    cp /ctx/{github-release-install.sh,install.sh,post-install.sh,packages.sh,packages.json} /tmp/ && \
     mkdir -p /var/lib/alternatives && \
-    /tmp/install.sh && \
-    /tmp/post-install.sh && \
+    /ctx/install.sh && \
+    /ctx/post-install.sh && \
     mv /var/lib/alternatives /staged-alternatives && \
     rm -rf /tmp/* || true && \
     rm -rf /var/* || true && \
