@@ -30,8 +30,7 @@ RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     /ctx/install.sh && \
     /ctx/post-install.sh && \
     mv /var/lib/alternatives /staged-alternatives && \
-    rm -rf /tmp/* || true && \
-    rm -rf /var/* || true && \
+    /ctx/cleanup.sh && \
     ostree container commit && \
     mkdir -p /var/lib && mv /staged-alternatives /var/lib/alternatives && \
     mkdir -p /var/tmp && \
