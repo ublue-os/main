@@ -172,7 +172,8 @@
         },
         "exclude": {
             "all": [
-                "ffmpeg-free",
+                "chsh", 
+		"ffmpeg-free",
                 "google-noto-sans-cjk-vf-fonts",
                 "libavcodec-free",
                 "libavdevice-free",
