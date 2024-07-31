@@ -160,7 +160,7 @@ jobs:
             # we can retry on that unfortunately common failure case
             podman pull quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
             podman pull ${{ env.IMAGE_REGISTRY }}/akmods:main-${{ matrix.fedora_version }}
-            podman pull ghcr.io/ublue-os/main-kernel:${{ env.KERNEL_VERSION }}
+            podman pull ${{ env.IMAGE_REGISTRY }}/main-kernel:${{ env.KERNEL_VERSION }}
 
       # Generate image metadata
       - name: Image Metadata
@@ -194,6 +194,7 @@ jobs:
             FEDORA_MAJOR_VERSION=${{ matrix.fedora_version }}
             RPMFUSION_MIRROR=${{ vars.RPMFUSION_MIRROR }}
             KERNEL_VERSION=${{ env.KERNEL_VERSION }}
+            IMAGE_REGISTRY=${{ env.IMAGE_REGISTRY }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
 
