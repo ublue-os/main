@@ -27,6 +27,7 @@ RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     --mount=type=bind,from=config,src=/rpms,dst=/tmp/rpms \
     --mount=type=bind,from=akmods,src=/rpms/ublue-os,dst=/tmp/akmods-rpms \
     --mount=type=bind,from=kernel,src=/tmp/rpms,dst=/tmp/kernel-rpms \
+    rm -f /usr/bin/chsh && \
     mkdir -p /var/lib/alternatives && \
     /ctx/install.sh && \
     /ctx/post-install.sh && \
