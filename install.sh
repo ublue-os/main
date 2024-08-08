@@ -19,7 +19,8 @@ curl -Lo /etc/yum.repos.d/_copr_ublue-os_staging.repo https://copr.fedorainfracl
 curl -Lo /etc/yum.repos.d/_copr_kylegospo_oversteer.repo https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-"${RELEASE}"/kylegospo-oversteer-fedora-"${RELEASE}".repo
 
 rpm-ostree install \
-    /tmp/rpms/*.rpm \
+    /tmp/rpms/*.rpm --force-replacefiles && \
+rpm-ostree install \
     /tmp/rpm-repos/*.rpm \
     /tmp/akmods-rpms/*.rpm \
     fedora-repos-archive
