@@ -11,7 +11,7 @@
                 "ffmpeg-libs",
                 "ffmpegthumbnailer",
                 "flatpak-spawn",
-		"fuse",
+                "fuse",
                 "fzf",
                 "google-noto-sans-balinese-fonts",
                 "google-noto-sans-cjk-fonts",
