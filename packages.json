@@ -120,6 +120,18 @@
             ]
         }
     },
+    "41": {
+        "include": {
+            "all": [
+            ]
+        },
+        "exclude": {
+            "all": [
+                "default-fonts-cjk-sans",
+                "ffmpeg-free"
+            ]
+        }
+    },
     "40": {
         "include": {
             "all": [
