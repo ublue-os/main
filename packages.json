@@ -55,6 +55,7 @@
                 "traceroute",
                 "vim",
                 "wireguard-tools",
+		"yubikey-manager",
                 "zstd"
             ],
             "silverblue": [
