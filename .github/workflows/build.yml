@@ -11,7 +11,7 @@ env:
 jobs:
   push-ghcr:
     name: main image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: write
@@ -22,17 +22,18 @@ jobs:
         image_name:
           - silverblue
           - kinoite
-        major_version: [40]
+        major_version: [40, 41]
         include:
+          - major_version: 41
+            is_latest_version: true
+            is_stable_version: false
+            is_gts_version: false
           - major_version: 40
             is_latest_version: true
             is_stable_version: true
             is_gts_version: false
 
     steps:
-      - name: Maximize build space
-        uses: ublue-os/remove-unwanted-software@v6
-
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@v4
