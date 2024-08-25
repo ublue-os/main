@@ -19,6 +19,7 @@
                 "libjxl-utils",
                 "libva-intel-driver",
                 "libva-utils",
+                "lorax",
                 "lshw",
 		"make",
                 "mesa-filesystem",
