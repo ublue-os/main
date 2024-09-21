@@ -1,4 +1,4 @@
-name: build-rose-os
+name: build-rpms
 on:
   pull_request:
   merge_group:
