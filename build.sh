@@ -6,7 +6,8 @@ sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
 
 readonly RPM_BUILD_DIR="/tmp/rose-os/rpmbuild"
 
-rpm-ostree install cabextract rpm-build rpm-sign
+dnf5 install --setopt install_weak_deps=0 --assumeyes dnf5-plugins jq rpm-build rpm-sign
+dnf5 builddep --setopt install_weak_deps=0 --assumeyes /tmp/rose-os/*.spec
 
 mkdir -p ${RPM_BUILD_DIR}/SOURCES /tmp/rpms
 
@@ -30,8 +31,6 @@ rpmbuild -ba \
     /tmp/rose-os/*.spec
 
 find ${RPM_BUILD_DIR}/RPMS -name '*.rpm' -exec cp {} /tmp/rpms \;
-
-/tmp/github-release-install.sh sigstore/cosign x86_64
 
 if [[ -s /tmp/RPM-GPG-KEY-rose-os.priv ]]; then
     mkdir -p -m 700 /tmp/gnupg

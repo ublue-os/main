@@ -13,6 +13,7 @@ URL:           https://github.com/jostone-stone/rose-os
 BuildArch:     noarch
 
 BuildRequires: cabextract
+BuildRequires: wget
 Requires:      fontconfig
 
 %define        FONTSDIR     %{buildroot}%{_datadir}/fonts/%{NAME}
