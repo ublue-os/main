@@ -31,7 +31,7 @@
                 "libheif-tools",
                 "libratbag-ratbagd",
                 "libva-intel-driver",
-                "libva-utils",                 
+                "libva-utils",
                 "lshw",
                 "mesa-va-drivers-freeworld.x86_64",
                 "net-tools",
@@ -126,7 +126,7 @@
             "all": [],
             "kinoite": [
                 "kf6-kimageformats",
-		"qt6-qtimageformats"
+                "qt6-qtimageformats"
             ]
         },
         "exclude": {
