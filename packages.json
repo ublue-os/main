@@ -55,6 +55,7 @@
                 "traceroute",
                 "vim",
                 "wireguard-tools",
+                "wl-clipboard",
                 "yubikey-manager",
                 "zstd"
             ],
