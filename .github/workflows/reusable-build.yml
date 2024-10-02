@@ -33,12 +33,7 @@ jobs:
           - onyx
           - base
           - lazurite
-          - mate
           - vauxite
-        exclude:
-          # There is currently no Fedora 40 version of mate
-          - image_name: mate
-            fedora_version: 40
 
     steps:
       # Checkout push-to-registry action GitHub repository

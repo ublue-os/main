@@ -48,16 +48,6 @@ if [[ "${FEDORA_MAJOR_VERSION}" -ge 39 ]]; then
     sed -i '0,/enabled=0/{s/enabled=0/enabled=1\npriority=110/}' /etc/yum.repos.d/rpmfusion-*-updates-testing.repo
 fi
 
-# Temporary fix for an upstream issue
-# https://github.com/coreos/rpm-ostree/issues/5048
-if [[ "${FEDORA_MAJOR_VERSION}" -eq 40 ]]; then
-    rpm-ostree override replace \
-    --experimental \
-    --from repo=copr:copr.fedorainfracloud.org:ublue-os:staging \
-        rpm-ostree \
-        rpm-ostree-libs
-fi
-
 # after F41 launches, bump to 42
 if [[ "${FEDORA_MAJOR_VERSION}" -ge 41 ]]; then
     # note: this is done before single mirror hack to ensure this persists in image and is not reset
