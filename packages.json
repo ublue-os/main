@@ -9,6 +9,7 @@
                 "distrobox",
                 "ffmpeg",
                 "ffmpeg-libs",
+                "ffmpegthumbnailer",
                 "flatpak-spawn",
                 "fuse",
                 "fzf",
