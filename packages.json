@@ -27,7 +27,6 @@
                 "libcamera-tools",
                 "libcamera-gstreamer",
                 "libcamera-ipa",
-                "libheif",
                 "libratbag-ratbagd",
                 "libva-intel-media-driver",
                 "libva-utils",
