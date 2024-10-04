@@ -32,16 +32,6 @@ else
         /tmp/kernel-rpms/kernel-modules-*.rpm
 fi
 
-# Temporary fix for an upstream issue
-# https://github.com/coreos/rpm-ostree/issues/5048
-if [[ "${FEDORA_MAJOR_VERSION}" -eq 40 ]]; then
-    rpm-ostree override replace \
-    --experimental \
-    --from repo=copr:copr.fedorainfracloud.org:ublue-os:staging \
-        rpm-ostree \
-        rpm-ostree-libs
-fi
-
 # use negativo17 for 3rd party packages with higher priority than default
 curl -Lo /etc/yum.repos.d/negativo17-fedora-multimedia.repo https://negativo17.org/repos/fedora-multimedia.repo
 sed -i '0,/enabled=0/{s/enabled=0/enabled=1\npriority=90/}' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
