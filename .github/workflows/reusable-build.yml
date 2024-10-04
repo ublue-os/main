@@ -187,7 +187,6 @@ jobs:
             SOURCE_ORG=${{ env.SOURCE_ORG }}
             SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
             FEDORA_MAJOR_VERSION=${{ matrix.fedora_version }}
-            RPMFUSION_MIRROR=${{ vars.RPMFUSION_MIRROR }}
             KERNEL_VERSION=${{ env.KERNEL_VERSION }}
             IMAGE_REGISTRY=${{ env.IMAGE_REGISTRY }}
           labels: ${{ steps.meta.outputs.labels }}
