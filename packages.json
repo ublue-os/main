@@ -31,7 +31,6 @@
                 "libcamera-ipa",
                 "libfdk-aac",
                 "libratbag-ratbagd",
-                "libva-intel-media-driver",
                 "libva-utils",
                 "lshw",
                 "net-tools",
