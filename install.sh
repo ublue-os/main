@@ -38,7 +38,7 @@ sed -i '0,/enabled=0/{s/enabled=0/enabled=1\npriority=90/}' /etc/yum.repos.d/neg
 cat /etc/yum.repos.d/negativo17-fedora-multimedia.repo
 
 # use override to replace mesa drivers with the less crippled version
-rpm-ostree override replace --experimental --from repo='fedora-multimedia' mesa-filesystem mesa-va-drivers
+rpm-ostree override replace --experimental --from repo='fedora-multimedia' mesa-dri-drivers mesa-filesystem mesa-va-drivers
 
 # run common packages script
 /ctx/packages.sh
