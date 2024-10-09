@@ -43,6 +43,7 @@
                 "pipewire-libs-extra",
                 "pipewire-plugin-libcamera",
                 "powerstat",
+                "rar",
                 "smartmontools",
                 "solaar-udev",
                 "squashfs-tools",
