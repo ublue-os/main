@@ -90,7 +90,8 @@
                 "libavutil-free",
                 "libpostproc-free",
                 "libswresample-free",
-                "libswscale-free"
+                "libswscale-free",
+                "default-fonts-cjk-sans"
             ],
             "kinoite": [
                 "ffmpegthumbnailer",
@@ -112,11 +113,6 @@
             "kinoite": [
                 "xwaylandvideobridge"
             ]
-        },
-        "exclude": {
-            "all": [
-                "default-fonts-cjk-sans"
-            ]
         }
     },
     "40": {
@@ -128,11 +124,6 @@
             "kinoite": [
                 "kf6-kimageformats",
                 "qt6-qtimageformats"
-            ]
-        },
-        "exclude": {
-            "all": [
-                "default-fonts-cjk-sans"
             ]
         }
     },
