@@ -1,6 +1,6 @@
 name: ublue main 40
 on:
-  # pull_request:
+  pull_request:
   merge_group:
   schedule:
     - cron: '5 3 * * *'  # 3am-ish UTC everyday (timed against official fedora container pushes)
