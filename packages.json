@@ -20,7 +20,6 @@
                 "grub2-tools-extra",
                 "heif-pixbuf-loader",
                 "htop",
-                "intel-vaapi-driver",
                 "just",
                 "kernel-tools",
                 "libcamera",
@@ -40,7 +39,6 @@
                 "pam-u2f",
                 "pam_yubico",
                 "pamu2fcfg",
-                "pipewire-libs-extra",
                 "pipewire-plugin-libcamera",
                 "powerstat",
                 "smartmontools",
@@ -92,7 +90,8 @@
                 "libavutil-free",
                 "libpostproc-free",
                 "libswresample-free",
-                "libswscale-free"
+                "libswscale-free",
+                "default-fonts-cjk-sans"
             ],
             "kinoite": [
                 "ffmpegthumbnailer",
@@ -107,30 +106,40 @@
     "39": {
         "include": {
             "all": [
-                "bootc"
+                "bootc",
+                "intel-vaapi-driver",
+                "pipewire-libs-extra"
             ],
             "kinoite": [
                 "xwaylandvideobridge"
             ]
         },
         "exclude": {
-            "all": [
-                "default-fonts-cjk-sans"
-            ]
+            "all": []
         }
     },
     "40": {
         "include": {
-            "all": [],
+            "all": [
+                "intel-vaapi-driver",
+                "pipewire-libs-extra"
+            ],
             "kinoite": [
                 "kf6-kimageformats",
                 "qt6-qtimageformats"
             ]
         },
         "exclude": {
-            "all": [
-                "default-fonts-cjk-sans"
-            ]
+            "all": []
+        }
+    },
+    "41": {
+        "include": {
+            "all": [],
+            "kinoite": []
+        },
+        "exclude": {
+            "all": []
         }
     }
 }
