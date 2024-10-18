@@ -63,14 +63,17 @@ jobs:
             IS_LATEST_VERSION=false
             IS_STABLE_VERSION=true
             IS_GTS_VERSION=true
+            IS_BETA_VERSION=false
           elif [[ "${{ matrix.fedora_version }}" -eq "40" ]]; then
             IS_LATEST_VERSION=true
             IS_STABLE_VERSION=true
             IS_GTS_VERSION=false
+            IS_BETA_VERSION=false
           elif [[ "${{ matrix.fedora_version }}" -eq "41" ]]; then
             IS_LATEST_VERSION=false
             IS_STABLE_VERSION=false
             IS_GTS_VERSION=false
+            IS_BETA_VERSION=true
           fi
 
           COMMIT_TAGS=()
@@ -103,6 +106,10 @@ jobs:
               BUILD_TAGS+=("gts-${TIMESTAMP}")
               BUILD_TAGS+=("gts")
               echo "DEFAULT_TAG=gts" >> $GITHUB_ENV
+          elif [[ "${IS_BETA_VERSION}" == "true" ]]; then
+              BUILD_TAGS+=("beta-${TIMESTAMP}")
+              BUILD_TAGS+=("beta")
+              echo "DEFAULT_TAG=beta" >> $GITHUB_ENV
           fi
 
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
