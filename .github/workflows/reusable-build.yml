@@ -73,7 +73,7 @@ jobs:
             IS_LATEST_VERSION=false
             IS_STABLE_VERSION=false
             IS_GTS_VERSION=false
-            IS_BETA_VERSION=false
+            IS_BETA_VERSION=true
           fi
 
           COMMIT_TAGS=()
