@@ -113,6 +113,9 @@
             "kinoite": [
                 "xwaylandvideobridge"
             ]
+        },
+        "exclude": {
+            "all": []
         }
     },
     "40": {
@@ -125,6 +128,9 @@
                 "kf6-kimageformats",
                 "qt6-qtimageformats"
             ]
+        },
+        "exclude": {
+            "all": []
         }
     },
     "41": {
