@@ -40,10 +40,8 @@ sed -i '0,/enabled=1/{s/enabled=1/enabled=1\npriority=90/}' /etc/yum.repos.d/neg
 rpm-ostree override replace \
   --experimental \
   --from repo='fedora-multimedia' \
-    libheif \
     libva \
     libva-intel-media-driver \
-    libvdpau \
     mesa-dri-drivers \
     mesa-filesystem \
     mesa-libEGL \
@@ -53,6 +51,14 @@ rpm-ostree override replace \
     mesa-libxatracker \
     mesa-va-drivers \
     mesa-vulkan-drivers
+
+if [[ "$FEDORA_MAJOR_VERSION" -ne "41" ]]; then
+    rpm-ostree override replace \
+        --experimental \
+        --from repo='fedora-multimedia' \
+        libheif \
+        libvdpau
+fi
 
 # run common packages script
 /ctx/packages.sh
