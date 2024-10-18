@@ -39,7 +39,6 @@
                 "pam-u2f",
                 "pam_yubico",
                 "pamu2fcfg",
-                "pipewire-libs-extra",
                 "pipewire-plugin-libcamera",
                 "powerstat",
                 "smartmontools",
@@ -107,7 +106,8 @@
         "include": {
             "all": [
                 "bootc",
-                "intel-vaapi-driver"
+                "intel-vaapi-driver",
+                "pipewire-libs-extra"
             ],
             "kinoite": [
                 "xwaylandvideobridge"
@@ -122,7 +122,8 @@
     "40": {
         "include": {
             "all": [
-                "intel-vaapi-driver"
+                "intel-vaapi-driver",
+                "pipewire-libs-extra"
             ],
             "kinoite": [
                 "kf6-kimageformats",
