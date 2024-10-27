@@ -40,6 +40,7 @@ sed -i '0,/enabled=1/{s/enabled=1/enabled=1\npriority=90/}' /etc/yum.repos.d/neg
 rpm-ostree override replace \
   --experimental \
   --from repo='fedora-multimedia' \
+    libheif \
     libva \
     libva-intel-media-driver \
     mesa-dri-drivers \
@@ -56,7 +57,6 @@ if [[ "$FEDORA_MAJOR_VERSION" -ne "41" ]]; then
     rpm-ostree override replace \
         --experimental \
         --from repo='fedora-multimedia' \
-        libheif \
         libvdpau
 fi
 

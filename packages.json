@@ -20,6 +20,7 @@
                 "grub2-tools-extra",
                 "heif-pixbuf-loader",
                 "htop",
+                "intel-vaapi-driver",
                 "just",
                 "kernel-tools",
                 "libcamera",
@@ -39,6 +40,7 @@
                 "pam-u2f",
                 "pam_yubico",
                 "pamu2fcfg",
+                "pipewire-libs-extra",
                 "pipewire-plugin-libcamera",
                 "powerstat",
                 "smartmontools",
@@ -106,9 +108,7 @@
     "39": {
         "include": {
             "all": [
-                "bootc",
-                "intel-vaapi-driver",
-                "pipewire-libs-extra"
+                "bootc"
             ],
             "kinoite": [
                 "xwaylandvideobridge"
@@ -120,10 +120,7 @@
     },
     "40": {
         "include": {
-            "all": [
-                "intel-vaapi-driver",
-                "pipewire-libs-extra"
-            ],
+            "all": [],
             "kinoite": [
                 "kf6-kimageformats",
                 "qt6-qtimageformats"
