@@ -72,6 +72,10 @@ CSFG=/usr/lib/systemd/system-generators/coreos-sulogin-force-generator
 curl -sSLo ${CSFG} https://raw.githubusercontent.com/coreos/fedora-coreos-config/refs/heads/stable/overlay.d/05core/usr/lib/systemd/system-generators/coreos-sulogin-force-generator
 chmod +x ${CSFG}
 
+# prevent gnome software from warning about dkms secureboot as these warnings
+# would duplicate warnings provided by ublue already. we don't want confusion
+rm -f /usr/libexec/gnome-software-dkms-helper
+
 if [[ "${KERNEL_VERSION}" == "${QUALIFIED_KERNEL}" ]]; then
     /ctx/initramfs.sh
 fi
