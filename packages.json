@@ -133,7 +133,10 @@
     "41": {
         "include": {
             "all": [],
-            "kinoite": []
+            "kinoite": [
+                "kf6-kimageformats",
+                "qt6-qtimageformats"
+            ]
         },
         "exclude": {
             "all": []
