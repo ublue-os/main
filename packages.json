@@ -96,7 +96,8 @@
                 "default-fonts-cjk-sans"
             ],
             "silverblue": [
-                "totem-video-thumbnailer"
+                "totem-video-thumbnailer",
+                "gnome-software-rpm-ostree"
             ],
             "kinoite": [
                 "ffmpegthumbnailer",
