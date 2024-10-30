@@ -76,6 +76,9 @@ chmod +x ${CSFG}
 # would duplicate warnings provided by ublue already. we don't want confusion
 rm -f /usr/libexec/gnome-software-dkms-helper
 
+# Remove avif thumbnailer, as heif thumbnailer already caches it
+rm -f /usr/share/thumbnailers/avif.thumbnailer
+
 if [[ "${KERNEL_VERSION}" == "${QUALIFIED_KERNEL}" ]]; then
     /ctx/initramfs.sh
 fi
