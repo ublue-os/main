@@ -95,6 +95,9 @@
                 "libswscale-free",
                 "default-fonts-cjk-sans"
             ],
+            "silverblue": [
+                "totem-video-thumbnailer"
+            ],
             "kinoite": [
                 "ffmpegthumbnailer",
                 "plasma-discover-rpm-ostree"
