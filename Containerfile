@@ -26,10 +26,9 @@ RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     --mount=type=bind,from=config,src=/rpms,dst=/tmp/rpms \
     --mount=type=bind,from=akmods,src=/rpms/ublue-os,dst=/tmp/akmods-rpms \
     --mount=type=bind,from=kernel,src=/tmp/rpms,dst=/tmp/kernel-rpms \
-    mkdir -p /var/lib/alternatives && \
     chmod +x /ctx/build_scripts/*.sh && \
-    for script in /ctx/build_scripts/*.sh; do $script; done && \
-    ostree container commit && \
-    mkdir -p /var/lib && mv /staged-alternatives /var/lib/alternatives && \
-    mkdir -p /var/tmp && \
-    chmod -R 1777 /var/tmp
+    for script in /ctx/build_scripts/*.sh; do $script; done \
+    && \
+    rpm-ostree cleanup -m && \
+    rm -rf /tmp/* /var/* && \
+    ostree container commit
