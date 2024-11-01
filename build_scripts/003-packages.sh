@@ -2,8 +2,6 @@
 
 set -ouex pipefail
 
-RELEASE="$(rpm -E %fedora)"
-
 # Helper function to parse packages
 get_packages() {
   local type="$1"
