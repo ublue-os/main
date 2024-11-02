@@ -63,9 +63,7 @@ fi
 # Disable DKMS support in gnome-software
 if [[ "$FEDORA_MAJOR_VERSION" -ge "41" && "$IMAGE_NAME" == "silverblue" ]]; then
     rpm-ostree override replace \
-        --experimental \
-        --from repo=copr:copr.fedorainfracloud.org:ublue-os:staging \
-        gnome-software.x86_64
+        https://download.copr.fedorainfracloud.org/results/ublue-os/staging/fedora-41-x86_64/08203620-gnome-software/gnome-software-47.1-100.ublue.fc41.x86_64.rpm
 fi
 
 # run common packages script
