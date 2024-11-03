@@ -21,13 +21,9 @@ jobs:
       matrix:
         image_name:
           - fedora-minimal
-        major_version: [40, 41]
+        major_version: [41]
         include:
           - major_version: 41
-            is_latest_version: true
-            is_stable_version: false
-            is_gts_version: false
-          - major_version: 40
             is_latest_version: true
             is_stable_version: true
             is_gts_version: false
