@@ -65,7 +65,9 @@ if [[ "$FEDORA_MAJOR_VERSION" -ge "41" && "$IMAGE_NAME" == "silverblue" ]]; then
     rpm-ostree override remove \
         gnome-software-rpm-ostree
     rpm-ostree override replace \
-        https://download.copr.fedorainfracloud.org/results/ublue-os/staging/fedora-41-x86_64/08203620-gnome-software/gnome-software-47.1-100.ublue.fc41.x86_64.rpm
+        --experimental \
+        --from repo=copr:copr.fedorainfracloud.org:ublue-os:staging \
+        gnome-software
 fi
 
 # run common packages script
