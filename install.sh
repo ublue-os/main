@@ -62,6 +62,8 @@ fi
 
 # Disable DKMS support in gnome-software
 if [[ "$FEDORA_MAJOR_VERSION" -ge "41" && "$IMAGE_NAME" == "silverblue" ]]; then
+    rpm-ostree override remove \
+        gnome-software-rpm-ostree
     rpm-ostree override replace \
         https://download.copr.fedorainfracloud.org/results/ublue-os/staging/fedora-41-x86_64/08203620-gnome-software/gnome-software-47.1-100.ublue.fc41.x86_64.rpm
 fi
@@ -77,10 +79,6 @@ fi
 CSFG=/usr/lib/systemd/system-generators/coreos-sulogin-force-generator
 curl -sSLo ${CSFG} https://raw.githubusercontent.com/coreos/fedora-coreos-config/refs/heads/stable/overlay.d/05core/usr/lib/systemd/system-generators/coreos-sulogin-force-generator
 chmod +x ${CSFG}
-
-# prevent gnome software from warning about dkms secureboot as these warnings
-# would duplicate warnings provided by ublue already. we don't want confusion
-rm -f /usr/libexec/gnome-software-dkms-helper
 
 if [[ "${KERNEL_VERSION}" == "${QUALIFIED_KERNEL}" ]]; then
     /ctx/initramfs.sh
