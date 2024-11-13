@@ -34,6 +34,12 @@ jobs:
           - base
           - lazurite
           - vauxite
+          - cosmic
+        exclude:
+          - image_name: cosmic
+            fedora_version: 39
+          - image_name: cosmic
+            fedora_version: 40
 
     steps:
       # Checkout push-to-registry action GitHub repository
