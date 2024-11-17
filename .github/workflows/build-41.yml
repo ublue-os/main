@@ -1,4 +1,4 @@
-name: ublue main 39
+name: ublue main 41
 on:
   pull_request:
   merge_group:
@@ -12,4 +12,4 @@ jobs:
     uses: ./.github/workflows/reusable-build.yml
     secrets: inherit
     with:
-      fedora_version: 39
+      fedora_version: 41
