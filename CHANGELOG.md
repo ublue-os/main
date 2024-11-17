@@ -1,5 +1,49 @@
 # Changelog
 
+## [2.2.0](https://github.com/ublue-os/main/compare/v2.1.0...v2.2.0) (2024-11-17)
+
+
+### Features
+
+* add `wl-clipboard` to all images ([#641](https://github.com/ublue-os/main/issues/641)) ([77e26e6](https://github.com/ublue-os/main/commit/77e26e6e553a1e2466b2cd9d7faecd3d637d5116))
+* Add a beta tag ([#651](https://github.com/ublue-os/main/issues/651)) ([73e6d04](https://github.com/ublue-os/main/commit/73e6d049cd2328cb30754cdbcff0da33d142fc25))
+* Add flatpak-spawn package by default ([#583](https://github.com/ublue-os/main/issues/583)) ([2d8dca6](https://github.com/ublue-os/main/commit/2d8dca6e7d9b54b8637be49a2f0d0d80f3eb0bfc))
+* add fprint and libcamera ([#616](https://github.com/ublue-os/main/issues/616)) ([3b629bb](https://github.com/ublue-os/main/commit/3b629bbfa04e766b82c452d8fcf2e222a451717c))
+* add missing packages to Fedora 41 builds ([#655](https://github.com/ublue-os/main/issues/655)) ([0373f7a](https://github.com/ublue-os/main/commit/0373f7af656c424de31f6141a777d53a00ee1bdd))
+* Add squashfs-tools ([#586](https://github.com/ublue-os/main/issues/586)) ([0afd8cf](https://github.com/ublue-os/main/commit/0afd8cf0caf9f4109bf10e12fae0ab0795e6ac3b))
+* add yubikey-manager ([#630](https://github.com/ublue-os/main/issues/630)) ([7d01b96](https://github.com/ublue-os/main/commit/7d01b9670091a301ecfbf094cdb250f4f14400f3))
+* **ci:** honor `IMAGE_REGISTRY` in Containerfile ([#607](https://github.com/ublue-os/main/issues/607)) ([3107f29](https://github.com/ublue-os/main/commit/3107f29c9abce745648c1236e8fd5f6e2e7f9739))
+* create emeritus.md ([#621](https://github.com/ublue-os/main/issues/621)) ([f2e0055](https://github.com/ublue-os/main/commit/f2e005523f981dc08166e3eec1b2ba6ff16024fd))
+* **dev:** add justfile for local testing and integration with vscode ([#578](https://github.com/ublue-os/main/issues/578)) ([7e07358](https://github.com/ublue-os/main/commit/7e073587cee57db4d77ca7677cf80d07f5bc0583))
+* enable Fedora 41 builds ([#638](https://github.com/ublue-os/main/issues/638)) ([f959353](https://github.com/ublue-os/main/commit/f9593536d60d2de93a55084ace11501552ae5bb1))
+* Improve Containerfile / enable workflow usage of containerized buildah (tag: v1) ([#604](https://github.com/ublue-os/main/issues/604)) ([85d2bd8](https://github.com/ublue-os/main/commit/85d2bd8333851b4d6797f385e813d630643c16b4))
+* Remove lchsh ([#637](https://github.com/ublue-os/main/issues/637)) ([2e5e007](https://github.com/ublue-os/main/commit/2e5e007a3310df664822a47b4689f629786c81d7))
+* Replace gnome-software with non-dkms version on F41 and above. ([#671](https://github.com/ublue-os/main/issues/671)) ([90054b9](https://github.com/ublue-os/main/commit/90054b90907a9e403ea626e637ca367f78694cc3))
+* set dracut zstd compression for initramfs regen ([#595](https://github.com/ublue-os/main/issues/595)) ([ea43f00](https://github.com/ublue-os/main/commit/ea43f00fd0fb4c3c4379d71fd30e00522df0fa4a))
+* Sign kernel with our akmods key ([#588](https://github.com/ublue-os/main/issues/588)) ([e72d5af](https://github.com/ublue-os/main/commit/e72d5afc246e45530bf9c56c1605c66ed1d11f11))
+* Stop supporting chsh ([#624](https://github.com/ublue-os/main/issues/624)) ([1298125](https://github.com/ublue-os/main/commit/12981252b81966813927744ae5f39ef6ceb53283))
+* Update tags for F41 Release ([#657](https://github.com/ublue-os/main/issues/657)) ([a411c6a](https://github.com/ublue-os/main/commit/a411c6aba3ad035de588c9c5daf3f288e269a405))
+* use cached kernel ([#605](https://github.com/ublue-os/main/issues/605)) ([a7af108](https://github.com/ublue-os/main/commit/a7af108a27d454cc699fb0ee955892ded65a8506))
+* use negativo17 in lieu of rpmfusion ([#636](https://github.com/ublue-os/main/issues/636)) ([3dd8884](https://github.com/ublue-os/main/commit/3dd8884f8de176fb3fe53e5f96e85c176f94c56a))
+
+
+### Bug Fixes
+
+* bug in negativo prioritization command ([#649](https://github.com/ublue-os/main/issues/649)) ([5006127](https://github.com/ublue-os/main/commit/500612786d72f0377fe075138c8269332c08a938))
+* **ci:** Don't sign kernel on PR ([#590](https://github.com/ublue-os/main/issues/590)) ([a7dfe88](https://github.com/ublue-os/main/commit/a7dfe88f71b6db1fa540fdd5901cf2bee22e1ea9))
+* Correct rpm-ostree issue that prevents rollbacks ([#635](https://github.com/ublue-os/main/issues/635)) ([2a37660](https://github.com/ublue-os/main/commit/2a376609a5bd3227a982952bd173dc2f767c7d1e))
+* github release install silently fails if no urls found ([#571](https://github.com/ublue-os/main/issues/571)) ([4561ed4](https://github.com/ublue-os/main/commit/4561ed4858e9a7ad131e7ea2e051ea1a690cff82))
+* handle new F41 selinux policies for sulogin-generator ([#654](https://github.com/ublue-os/main/issues/654)) ([55a4433](https://github.com/ublue-os/main/commit/55a4433ebf7458f69c791dc69cff32d522afdfd0))
+* Include fuse package for AppImage support ([#631](https://github.com/ublue-os/main/issues/631)) ([8b9725b](https://github.com/ublue-os/main/commit/8b9725b2caa79f1484dfaf2a83a60b2ccc1b03fa))
+* **kinoite:** Include missing KDE image format codecs ([#660](https://github.com/ublue-os/main/issues/660)) ([147b76b](https://github.com/ublue-os/main/commit/147b76b112cae7f624a66752ceb26c6733855174))
+* Override copr plugin config to use fedora chroot by default ([#663](https://github.com/ublue-os/main/issues/663)) ([12829ea](https://github.com/ublue-os/main/commit/12829ea1b846497085a38342af8a3821efff6102))
+* Override copr plugin config to use fedora chroot by default (resubmission) ([#665](https://github.com/ublue-os/main/issues/665)) ([99b6864](https://github.com/ublue-os/main/commit/99b6864790c6605c652f591003bccefe605fae63))
+* reduce gap between upstream builds and ublue builds ([#589](https://github.com/ublue-os/main/issues/589)) ([897a07b](https://github.com/ublue-os/main/commit/897a07b0a7a8df226197631b69af1d2999ca4302))
+* remove ffmpeg-free from all images ([#582](https://github.com/ublue-os/main/issues/582)) ([9f5b4e7](https://github.com/ublue-os/main/commit/9f5b4e74add8c053402e99a99fa37fe7f20b978e))
+* remove mate images ([#639](https://github.com/ublue-os/main/issues/639)) ([39bd13d](https://github.com/ublue-os/main/commit/39bd13db95a317080c06f4ca7813b2a8c24f72ee))
+* Remove no longer needed rpm-ostree override ([#640](https://github.com/ublue-os/main/issues/640)) ([da4f78f](https://github.com/ublue-os/main/commit/da4f78fc304f33f0dcb87086e056dfb8ecd7a69d))
+* remove redundant and less performant thumbnailer ([#659](https://github.com/ublue-os/main/issues/659)) ([77e6b44](https://github.com/ublue-os/main/commit/77e6b443f6a6023582ef964e36fa7fd1c158033c))
+
 ## [2.1.0](https://github.com/ublue-os/main/compare/v2.0.0...v2.1.0) (2024-05-07)
 
 
