@@ -17,7 +17,8 @@ jobs:
         uses: dataaxiom/ghcr-cleanup-action@v1.0.13
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          packages: silverblue-main, kinoite-main, sericea-main, onyx-main, base-main, lazurite-main, vauxite-main          older-than: 90 days
+          packages: silverblue-main,kinoite-main,sericea-main,onyx-main,base-main,lazurite-main,vauxite-main          
+          older-than: 90 days
           delete-orphaned-images: true
           keep-n-tagged: 7
           keep-n-untagged: 7
