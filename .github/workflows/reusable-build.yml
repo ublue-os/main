@@ -199,7 +199,7 @@ jobs:
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
-            ${{ matrix.base-image && format('BASE_IMAGE={0}', matrix.base-image) || '' }}
+            ${{ matrix.base_image && format('BASE_IMAGE={0}', matrix.base_image) || '' }}
             IMAGE_NAME=${{ matrix.image_name }}
             SOURCE_ORG=${{ env.SOURCE_ORG }}
             SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
