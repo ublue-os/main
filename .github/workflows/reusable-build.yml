@@ -43,9 +43,9 @@ jobs:
           - image_name: vauxite
             source_org: fedora-ostree-desktops
           - image_name: sericea
-            source_image: sway-atomic
+            source_image: fedora-sway-atomic
           - image_name: onyx
-            source_image: budgie-atomic
+            source_image: fedora-budgie-atomic
 
     steps:
       # Checkout push-to-registry action GitHub repository
@@ -58,7 +58,7 @@ jobs:
           if [[ -n "${{ matrix.source_image }}" ]]; then
             echo "SOURCE_IMAGE=${{ matrix.source_image }}" >> $GITHUB_ENV
           else
-            echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
+            echo "SOURCE_IMAGE=fedora-${{ matrix.image_name }}" >> $GITHUB_ENV
           fi
           if [[ -n "${{ matrix.source_org }}" ]]; then
             echo "SOURCE_ORG=${{ matrix.source_org }}" >> $GITHUB_ENV
