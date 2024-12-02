@@ -60,7 +60,7 @@ jobs:
             echo "SOURCE_ORG=${{ matrix.source_org }}" >> $GITHUB_ENV
           else
             if [[ "${{ matrix.source_image }}" == fedora-* ]]; then
-              echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
+              echo "SOURCE_IMAGE=${{ matrix.source_image }}" >> $GITHUB_ENV
             else
               echo "SOURCE_IMAGE=fedora-${{ matrix.image_name }}" >> $GITHUB_ENV
             fi
