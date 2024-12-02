@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.3.0](https://github.com/ublue-os/main/compare/v2.2.0...v2.3.0) (2024-12-02)
+
+
+### Features
+
+* **ci:** add registry cleanup script ([#680](https://github.com/ublue-os/main/issues/680)) ([1e2bc12](https://github.com/ublue-os/main/commit/1e2bc1205d9807049b5248a105e65eb54e2801cd))
+
+
+### Bug Fixes
+
+* remove F39 and add F41 build status from README ([#686](https://github.com/ublue-os/main/issues/686)) ([fa108e3](https://github.com/ublue-os/main/commit/fa108e343f1a212ab035756aa0e3df93aeef4790))
+
 ## [2.2.0](https://github.com/ublue-os/main/compare/v2.1.0...v2.2.0) (2024-11-17)
 
 
