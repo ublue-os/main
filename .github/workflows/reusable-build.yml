@@ -8,6 +8,7 @@ on:
         type: string
 env:
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  SOURCE_ORG: fedora
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.fedora_version }}
@@ -35,14 +36,16 @@ jobs:
           - lazurite
           - vauxite
         include:
-          - image_name: silverblue
-            base_image: quay.io/fedora/fedora-silverblue
-          - image_name: kinoite
-            base_image: quay.io/fedora/fedora-kinoite
+          - image_name: base
+            source_org: fedora-ostree-desktops
+          - image_name: lazurite
+            source_org: fedora-ostree-desktops
+          - image_name: vauxite
+            source_org: fedora-ostree-desktops
           - image_name: sericea
-            base_image: quay.io/fedora/fedora-sway-atomic
+            source_image: sway-atomic
           - image_name: onyx
-            base_image: quay.io/fedora/fedora-budgie-atomic
+            source_image: budgie-atomic
 
     steps:
       # Checkout push-to-registry action GitHub repository
@@ -52,12 +55,14 @@ jobs:
       - name: Matrix Variables
         shell: bash
         run: |
-          if [[ "${{ matrix.image_name }}" == "mate" ]]; then
-              echo "SOURCE_IMAGE=base" >> $GITHUB_ENV
+          if [[ -n "${{ matrix.source_image }}" ]]; then
+            echo "SOURCE_IMAGE=${{ matrix.source_image }}" >> $GITHUB_ENV
           else
-              echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
+            echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
           fi
-          echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV
+          if [[ -n "${{ matrix.source_org }}" ]]; then
+            echo "SOURCE_ORG=${{ matrix.source_org }}" >> $GITHUB_ENV
+          fi
           echo "IMAGE_NAME=${{ matrix.image_name }}-main" >> $GITHUB_ENV
 
       - name: Generate tags
@@ -169,11 +174,7 @@ jobs:
           command: |
             # pull the base image used for FROM in containerfile so
             # we can retry on that unfortunately common failure case
-            if [[ -n "${{ matrix.base_image }}" ]]; then
-              podman pull ${{ matrix.base_image }}:${{ matrix.fedora_version }}
-            else
-              podman pull quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
-            fi
+            podman pull quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
             podman pull ${{ env.IMAGE_REGISTRY }}/akmods:main-${{ matrix.fedora_version }}
             podman pull ${{ env.IMAGE_REGISTRY }}/main-kernel:${{ env.KERNEL_VERSION }}
 
@@ -203,7 +204,6 @@ jobs:
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
-            ${{ matrix.base_image && format('BASE_IMAGE={0}', matrix.base_image) || '' }}
             IMAGE_NAME=${{ matrix.image_name }}
             SOURCE_ORG=${{ env.SOURCE_ORG }}
             SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
