@@ -169,7 +169,11 @@ jobs:
           command: |
             # pull the base image used for FROM in containerfile so
             # we can retry on that unfortunately common failure case
-            podman pull quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
+            if [[ -n "${{ matrix.base_image }}" ]]; then
+              podman pull ${{ matrix.base_image }}:${{ matrix.fedora_version }}
+            else
+              podman pull quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
+            fi
             podman pull ${{ env.IMAGE_REGISTRY }}/akmods:main-${{ matrix.fedora_version }}
             podman pull ${{ env.IMAGE_REGISTRY }}/main-kernel:${{ env.KERNEL_VERSION }}
 
