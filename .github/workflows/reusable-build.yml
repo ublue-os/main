@@ -34,6 +34,15 @@ jobs:
           - base
           - lazurite
           - vauxite
+        include:
+          - image_name: silverblue
+            base_image: quay.io/fedora/fedora-silverblue
+          - image_name: kinoite
+            base_image: quay.io/fedora/fedora-kinoite
+          - image_name: sericea
+            base_image: quay.io/fedora/fedora-sway-atomic
+          - image_name: onyx
+            base_image: quay.io/fedora/fedora-budgie-atomic
 
     steps:
       # Checkout push-to-registry action GitHub repository
@@ -190,6 +199,7 @@ jobs:
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
+            ${{ matrix.image-registry && format('BASE_IMAGE={0}', matrix.base-image) || '' }}
             IMAGE_NAME=${{ matrix.image_name }}
             SOURCE_ORG=${{ env.SOURCE_ORG }}
             SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
