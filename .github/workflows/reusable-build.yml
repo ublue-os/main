@@ -8,6 +8,7 @@ on:
         type: string
 env:
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  SOURCE_ORG: fedora
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.fedora_version }}
@@ -34,6 +35,17 @@ jobs:
           - base
           - lazurite
           - vauxite
+        include:
+          - image_name: base
+            source_org: fedora-ostree-desktops
+          - image_name: lazurite
+            source_org: fedora-ostree-desktops
+          - image_name: vauxite
+            source_org: fedora-ostree-desktops
+          - image_name: sericea
+            source_image: fedora-sway-atomic
+          - image_name: onyx
+            source_image: fedora-budgie-atomic
 
     steps:
       # Checkout push-to-registry action GitHub repository
@@ -43,12 +55,16 @@ jobs:
       - name: Matrix Variables
         shell: bash
         run: |
-          if [[ "${{ matrix.image_name }}" == "mate" ]]; then
-              echo "SOURCE_IMAGE=base" >> $GITHUB_ENV
+          if [[ "${{ matrix.source_org }}" == "fedora-ostree-desktops" ]]; then
+            echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
+            echo "SOURCE_ORG=${{ matrix.source_org }}" >> $GITHUB_ENV
           else
-              echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
+            if [[ "${{ matrix.source_image }}" == fedora-* ]]; then
+              echo "SOURCE_IMAGE=${{ matrix.source_image }}" >> $GITHUB_ENV
+            else
+              echo "SOURCE_IMAGE=fedora-${{ matrix.image_name }}" >> $GITHUB_ENV
+            fi
           fi
-          echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV
           echo "IMAGE_NAME=${{ matrix.image_name }}-main" >> $GITHUB_ENV
 
       - name: Generate tags
