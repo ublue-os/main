@@ -24,9 +24,9 @@
                 "just",
                 "kernel-tools",
                 "libcamera",
-                "libcamera-tools",
                 "libcamera-gstreamer",
                 "libcamera-ipa",
+                "libcamera-tools",
                 "libfdk-aac",
                 "libratbag-ratbagd",
                 "libva-utils",
@@ -81,6 +81,7 @@
         },
         "exclude": {
             "all": [
+                "default-fonts-cjk-sans",
                 "fdk-aac-free",
                 "ffmpeg-free",
                 "google-noto-sans-cjk-vf-fonts",
@@ -91,12 +92,11 @@
                 "libavutil-free",
                 "libpostproc-free",
                 "libswresample-free",
-                "libswscale-free",
-                "default-fonts-cjk-sans"
+                "libswscale-free"
             ],
             "silverblue": [
-                "totem-video-thumbnailer",
-                "gnome-software-rpm-ostree"
+                "gnome-software-rpm-ostree",
+                "totem-video-thumbnailer"
             ],
             "kinoite": [
                 "ffmpegthumbnailer",
