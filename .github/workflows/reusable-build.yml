@@ -1,4 +1,5 @@
-name: build-ublue
+name: Build Image
+
 on:
   workflow_call:
     inputs:
@@ -6,282 +7,74 @@ on:
         description: "The Fedora release version: 39, 40, 41 etc"
         required: true
         type: string
+      fedora_edition:
+        description: "The Fedora Atomic edition: Silverblue, Kinoite etc"
+        required: true
+        type: string
+      platforms:
+        description: "The platforms to build for: aarch64, x86_64 etc"
+        required: true
+        type: string
+      tags:
+        description: "The tags to apply to the image"
+        required: true
+        type: string
+
 env:
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.fedora_version }}
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.fedora_version }}-${{ inputs.fedora_edition }}-${{ inputs.platforms }}
   cancel-in-progress: true
 
 jobs:
-  build_ublue:
-    name: main
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    strategy:
-      fail-fast: false
-      matrix:
-        fedora_version:
-          - ${{ inputs.fedora_version }}
-        image_name:
-          - silverblue
-          - kinoite
-          - sericea
-          - onyx
-          - base
-          - lazurite
-          - vauxite
-
+  generate_matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      # Checkout push-to-registry action GitHub repository
-      - name: Checkout Push to Registry action
+      - name: Set matrix
+        id: set-matrix
+        env:
+          PLATFORMS: ${{ inputs.platforms }}
+        run: |
+          MATRIX='{"include":[]}'
+          # Split platforms string by comma and iterate over each platform
+          for platform in $(echo $PLATFORMS | tr ',' '\n'); do
+            MATRIX=$(echo $MATRIX | jq ".include += [{\"platform\": \"${platform}\"}]")
+          done
+
+          echo "matrix=$(echo $MATRIX | jq -c  '.')" >> $GITHUB_OUTPUT
+
+  build:
+    runs-on: ubuntu-22.04
+    needs: generate_matrix
+    strategy:
+      matrix: ${{fromJson(needs.generate_matrix.outputs.matrix)}}
+    steps:
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Matrix Variables
-        shell: bash
-        run: |
-          if [[ "${{ matrix.image_name }}" == "mate" ]]; then
-              echo "SOURCE_IMAGE=base" >> $GITHUB_ENV
-          else
-              echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
-          fi
-          echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV
-          echo "IMAGE_NAME=${{ matrix.image_name }}-main" >> $GITHUB_ENV
-
-      - name: Generate tags
-        id: generate-tags
-        shell: bash
-        run: |
-          # Generate a timestamp for creating an image version history
-          TIMESTAMP="$(date +%Y%m%d)"
-          VARIANT="${{ matrix.fedora_version }}"
-
-          if [[ "${{ matrix.fedora_version }}" -eq "39" ]]; then
-            IS_LATEST_VERSION=false
-            IS_STABLE_VERSION=true
-            IS_GTS_VERSION=false
-            IS_BETA_VERSION=false
-          elif [[ "${{ matrix.fedora_version }}" -eq "40" ]]; then
-            IS_LATEST_VERSION=false
-            IS_STABLE_VERSION=true
-            IS_GTS_VERSION=true
-            IS_BETA_VERSION=false
-          elif [[ "${{ matrix.fedora_version }}" -eq "41" ]]; then
-            IS_LATEST_VERSION=true
-            IS_STABLE_VERSION=true
-            IS_GTS_VERSION=false
-            IS_BETA_VERSION=true
-          fi
-
-          COMMIT_TAGS=()
-          BUILD_TAGS=()
-
-          # Have tags for tracking builds during pull request
-          SHA_SHORT="${GITHUB_SHA::7}"
-          COMMIT_TAGS+=("pr-${{ github.event.number }}-${VARIANT}")
-          COMMIT_TAGS+=("${SHA_SHORT}-${VARIANT}")
-
-          if [[ "${IS_LATEST_VERSION}" == "true" ]] && \
-             [[ "${IS_STABLE_VERSION}" == "true" ]]; then
-              COMMIT_TAGS+=("pr-${{ github.event.number }}")
-              COMMIT_TAGS+=("${SHA_SHORT}")
-          fi
-
-          BUILD_TAGS=("${VARIANT}")
-
-          # Append matching timestamp tags to keep a version history
-          for TAG in "${BUILD_TAGS[@]}"; do
-              BUILD_TAGS+=("${TAG}-${TIMESTAMP}")
-          done
-
-          if [[ "${IS_LATEST_VERSION}" == "true" ]] && \
-             [[ "${IS_STABLE_VERSION}" == "true" ]]; then
-              BUILD_TAGS+=("${TIMESTAMP}")
-              BUILD_TAGS+=("latest")
-              echo "DEFAULT_TAG=latest" >> $GITHUB_ENV
-          elif [[ "${IS_GTS_VERSION}" == "true" ]]; then
-              BUILD_TAGS+=("gts-${TIMESTAMP}")
-              BUILD_TAGS+=("gts")
-              echo "DEFAULT_TAG=gts" >> $GITHUB_ENV
-          elif [[ "${IS_BETA_VERSION}" == "true" ]]; then
-              BUILD_TAGS+=("beta-${TIMESTAMP}")
-              BUILD_TAGS+=("beta")
-              echo "DEFAULT_TAG=beta" >> $GITHUB_ENV
-          fi
-
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-              echo "Generated the following commit tags: "
-              for TAG in "${COMMIT_TAGS[@]}"; do
-                  echo "${TAG}"
-              done
-              alias_tags=("${COMMIT_TAGS[@]}")
-              echo "DEFAULT_TAG=${SHA_SHORT}-${VARIANT}" >> $GITHUB_ENV
-          else
-              alias_tags=("${BUILD_TAGS[@]}")
-          fi
-
-          echo "Generated the following build tags: "
-          for TAG in "${BUILD_TAGS[@]}"; do
-              echo "${TAG}"
-          done
-
-          echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
-
-      - name: Get current version
-        id: labels
-        uses: Wandalen/wretry.action@v3.7.3
-        with:
-          attempt_limit: 3
-          attempt_delay: 15000
-          command: |
-            set -eo pipefail
-            ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
-            if [ -z "$ver" ] || [ "null" = "$ver" ]; then
-              echo "inspected image version must not be empty or null"
-              exit 1
-            fi
-            linux=$(skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/main-kernel:${{ matrix.fedora_version }} | jq -r '.Labels["ostree.linux"]')
-            AKMODS_KERNEL_VERSION=$(skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/akmods:main-${{ matrix.fedora_version }} | jq -r '.Labels["ostree.linux"]')
-            if [[ "${linux}" != "${AKMODS_KERNEL_VERSION}" ]]; then
-              echo "Kernel Versions do not match between AKMODS and Cached-Kernel."
-              exit 1
-            fi
-            echo "KERNEL_VERSION=$linux" >> $GITHUB_ENV
-            echo "SOURCE_IMAGE_VERSION=$ver" >> $GITHUB_ENV
-
-      - name: Pull Images
-        uses: Wandalen/wretry.action@v3.7.3
-        with:
-          attempt_limit: 3
-          attempt_delay: 15000
-          command: |
-            # pull the base image used for FROM in containerfile so
-            # we can retry on that unfortunately common failure case
-            podman pull quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
-            podman pull ${{ env.IMAGE_REGISTRY }}/akmods:main-${{ matrix.fedora_version }}
-            podman pull ${{ env.IMAGE_REGISTRY }}/main-kernel:${{ env.KERNEL_VERSION }}
-
-      # Generate image metadata
-      - name: Image Metadata
-        uses: docker/metadata-action@v5
-        id: meta
-        with:
-          images: |
-            ${{ env.IMAGE_NAME }}
-          labels: |
-            org.opencontainers.image.title=${{ env.IMAGE_NAME }}
-            org.opencontainers.image.version=${{ env.SOURCE_IMAGE_VERSION }}
-            org.opencontainers.image.description=A base Universal Blue ${{ matrix.image_name }} image with batteries included
-            ostree.linux=${{ env.KERNEL_VERSION }}
-            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/main/README.md
-            io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/120078124?s=200&v=4
-
-      # Build image using Buildah action
       - name: Build Image
-        id: build_image
-        uses: redhat-actions/buildah-build@v2
-        with:
-          containerfiles: |
-            ./Containerfile
-          image: ${{ env.IMAGE_NAME }}
-          tags: |
-            ${{ steps.generate-tags.outputs.alias_tags }}
-          build-args: |
-            IMAGE_NAME=${{ matrix.image_name }}
-            SOURCE_ORG=${{ env.SOURCE_ORG }}
-            SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
-            FEDORA_MAJOR_VERSION=${{ matrix.fedora_version }}
-            KERNEL_VERSION=${{ env.KERNEL_VERSION }}
-            IMAGE_REGISTRY=${{ env.IMAGE_REGISTRY }}
-          labels: ${{ steps.meta.outputs.labels }}
-          oci: false
-
-      - name: Check Secureboot
-        shell: bash
-        run: |
-          set -x
-          if [[ ! $(command -v sbverify) || ! $(command -v curl) || ! $(command -v openssl) ]]; then
-            sudo apt update
-            sudo apt install sbsigntool curl openssl
-          fi
-          podman run -d --rm --name ${{env.IMAGE_NAME}}-$(echo "${{ steps.generate-tags.outputs.alias_tags }}" | cut -d " " -f 1) "${{ env.IMAGE_NAME }}":$(echo "${{ steps.generate-tags.outputs.alias_tags }}" | cut -d " " -f 1) sleep 1000
-          podman cp ${{env.IMAGE_NAME}}-$(echo "${{ steps.generate-tags.outputs.alias_tags }}" | cut -d " " -f 1):/usr/lib/modules/${{ env.KERNEL_VERSION }}/vmlinuz .
-          podman rm -f ${{env.IMAGE_NAME}}-$(echo "${{ steps.generate-tags.outputs.alias_tags }}" | cut -d " " -f 1)
-          sbverify --list vmlinuz
-          curl --retry 3 -Lo kernel-sign.der https://github.com/ublue-os/kernel-cache/raw/main/certs/public_key.der
-          curl --retry 3 -Lo akmods.der https://github.com/ublue-os/kernel-cache/raw/main/certs/public_key_2.der
-          openssl x509 -in kernel-sign.der -out kernel-sign.crt
-          openssl x509 -in akmods.der -out akmods.crt
-          sbverify --cert kernel-sign.crt vmlinuz || exit 1
-          sbverify --cert akmods.crt vmlinuz || exit 1
-
-      # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
-      # https://github.com/macbre/push-to-ghcr/issues/12
-      - name: Lowercase Registry
-        id: registry_case
-        uses: ASzc/change-string-case-action@v6
-        with:
-          string: ${{ env.IMAGE_REGISTRY }}
-
-      - name: Push To GHCR
-        uses: Wandalen/wretry.action@v3.7.3
-        id: push
-        if: github.event_name != 'pull_request'
+        id: build-image
         env:
-          REGISTRY_USER: ${{ github.actor }}
-          REGISTRY_PASSWORD: ${{ github.token }}
-        with:
-          action: redhat-actions/push-to-registry@v2
-          attempt_limit: 3
-          attempt_delay: 15000
-          with: |
-            image: ${{ steps.build_image.outputs.image }}
-            tags: ${{ steps.build_image.outputs.tags }}
-            registry: ${{ steps.registry_case.outputs.lowercase }}
-            username: ${{ env.REGISTRY_USER }}
-            password: ${{ env.REGISTRY_PASSWORD }}
-            extra-args: |
-              --disable-content-trust
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        if: github.event_name != 'pull_request'
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      # Sign container
-      - uses: sigstore/cosign-installer@v3.7.0
-        if: github.event_name != 'pull_request'
-
-      - name: Sign container image
-        if: github.event_name != 'pull_request'
+          FEDORA_EDITION: ${{ inputs.fedora_edition }}
+          BUILD_ARGS_JSON: tojson(${{ inputs.build-args }})
         run: |
-          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image.outputs.image }}@${TAGS}
-        env:
-          TAGS: ${{ steps.push.outputs.outputs && fromJSON(steps.push.outputs.outputs).digest }}
-          COSIGN_EXPERIMENTAL: false
-          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+          podman build \
+            --iidfile /tmp/iidfile \
+            -t ${IMAGE_REGISTRY}/main-${FEDORA_EDITION}:local
+            .
 
-      - name: Echo outputs
-        if: github.event_name != 'pull_request'
-        run: |
-          echo "${{ toJSON(steps.push.outputs) }}"
+          IMAGE_ID=$(cat /tmp/iidfile)
+          IMAGE_DIGEST=$(podman inspect --format '{{.Digest}}' $IMAGE_ID)
 
-  check:
-    name: Check all ${{ inputs.fedora_version }} builds successful
-    if: ${{ !cancelled() }}
+          echo "IMAGE_DIGEST=${IMAGE_DIGEST}" >> $GITHUB_OUTPUT
+
+  manifest:
     runs-on: ubuntu-latest
-    needs: [build_ublue]
+    needs: build
     steps:
-      - name: Exit on failure
-        if: ${{ needs.build_ublue.result == 'failure' }}
-        shell: bash
-        run: exit 1
-      - name: Exit
-        shell: bash
-        run: exit 0
+      - name: Create Manifest
+        run: |
+          podman manifest create build

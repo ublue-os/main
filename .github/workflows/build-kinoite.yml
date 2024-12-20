@@ -1,0 +1,13 @@
+name: Build Kinoite
+on:
+  pull_request:
+
+jobs:
+  build:
+    uses: ./.github/workflows/reusable-build.yml
+    secrets: inherit
+    with:
+      fedora_version: 40
+      fedora_edition: kinoite
+      platforms: amd64, arm64
+      tags: test
