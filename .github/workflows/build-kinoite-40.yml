@@ -1,0 +1,59 @@
+name: Build Kinoite 40
+
+on:
+  pull_request:
+
+env:
+  IMAGE_REGISTRY: ghcr.io/ublue-os
+  IMAGE_NAME: kinoite
+  FEDORA_VERSION: 40
+
+jobs:
+  generate_metadata:
+    runs-on: ubuntu-latest
+    outputs:
+      BUILD_ARGS: ${{ steps.set-metadata.outputs.BUILD_ARGS }}
+      TAGS: ${{ steps.set-metadata.outputs.TAGS }}
+    steps:
+      - name: Fetch Kernel Version
+        id: fetch-kernel-version
+        run: |
+          KERNEL_VERSION=$(skopeo inspect docker://${IMAGE_REGISTRY}/main-kernel:${FEDORA_VERSION} | jq -r '.Labels["ostree.linux"]')
+
+          echo "KERNEL_VERSION=${KERNEL_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Generate Tags
+        id: generate-tags
+        run: |
+          TAGS=()
+
+          TAGS+=("test")
+          TAGS+=("rs-test")
+
+          echo "TAGS=$(IFS=,; echo "${TAGS[*]}")" >> $GITHUB_OUTPUT
+
+      - name: Set Metadata
+        id: set-metadata
+        env:
+          KERNEL_VERSION: ${{ steps.fetch-kernel-version.outputs.KERNEL_VERSION }}
+          TAGS: ${{ steps.generate-tags.outputs.TAGS }}
+        run: |
+          BUILD_ARGS=()
+
+          if [[ -n "${KERNEL_VERSION}" ]]; then
+            BUILD_ARGS+=("KERNEL_VERSION=${KERNEL_VERSION}")
+          fi
+
+          echo "BUILD_ARGS=$(IFS=,; echo "${BUILD_ARGS[*]}")" >> $GITHUB_OUTPUT
+          echo "TAGS=$TAGS" >> $GITHUB_OUTPUT
+
+  build:
+    uses: ./.github/workflows/reusable-build.yml
+    needs: generate_metadata
+    secrets: inherit
+    with:
+      image-registry: ${{ env.IMAGE_REGISTRY }}
+      image-name: ${{ env.IMAGE_NAME }}
+      platforms: amd64, arm64
+      build-args: ${{ needs.generate_metadata.outputs.BUILD_ARGS }}
+      tags: ${{ needs.generate_metadata.outputs.TAGS }}

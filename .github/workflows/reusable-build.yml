@@ -19,6 +19,10 @@ on:
         description: "The tags to apply to the image"
         required: true
         type: string
+      build-args:
+        description: "The build arguments to pass to the build"
+        required: false
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.fedora_version }}-${{ inputs.fedora_edition }}-${{ inputs.platforms }}
@@ -60,11 +64,17 @@ jobs:
         env:
           IMAGE_REGISTRY: ${{ inputs.image-registry }}
           IMAGE_NAME: ${{ inputs.image-name }}
-          BUILD_ARGS_JSON: tojson(${{ inputs.build-args }})
+          BUILD_ARGS: ${{ inputs.build-args }}
         run: |
+          BUILD_ARGS_FLAGS=()
+          for arg in $(echo $BUILD_ARGS | tr ',' '\n'); do
+            BUILD_ARGS_FLAGS+=("--build-arg" "$arg")
+          done
+
           podman build \
             --iidfile /tmp/iidfile \
             -t ${IMAGE_REGISTRY}/${IMAGE_NAME}:local \
+            "${BUILD_ARGS_FLAGS[@]}" \
             .
 
           IMAGE_ID=$(cat /tmp/iidfile)
