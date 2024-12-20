@@ -48,7 +48,7 @@ jobs:
           echo "matrix=$(echo $MATRIX | jq -c  '.')" >> $GITHUB_OUTPUT
 
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: generate_matrix
     strategy:
       matrix: ${{fromJson(needs.generate_matrix.outputs.matrix)}}
