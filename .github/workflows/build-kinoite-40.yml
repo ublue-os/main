@@ -5,7 +5,8 @@ on:
 
 env:
   IMAGE_REGISTRY: ghcr.io/ublue-os
-  IMAGE_NAME: kinoite
+  IMAGE_NAME: kinoite-main
+  SOURCE_IMAGE: kinoite
   FEDORA_VERSION: 40
 
 jobs:
@@ -42,9 +43,10 @@ jobs:
         run: |
           BUILD_ARGS=()
 
-          if [[ -n "${KERNEL_VERSION}" ]]; then
-            BUILD_ARGS+=("KERNEL_VERSION=${KERNEL_VERSION}")
-          fi
+          BUILD_ARGS+=("KERNEL_VERSION=${KERNEL_VERSION}")
+          BUILD_ARGS+=("SOURCE_IMAGE=${SOURCE_IMAGE}")
+          BUILD_ARGS+=("FEDORA_MAJOR_VERSION=${FEDORA_VERSION}")
+          BUILD_ARGS+=("IMAGE_NAME=${IMAGE_NAME}")
 
           echo "BUILD_ARGS=$(IFS=,; echo "${BUILD_ARGS[*]}")" >> $GITHUB_OUTPUT
           echo "TAGS=$TAGS" >> $GITHUB_OUTPUT
