@@ -48,7 +48,7 @@ jobs:
           echo "matrix=$(echo $MATRIX | jq -c  '.')" >> $GITHUB_OUTPUT
 
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.platform == 'amd64' && 'ubuntu-24.04' || 'ubuntu-24.04' }}
     needs: generate_matrix
     strategy:
       matrix: ${{fromJson(needs.generate_matrix.outputs.matrix)}}
@@ -94,7 +94,7 @@ jobs:
           done
 
           # Temporarily populate the digest file with a dummy value
-          echo "dummy-digest ${{ matrix.platform }}" > /tmp/digestfile
+          echo "dummy-digest-${{ matrix.platform }}" > /tmp/digestfile
 
           IMAGE_DIGEST=$(cat /tmp/digestfile)
           echo "IMAGE_DIGEST=${IMAGE_DIGEST}" >> $GITHUB_OUTPUT
