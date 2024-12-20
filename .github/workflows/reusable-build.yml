@@ -111,7 +111,7 @@ jobs:
       - name: Upload Output Artifacts
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4
         with:
-          name: ${{ steps.build-image.outputs.IMAGE_NAME }}-${{ inputs.source_tag }}-${{ matrix.platform }}
+          name: ${{ inputs.image-name }}-${{ matrix.platform }}
           retention-days: 1
           if-no-files-found: error
           path: |
@@ -124,7 +124,7 @@ jobs:
       - name: Fetch Build Outputs
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4
         with:
-          pattern: "*.txt"
+          pattern: ${{ inputs.image-name }}-*
           merge-multiple: true
           path: /tmp/artifacts
 
