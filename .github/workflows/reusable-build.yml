@@ -3,25 +3,22 @@ name: Build Image
 on:
   workflow_call:
     inputs:
-      fedora_version:
-        description: "The Fedora release version: 39, 40, 41 etc"
+      image-registry:
+        description: "The registry to push the image to.  E.G. ghcr.io/ublue-os"
         required: true
         type: string
-      fedora_edition:
-        description: "The Fedora Atomic edition: Silverblue, Kinoite etc"
+      image-name:
+        description: "The name of the image to build.  E.G. main"
         required: true
         type: string
       platforms:
-        description: "The platforms to build for: aarch64, x86_64 etc"
+        description: "The platforms to build for.  E.G. aarch64, x86_64 etc"
         required: true
         type: string
       tags:
         description: "The tags to apply to the image"
         required: true
         type: string
-
-env:
-  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.fedora_version }}-${{ inputs.fedora_edition }}-${{ inputs.platforms }}
@@ -55,15 +52,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
       - name: Build Image
         id: build-image
         env:
-          FEDORA_EDITION: ${{ inputs.fedora_edition }}
+          IMAGE_REGISTRY: ${{ inputs.image-registry }}
+          IMAGE_NAME: ${{ inputs.image-name }}
           BUILD_ARGS_JSON: tojson(${{ inputs.build-args }})
         run: |
           podman build \
             --iidfile /tmp/iidfile \
-            -t ${IMAGE_REGISTRY}/main-${FEDORA_EDITION}:local
+            -t ${IMAGE_REGISTRY}/${IMAGE_NAME}:local \
             .
 
           IMAGE_ID=$(cat /tmp/iidfile)
@@ -71,10 +72,24 @@ jobs:
 
           echo "IMAGE_DIGEST=${IMAGE_DIGEST}" >> $GITHUB_OUTPUT
 
+      - name: Push Image
+        env:
+          IMAGE_REGISTRY: ${{ inputs.image-registry }}
+          IMAGE_NAME: ${{ inputs.image-name }}
+          IMAGE_DIGEST: ${{ steps.build-image.outputs.IMAGE_DIGEST }}
+        run: |
+          for i in {1..3}; do
+            echo "podman push --digestfile=/tmp/digestfile ${IMAGE_REGISTRY}/${IMAGE_NAME}@${IMAGE_DIGEST}" && break || sleep $((10 ** i))
+            sleep 5
+          done
+
   manifest:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - name: Create Manifest
+        env:
+          IMAGE_REGISTRY: ${{ inputs.image-registry }}
+          IMAGE_NAME: ${{ inputs.image-name }}
         run: |
-          podman manifest create build
+          podman manifest create ${IMAGE_REGISTRY}/${IMAGE_NAME}

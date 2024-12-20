@@ -7,7 +7,7 @@ jobs:
     uses: ./.github/workflows/reusable-build.yml
     secrets: inherit
     with:
-      fedora_version: 40
-      fedora_edition: kinoite
+      image-registry: ghcr.io/ublue-os
+      image-name: kinoite
       platforms: amd64, arm64
       tags: test
