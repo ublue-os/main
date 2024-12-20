@@ -14,6 +14,8 @@ jobs:
     outputs:
       BUILD_ARGS: ${{ steps.set-metadata.outputs.BUILD_ARGS }}
       TAGS: ${{ steps.set-metadata.outputs.TAGS }}
+      IMAGE_REGISTRY: ${{ steps.set-metadata.outputs.IMAGE_REGISTRY }}
+      IMAGE_NAME: ${{ steps.set-metadata.outputs.IMAGE_NAME }}
     steps:
       - name: Fetch Kernel Version
         id: fetch-kernel-version
@@ -46,14 +48,16 @@ jobs:
 
           echo "BUILD_ARGS=$(IFS=,; echo "${BUILD_ARGS[*]}")" >> $GITHUB_OUTPUT
           echo "TAGS=$TAGS" >> $GITHUB_OUTPUT
+          echo "IMAGE_REGISTRY=${IMAGE_REGISTRY}" >> $GITHUB_OUTPUT
+          echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_OUTPUT
 
   build:
     uses: ./.github/workflows/reusable-build.yml
     needs: generate_metadata
     secrets: inherit
     with:
-      image-registry: ${{ env.IMAGE_REGISTRY }}
-      image-name: ${{ env.IMAGE_NAME }}
+      image-registry: ${{ needs.generate_metadata.outputs.IMAGE_REGISTRY }}
+      image-name: ${{ needs.generate_metadata.outputs.IMAGE_NAME }}
       platforms: amd64, arm64
       build-args: ${{ needs.generate_metadata.outputs.BUILD_ARGS }}
       tags: ${{ needs.generate_metadata.outputs.TAGS }}
