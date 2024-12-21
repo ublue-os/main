@@ -23,8 +23,10 @@ on:
         description: "The build arguments to pass to the build"
         required: false
         type: string
-    output:
-      manifest-digest: ${{ jobs.manifest.outputs.manifest-digest }}
+    outputs:
+      manifest-digest:
+        description: "The digest of the remote manifest"
+        value: ${{ jobs.manifest.outputs.manifest-digest }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.fedora_version }}-${{ inputs.fedora_edition }}-${{ inputs.platforms }}
