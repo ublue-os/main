@@ -23,6 +23,10 @@ on:
         description: "The build arguments to pass to the build"
         required: false
         type: string
+      validate-secureboot:
+        description: "Whether to validate secureboot"
+        required: false
+        type: boolean
     outputs:
       manifest-digest:
         description: "The digest of the remote manifest"
@@ -38,7 +42,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - name: Set matrix
+      - name: Set Matrix
         id: set-matrix
         env:
           PLATFORMS: ${{ inputs.platforms }}
@@ -85,6 +89,30 @@ jobs:
           IMAGE_DIGEST=$(podman inspect --format '{{.Digest}}' $IMAGE_ID)
 
           echo "IMAGE_DIGEST=${IMAGE_DIGEST}" >> $GITHUB_OUTPUT
+
+      - name: Check Secureboot
+        if: ${{ inputs.validate-secureboot }}
+        env:
+          IMAGE_REGISTRY: ${{ inputs.image-registry }}
+          IMAGE_NAME: ${{ inputs.image-name }}
+          IMAGE_DIGEST: ${{ steps.build-image.outputs.IMAGE_DIGEST }}
+        run: |
+          set -euxo pipefail
+
+          if [[ ! $(command -v sbverify) || ! $(command -v curl) || ! $(command -v openssl) ]]; then
+            sudo apt update
+            sudo apt install sbsigntool curl openssl
+          fi
+          podman run -d --rm --name ${IMAGE_NAME} ${IMAGE_REGISTRY}/${IMAGE_NAME}@${IMAGE_DIGEST} sleep 1000
+          podman cp ${IMAGE_NAME}:/usr/lib/modules/*/vmlinuz .
+          podman rm -f ${IMAGE_NAME}
+          sbverify --list vmlinuz
+          curl --retry 3 -Lo kernel-sign.der https://github.com/ublue-os/kernel-cache/raw/main/certs/public_key.der
+          curl --retry 3 -Lo akmods.der https://github.com/ublue-os/kernel-cache/raw/main/certs/public_key_2.der
+          openssl x509 -in kernel-sign.der -out kernel-sign.crt
+          openssl x509 -in akmods.der -out akmods.crt
+          sbverify --cert kernel-sign.crt vmlinuz || exit 1
+          sbverify --cert akmods.crt vmlinuz || exit 1
 
       - name: Push Image
         id: push-image
@@ -183,7 +211,7 @@ jobs:
       - name: Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Push manifest
+      - name: Push Manifest
         id: push-manifest
         env:
           TAGS: ${{ inputs.tags }}
@@ -198,3 +226,17 @@ jobs:
           echo "dummy-digest" > /tmp/digestfile
 
           echo "DIGEST=$(cat /tmp/digestfile)" >> $GITHUB_OUTPUT
+
+      - name: Setup Cosign
+        if: false
+        uses: sigstore/cosign-installer@v3.7.0
+
+      - name: Sign Image
+        if: false
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+          IMAGE_REGISTRY: ${{ inputs.image-registry }}
+          IMAGE_NAME: ${{ inputs.image-name }}
+          DIGEST: ${{ steps.push-manifest.outputs.DIGEST }}
+        run: |
+          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${IMAGE_REGISTRY}/${IMAGE_NAME}:${DIGEST}
