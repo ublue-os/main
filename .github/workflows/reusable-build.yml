@@ -23,6 +23,8 @@ on:
         description: "The build arguments to pass to the build"
         required: false
         type: string
+    output:
+      manifest-digest: ${{ jobs.manifest.outputs.manifest-digest }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.fedora_version }}-${{ inputs.fedora_edition }}-${{ inputs.platforms }}
@@ -120,6 +122,8 @@ jobs:
   manifest:
     runs-on: ubuntu-latest
     needs: build
+    outputs:
+      manifest-digest: ${{ steps.push-manifest.outputs.DIGEST }}
     steps:
       - name: Fetch Build Outputs
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4
@@ -178,11 +182,17 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Push manifest
+        id: push-manifest
         env:
           TAGS: ${{ inputs.tags }}
           MANIFEST: ${{ steps.create-manifest.outputs.MANIFEST }}
           IMAGE_REGISTRY: ${{ inputs.image-registry }}
         run: |
           for tag in $(echo $TAGS | tr ',' '\n'); do
-            echo "podman manifest push --all=false $MANIFEST $IMAGE_REGISTRY/$tag"
+            echo "podman manifest push --digestfile=/tmp/digestfile --all=false $MANIFEST $IMAGE_REGISTRY/$tag"
           done
+
+          # Temporarily populate the digest file with a dummy value
+          echo "dummy-digest" > /tmp/digestfile
+
+          echo "DIGEST=$(cat /tmp/digestfile)" >> $GITHUB_OUTPUT

@@ -27,11 +27,31 @@ jobs:
 
       - name: Generate Tags
         id: generate-tags
+        env:
+          IS_LATEST_VERSION: false
+          IS_GTS_VERSION: true
+          IS_BETA_VERSION: false
         run: |
-          TAGS=()
+          TIMESTAMP="$(date +%Y%m%d)"
+          SHA_SHORT="${GITHUB_SHA::7}"
 
-          TAGS+=("test")
-          TAGS+=("rs-test")
+          TAGS=()
+          TAGS+=("${FEDORA_VERSION}")
+
+          if [[ "${IS_LATEST_VERSION}" == "true" ]]; then
+              TAGS+=("latest")
+          elif [[ "${IS_GTS_VERSION}" == "true" ]]; then
+              TAGS+=("gts")
+          elif [[ "${IS_BETA_VERSION}" == "true" ]]; then
+              TAGS+=("beta")
+          fi
+
+          for TAG in "${TAGS[@]}"; do
+              TAGS+=("${TAG}-${TIMESTAMP}")
+          done
+          for TAG in "${TAGS[@]}"; do
+              TAGS+=("${TAG}-${SHA_SHORT}")
+          done
 
           echo "TAGS=$(IFS=,; echo "${TAGS[*]}")" >> $GITHUB_OUTPUT
 
