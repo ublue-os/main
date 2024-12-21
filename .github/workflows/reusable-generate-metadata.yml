@@ -1,0 +1,91 @@
+name: Generate Metadata
+
+on:
+  workflow_call:
+    inputs:
+      fedora-version:
+        description: "The version of Fedora to build"
+        required: true
+        type: string
+      image-registry:
+        description: "The registry to push the image to"
+        required: true
+        type: string
+      image-name:
+        description: "The name of the image to build"
+        required: true
+        type: string
+      is-latest:
+        description: "Is this the latest version"
+        required: false
+        type: boolean
+        default: false
+      is-gts:
+        description: "Is this a GTS version"
+        required: false
+        type: boolean
+        default: false
+      is-beta:
+        description: "Is this a beta version"
+        required: false
+        type: boolean
+        default: false
+    outputs:
+      image-registry:
+        description: "The registry to push the image to"
+        value: ${{ jobs.generate_metadata.outputs.image-registry }}
+      image-name:
+        description: "The name of the image to build"
+        value: ${{ jobs.generate_metadata.outputs.image-name }}
+      build-args:
+        description: "The build arguments to pass to the build"
+        value: ${{ jobs.generate_metadata.outputs.build-args }}
+      tags:
+        description: "The tags to apply to the image"
+        value: ${{ jobs.generate_metadata.outputs.tags }}
+
+jobs:
+  generate_metadata:
+    runs-on: ubuntu-latest
+    outputs:
+      image-registry: ${{ inputs.image-registry }}
+      image-name: ${{ inputs.image-name }}
+      build-args: ${{ steps.set-metadata.outputs.BUILD_ARGS }}
+      tags: ${{ steps.generate-tags.outputs.TAGS }}
+    steps:
+      - name: Fetch Kernel Version
+        id: fetch-kernel-version
+        run: |
+          KERNEL_VERSION=$(skopeo inspect docker://${IMAGE_REGISTRY}/main-kernel:${FEDORA_VERSION} | jq -r '.Labels["ostree.linux"]')
+
+          echo "KERNEL_VERSION=${KERNEL_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Generate Tags
+        id: generate-tags
+        env:
+          IS_LATEST_VERSION: ${{ inputs.is-latest }}
+          IS_GTS_VERSION: ${{ inputs.is-gts }}
+          IS_BETA_VERSION: ${{ inputs.is-beta }}
+        run: |
+          TIMESTAMP="$(date +%Y%m%d)"
+          SHA_SHORT="${GITHUB_SHA::7}"
+
+          TAGS=()
+          TAGS+=("${FEDORA_VERSION}")
+
+          if [[ "${IS_LATEST_VERSION}" == "true" ]]; then
+              TAGS+=("latest")
+          elif [[ "${IS_GTS_VERSION}" == "true" ]]; then
+              TAGS+=("gts")
+          elif [[ "${IS_BETA_VERSION}" == "true" ]]; then
+              TAGS+=("beta")
+          fi
+
+          for TAG in "${TAGS[@]}"; do
+              TAGS+=("${TAG}-${TIMESTAMP}")
+          done
+          for TAG in "${TAGS[@]}"; do
+              TAGS+=("${TAG}-${SHA_SHORT}")
+          done
+
+          echo "TAGS=$(IFS=,; echo "${TAGS[*]}")" >> $GITHUB_OUTPUT

@@ -3,83 +3,22 @@ name: Build Kinoite 40
 on:
   pull_request:
 
-env:
-  IMAGE_REGISTRY: ghcr.io/ublue-os
-  IMAGE_NAME: kinoite-main
-  SOURCE_IMAGE: kinoite
-  FEDORA_VERSION: 40
-
 jobs:
   generate_metadata:
-    runs-on: ubuntu-latest
-    outputs:
-      BUILD_ARGS: ${{ steps.set-metadata.outputs.BUILD_ARGS }}
-      TAGS: ${{ steps.set-metadata.outputs.TAGS }}
-      IMAGE_REGISTRY: ${{ steps.set-metadata.outputs.IMAGE_REGISTRY }}
-      IMAGE_NAME: ${{ steps.set-metadata.outputs.IMAGE_NAME }}
-    steps:
-      - name: Fetch Kernel Version
-        id: fetch-kernel-version
-        run: |
-          KERNEL_VERSION=$(skopeo inspect docker://${IMAGE_REGISTRY}/main-kernel:${FEDORA_VERSION} | jq -r '.Labels["ostree.linux"]')
-
-          echo "KERNEL_VERSION=${KERNEL_VERSION}" >> $GITHUB_OUTPUT
-
-      - name: Generate Tags
-        id: generate-tags
-        env:
-          IS_LATEST_VERSION: false
-          IS_GTS_VERSION: true
-          IS_BETA_VERSION: false
-        run: |
-          TIMESTAMP="$(date +%Y%m%d)"
-          SHA_SHORT="${GITHUB_SHA::7}"
-
-          TAGS=()
-          TAGS+=("${FEDORA_VERSION}")
-
-          if [[ "${IS_LATEST_VERSION}" == "true" ]]; then
-              TAGS+=("latest")
-          elif [[ "${IS_GTS_VERSION}" == "true" ]]; then
-              TAGS+=("gts")
-          elif [[ "${IS_BETA_VERSION}" == "true" ]]; then
-              TAGS+=("beta")
-          fi
-
-          for TAG in "${TAGS[@]}"; do
-              TAGS+=("${TAG}-${TIMESTAMP}")
-          done
-          for TAG in "${TAGS[@]}"; do
-              TAGS+=("${TAG}-${SHA_SHORT}")
-          done
-
-          echo "TAGS=$(IFS=,; echo "${TAGS[*]}")" >> $GITHUB_OUTPUT
-
-      - name: Set Metadata
-        id: set-metadata
-        env:
-          KERNEL_VERSION: ${{ steps.fetch-kernel-version.outputs.KERNEL_VERSION }}
-          TAGS: ${{ steps.generate-tags.outputs.TAGS }}
-        run: |
-          BUILD_ARGS=()
-
-          BUILD_ARGS+=("KERNEL_VERSION=${KERNEL_VERSION}")
-          BUILD_ARGS+=("SOURCE_IMAGE=${SOURCE_IMAGE}")
-          BUILD_ARGS+=("FEDORA_MAJOR_VERSION=${FEDORA_VERSION}")
-          BUILD_ARGS+=("IMAGE_NAME=${IMAGE_NAME}")
-
-          echo "BUILD_ARGS=$(IFS=,; echo "${BUILD_ARGS[*]}")" >> $GITHUB_OUTPUT
-          echo "TAGS=$TAGS" >> $GITHUB_OUTPUT
-          echo "IMAGE_REGISTRY=${IMAGE_REGISTRY}" >> $GITHUB_OUTPUT
-          echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_OUTPUT
+    uses: ./.github/workflows/reusable-generate-metadata.yml
+    with:
+      fedora-version: 40
+      image-registry: ghcr.io/ublue-os
+      image-name: kinoite-main
+      is-gts: true
 
   build:
     uses: ./.github/workflows/reusable-build.yml
     needs: generate_metadata
     secrets: inherit
     with:
-      image-registry: ${{ needs.generate_metadata.outputs.IMAGE_REGISTRY }}
-      image-name: ${{ needs.generate_metadata.outputs.IMAGE_NAME }}
+      image-registry: ${{ needs.generate_metadata.outputs.image-registry }}
+      image-name: ${{ needs.generate_metadata.outputs.image-name }}
       platforms: amd64, arm64
-      build-args: ${{ needs.generate_metadata.outputs.BUILD_ARGS }}
-      tags: ${{ needs.generate_metadata.outputs.TAGS }}
+      build-args: ${{ needs.generate_metadata.outputs.build-args }}
+      tags: ${{ needs.generate_metadata.outputs.tags }}
