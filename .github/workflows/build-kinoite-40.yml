@@ -1,0 +1,26 @@
+name: Build Kinoite 40
+
+on:
+  pull_request:
+
+jobs:
+  generate_metadata:
+    uses: ./.github/workflows/reusable-generate-metadata.yml
+    with:
+      fedora-version: 40
+      image-registry: ghcr.io/ublue-os
+      image-name: kinoite-main
+      source-image: kinoite
+      is-gts: true
+
+  build:
+    uses: ./.github/workflows/reusable-build.yml
+    needs: generate_metadata
+    secrets: inherit
+    with:
+      image-registry: ${{ needs.generate_metadata.outputs.image-registry }}
+      image-name: ${{ needs.generate_metadata.outputs.image-name }}
+      platforms: amd64, arm64
+      build-args: ${{ needs.generate_metadata.outputs.build-args }}
+      tags: ${{ needs.generate_metadata.outputs.tags }}
+      validate-secureboot: true
