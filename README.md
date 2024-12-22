@@ -8,5 +8,5 @@ A common main image for all other uBlue images, with minimal (but important) adj
 # Documentation
 
 - [Main website](https://universal-blue.org)
-- [Documentation](https://universal-blue.discourse.group/docs?category=4)
-- [Scope document](https://universal-blue.discourse.group/t/universal-blue-project-governance/51)
+- [Documentation](https://universal-blue.org/documentation.html)
+- [Scope document](https://universal-blue.org/mission.html)
