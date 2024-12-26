@@ -82,9 +82,6 @@ fi
 # run common packages script
 /ctx/packages.sh
 
-## install packages direct from github
-/ctx/github-release-install.sh sigstore/cosign x86_64
-
 # use CoreOS' generator for emergency/rescue boot
 # see detail: https://github.com/ublue-os/main/issues/653
 CSFG=/usr/lib/systemd/system-generators/coreos-sulogin-force-generator

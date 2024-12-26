@@ -191,6 +191,8 @@ jobs:
 
       - name: Populate Manifest
         env:
+          IMAGE_REGISTRY: ${{ inputs.image-registry }}
+          IMAGE_NAME: ${{ inputs.image-name }}
           MANIFEST: ${{ steps.create-manifest.outputs.MANIFEST }}
           PLATFORMS: ${{ inputs.platforms }}
           DIGESTS_JSON: ${{ steps.load-outputs.outputs.DIGESTS_JSON }}
@@ -203,7 +205,7 @@ jobs:
 
             podman manifest add $MANIFEST \
               --arch $platform \
-              $IMAGE_REGISTRY@$DIGEST
+              $IMAGE_REGISTRY/$IMAGE_NAME@$DIGEST
           done
 
       - name: Login to GHCR
