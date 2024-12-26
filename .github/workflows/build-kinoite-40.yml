@@ -10,7 +10,7 @@ jobs:
       fedora-version: 40
       image-registry: ghcr.io/ublue-os
       image-name: multiarch-test-kinoite-main
-      source-image: kinoite
+      source-image: fedora-kinoite
       is-gts: true
 
   build:
