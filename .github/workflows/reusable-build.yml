@@ -104,7 +104,7 @@ jobs:
             sudo apt install sbsigntool curl openssl
           fi
           podman run -d --rm --name ${IMAGE_NAME} ${IMAGE_REGISTRY}/${IMAGE_NAME}@${IMAGE_DIGEST} sleep 1000
-          KERNEL_VERSION=$(podman exec ${IMAGE_NAME} uname -r)
+          KERNEL_VERSION=$(podman exec ${IMAGE_NAME} rpm -q --qf "%{VERSION}-%{RELEASE}\n" kernel | tail -n 1)
           podman cp ${IMAGE_NAME}:/usr/lib/modules/${KERNEL_VERSION}/vmlinuz .
           podman rm -f ${IMAGE_NAME}
           sbverify --list vmlinuz
