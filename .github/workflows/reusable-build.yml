@@ -123,11 +123,8 @@ jobs:
           IMAGE_DIGEST: ${{ steps.build-image.outputs.IMAGE_DIGEST }}
         run: |
           for i in {1..3}; do
-            echo "podman push --digestfile=/tmp/digestfile ${IMAGE_REGISTRY}/${IMAGE_NAME}@${IMAGE_DIGEST}" && break || sleep $((10 ** i))
+            podman push --digestfile=/tmp/digestfile ${IMAGE_REGISTRY}/${IMAGE_NAME}@${IMAGE_DIGEST} && break || sleep $((10 ** i))
           done
-
-          # Temporarily populate the digest file with a dummy value
-          echo "dummy-digest-${{ matrix.platform }}" > /tmp/digestfile
 
           IMAGE_DIGEST=$(cat /tmp/digestfile)
           echo "IMAGE_DIGEST=${IMAGE_DIGEST}" >> $GITHUB_OUTPUT
@@ -220,7 +217,7 @@ jobs:
           IMAGE_REGISTRY: ${{ inputs.image-registry }}
         run: |
           for tag in $(echo $TAGS | tr ',' '\n'); do
-            echo "podman manifest push --digestfile=/tmp/digestfile --all=false $MANIFEST $IMAGE_REGISTRY/$tag"
+            podman manifest push --digestfile=/tmp/digestfile --all=false $MANIFEST $IMAGE_REGISTRY/$tag
           done
 
           # Temporarily populate the digest file with a dummy value
