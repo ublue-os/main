@@ -217,9 +217,10 @@ jobs:
           TAGS: ${{ inputs.tags }}
           MANIFEST: ${{ steps.create-manifest.outputs.MANIFEST }}
           IMAGE_REGISTRY: ${{ inputs.image-registry }}
+          IMAGE_NAME: ${{ inputs.image-name }}
         run: |
           for tag in $(echo $TAGS | tr ',' '\n'); do
-            podman manifest push --digestfile=/tmp/digestfile --all=false $MANIFEST $IMAGE_REGISTRY/$tag
+            podman manifest push --digestfile=/tmp/digestfile --all=false $MANIFEST $IMAGE_REGISTRY/$IMAGE_NAME:$tag
           done
 
           # Temporarily populate the digest file with a dummy value
