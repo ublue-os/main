@@ -73,6 +73,7 @@ jobs:
           IMAGE_REGISTRY: ${{ inputs.image-registry }}
           IMAGE_NAME: ${{ inputs.image-name }}
           BUILD_ARGS: ${{ inputs.build-args }}
+          PLATFORM: ${{ matrix.platform }}
         run: |
           BUILD_ARGS_FLAGS=()
           for arg in $(echo $BUILD_ARGS | tr ',' '\n'); do
@@ -80,6 +81,7 @@ jobs:
           done
 
           podman build \
+            --arch $PLATFORM \
             --iidfile /tmp/iidfile \
             -t ${IMAGE_REGISTRY}/${IMAGE_NAME}:local \
             "${BUILD_ARGS_FLAGS[@]}" \
