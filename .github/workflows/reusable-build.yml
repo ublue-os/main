@@ -37,7 +37,7 @@ jobs:
         include:
           - image_name: base
             source_image: ${{ inputs.fedora_version == '41' && 'base-atomic' || '' }}
-          - image_name: sercia
+          - image_name: sericea
             source_image: ${{ inputs.fedora_version == '41' && 'sway-atomic' || '' }}
           - image_name: onyx
             source_image: ${{ inputs.fedora_version == '41' && 'budgie-atomic' || '' }}
