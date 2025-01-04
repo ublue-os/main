@@ -50,7 +50,7 @@ jobs:
           fi
 
           if [[ "${{ matrix.fedora_version }}" == 41 ]]; then
-            if [[ "${{ matrix.image_name }}" != "silverblue" || "${{ matrix.image_name }}" != "kinoite" ]]
+            if [[ "${{ matrix.image_name }}" != "silverblue" || "${{ matrix.image_name }}" != "kinoite" ]]; then
               SOURCE_IMAGE=$SOURCE_IMAGE-atomic
             fi
           fi
