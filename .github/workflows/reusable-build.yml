@@ -58,15 +58,20 @@ jobs:
 
       - name: Matrix Variables
         shell: bash
+        env:
+          MATRIX_SOURCE_IMAGE: ${{ matrix.source_image }}
+          MATRIX_IMAGE_NAME: ${{ matrix.image_name }}
         run: |
-          if [[ -z "${{ matrix.source_image }}" ]]; then
-              SOURCE_IMAGE=${{ matrix.source_image }}
+          if [[ -z $MATRIX_SOURCE_IMAGE ]]; then
+              echo "MATRIX_SOURCE_IMAGE not empty"
+              SOURCE_IMAGE=$MATRIX_SOURCE_IMAGE
           else
-              SOURCE_IMAGE=${{ matrix.image_name }}
+              echo "MATRIX_SOURCE_IMAGE empty"
+              SOURCE_IMAGE=$MATRIX_IMAGE_NAME
           fi
 
           echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV
-          echo "IMAGE_NAME=${{ matrix.image_name }}-main" >> $GITHUB_ENV
+          echo "IMAGE_NAME=$MATRIX_IMAGE_NAME-main" >> $GITHUB_ENV
           echo "SOURCE_IMAGE=$SOURCE_IMAGE" >> $GITHUB_ENV
 
       - name: Generate tags
