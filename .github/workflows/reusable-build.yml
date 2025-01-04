@@ -38,10 +38,13 @@ jobs:
         include:
           - image_name: base
             source_org: fedora-ostree-desktops
+            source_image: base-atomic
           - image_name: lazurite
             source_org: fedora-ostree-desktops
+            source_image: lxqt-atomic
           - image_name: vauxite
             source_org: fedora-ostree-desktops
+            source_image: xfce-atomic
           - image_name: sericea
             source_image: fedora-sway-atomic
           - image_name: onyx
