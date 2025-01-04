@@ -36,20 +36,15 @@ jobs:
           - vauxite
         include:
           - image_name: base
-            source_image: base-atomic
-            fedora_version: 41
+            source_image: ${{ inputs.fedora_version == '41' && 'base-atomic' || '' }}
           - image_name: sercia
-            source_image: sway-atomic
-            fedora_version: 41
+            source_image: ${{ inputs.fedora_version == '41' && 'sway-atomic' || '' }}
           - image_name: onyx
-            source_image: budgie-atomic
-            fedora_version: 41
+            source_image: ${{ inputs.fedora_version == '41' && 'budgie-atomic' || '' }}
           - image_name: lazurite
-            source_image: lxqt-atomic
-            fedora_version: 41
+            source_image: ${{ inputs.fedora_version == '41' && 'lxqt-atomic' || '' }}
           - image_name: vauxite
-            source_image: xfce-atomic
-            fedora_version: 41
+            source_image: ${{ inputs.fedora_version == '41' && 'xfce-atomic' || '' }}
 
     steps:
       # Checkout push-to-registry action GitHub repository
