@@ -63,11 +63,11 @@ jobs:
           MATRIX_IMAGE_NAME: ${{ matrix.image_name }}
         run: |
           if [[ -z $MATRIX_SOURCE_IMAGE ]]; then
-              echo "MATRIX_SOURCE_IMAGE not empty"
-              SOURCE_IMAGE=$MATRIX_SOURCE_IMAGE
-          else
               echo "MATRIX_SOURCE_IMAGE empty"
               SOURCE_IMAGE=$MATRIX_IMAGE_NAME
+          else
+              echo "MATRIX_SOURCE_IMAGE not empty"
+              SOURCE_IMAGE=$MATRIX_SOURCE_IMAGE
           fi
 
           echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV
