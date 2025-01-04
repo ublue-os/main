@@ -44,12 +44,20 @@ jobs:
         shell: bash
         run: |
           if [[ "${{ matrix.image_name }}" == "mate" ]]; then
-              echo "SOURCE_IMAGE=base" >> $GITHUB_ENV
+              SOURCE_IMAGE=base
           else
-              echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
+              SOURCE_IMAGE=${{ matrix.image_name }}
           fi
+
+          if [[ "${{ matrix.fedora_version }}" == 41 ]]; then
+            if [[ "${{ matrix.image_name }}" != "silverblue" || "${{ matrix.image_name }}" != "kinoite" ]]
+              SOURCE_IMAGE=$SOURCE_IMAGE-atomic
+            fi
+          fi
+
           echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV
           echo "IMAGE_NAME=${{ matrix.image_name }}-main" >> $GITHUB_ENV
+          echo "SOURCE_IMAGE=$SOURCE_IMAGE" >> $GITHUB_ENV
 
       - name: Generate tags
         id: generate-tags
