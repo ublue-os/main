@@ -58,12 +58,9 @@ jobs:
       - name: Matrix Variables
         shell: bash
         run: |
-          // Overwrite the SOURCE_ORG if set in the matrix.
           if [[ "${{ matrix.source_org }}" == "fedora-ostree-desktops" ]]; then
             echo "SOURCE_ORG=${{ matrix.source_org }}" >> $GITHUB_ENV
           fi
-
-          // Overwrite the SOURCE_IMAGE to prepend fedora- (the new naming convention)
           if [[ -n "${{ matrix.source_image }}" ]]; then
             echo "SOURCE_IMAGE=fedora-${{ matrix.image_name }}" >> $GITHUB_ENV
           else
