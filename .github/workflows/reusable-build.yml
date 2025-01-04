@@ -38,13 +38,25 @@ jobs:
         include:
           - image_name: base
             source_org: fedora-ostree-desktops
-            source_image: ${{ inputs.fedora_version != 40 && 'base-atomic' }}
+            fedora_version: 40
+          - image_name: base
+            source_org: fedora-ostree-desktops
+            source_image: base-atomic
+            fedora_version: 41
           - image_name: lazurite
             source_org: fedora-ostree-desktops
-            source_image: ${{ inputs.fedora_version != 40 && 'lxqt-atomic' }}
+            fedora_version: 40
+          - image_name: lazurite
+            source_org: fedora-ostree-desktops
+            fedora_version: 41
+            source_image: lxqt-atomic
           - image_name: vauxite
             source_org: fedora-ostree-desktops
-            source_image: ${{ inputs.fedora_version != 40 && 'xfce-atomic' }}
+            fedora_version: 40
+          - image_name: vauxite
+            source_org: fedora-ostree-desktops
+            fedora_version: 41
+            source_image: xfce-atomic
           - image_name: sericea
             source_image: fedora-sway-atomic
           - image_name: onyx
@@ -58,9 +70,10 @@ jobs:
       - name: Matrix Variables
         shell: bash
         run: |
-          if [[ "${{ matrix.source_org }}" == "fedora-ostree-desktops" ]]; then
+          if [[ -n "${{ matrix.source_org }}" ]]; then
             echo "SOURCE_ORG=${{ matrix.source_org }}" >> $GITHUB_ENV
           fi
+          
           if [[ -n "${{ matrix.source_image }}" ]]; then
             echo "SOURCE_IMAGE=fedora-${{ matrix.image_name }}" >> $GITHUB_ENV
           else
