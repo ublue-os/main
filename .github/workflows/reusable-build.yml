@@ -38,13 +38,13 @@ jobs:
         include:
           - image_name: base
             source_org: fedora-ostree-desktops
-            source_image: base-atomic
+            source_image: ${{ inputs.fedora_version != 40 && 'base-atomic' }}
           - image_name: lazurite
             source_org: fedora-ostree-desktops
-            source_image: lxqt-atomic
+            source_image: ${{ inputs.fedora_version != 40 && 'lxqt-atomic' }}
           - image_name: vauxite
             source_org: fedora-ostree-desktops
-            source_image: xfce-atomic
+            source_image: ${{ inputs.fedora_version != 40 && 'xfce-atomic' }}
           - image_name: sericea
             source_image: fedora-sway-atomic
           - image_name: onyx
@@ -58,15 +58,16 @@ jobs:
       - name: Matrix Variables
         shell: bash
         run: |
+          // Overwrite the SOURCE_ORG if set in the matrix.
           if [[ "${{ matrix.source_org }}" == "fedora-ostree-desktops" ]]; then
-            echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
             echo "SOURCE_ORG=${{ matrix.source_org }}" >> $GITHUB_ENV
+          fi
+
+          // Overwrite the SOURCE_IMAGE to prepend fedora- (the new naming convention)
+          if [[ -n "${{ matrix.source_image }}" ]]; then
+            echo "SOURCE_IMAGE=fedora-${{ matrix.image_name }}" >> $GITHUB_ENV
           else
-            if [[ "${{ matrix.source_image }}" == fedora-* ]]; then
-              echo "SOURCE_IMAGE=${{ matrix.source_image }}" >> $GITHUB_ENV
-            else
-              echo "SOURCE_IMAGE=fedora-${{ matrix.image_name }}" >> $GITHUB_ENV
-            fi
+            echo "SOURCE_IMAGE=${{ matrix.source_image }}" >> $GITHUB_ENV
           fi
           echo "IMAGE_NAME=${{ matrix.image_name }}-main" >> $GITHUB_ENV
 
