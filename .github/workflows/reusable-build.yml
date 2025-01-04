@@ -34,6 +34,22 @@ jobs:
           - base
           - lazurite
           - vauxite
+        include:
+          - image_name: base
+            source_image: base-atomic
+            fedora_version: 41
+          - image_name: sercia
+            source_image: sway-atomic
+            fedora_version: 41
+          - image_name: onyx
+            source_image: budgie-atomic
+            fedora_version: 41
+          - image_name: lazurite
+            source_image: lxqt-atomic
+            fedora_version: 41
+          - image_name: vauxite
+            source_image: xfce-atomic
+            fedora_version: 41
 
     steps:
       # Checkout push-to-registry action GitHub repository
@@ -43,16 +59,10 @@ jobs:
       - name: Matrix Variables
         shell: bash
         run: |
-          if [[ "${{ matrix.image_name }}" == "mate" ]]; then
-              SOURCE_IMAGE=base
+          if [[ -z "${{ matrix.source_image }}" ]]; then
+              SOURCE_IMAGE=${{ matrix.source_image }}
           else
               SOURCE_IMAGE=${{ matrix.image_name }}
-          fi
-
-          if [[ "${{ matrix.fedora_version }}" == 41 ]]; then
-            if [[ "${{ matrix.image_name }}" != "silverblue" && "${{ matrix.image_name }}" != "kinoite" ]]; then
-              SOURCE_IMAGE=$SOURCE_IMAGE-atomic
-            fi
           fi
 
           echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV
