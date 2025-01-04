@@ -34,6 +34,17 @@ jobs:
           - base
           - lazurite
           - vauxite
+        include:
+          - image_name: base
+            source_image: ${{ inputs.fedora_version == '41' && 'base-atomic' || '' }}
+          - image_name: sericea
+            source_image: ${{ inputs.fedora_version == '41' && 'sway-atomic' || '' }}
+          - image_name: onyx
+            source_image: ${{ inputs.fedora_version == '41' && 'budgie-atomic' || '' }}
+          - image_name: lazurite
+            source_image: ${{ inputs.fedora_version == '41' && 'lxqt-atomic' || '' }}
+          - image_name: vauxite
+            source_image: ${{ inputs.fedora_version == '41' && 'xfce-atomic' || '' }}
 
     steps:
       # Checkout push-to-registry action GitHub repository
@@ -42,14 +53,21 @@ jobs:
 
       - name: Matrix Variables
         shell: bash
+        env:
+          MATRIX_SOURCE_IMAGE: ${{ matrix.source_image }}
+          MATRIX_IMAGE_NAME: ${{ matrix.image_name }}
         run: |
-          if [[ "${{ matrix.image_name }}" == "mate" ]]; then
-              echo "SOURCE_IMAGE=base" >> $GITHUB_ENV
+          if [[ -z $MATRIX_SOURCE_IMAGE ]]; then
+              echo "MATRIX_SOURCE_IMAGE empty"
+              SOURCE_IMAGE=$MATRIX_IMAGE_NAME
           else
-              echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
+              echo "MATRIX_SOURCE_IMAGE not empty"
+              SOURCE_IMAGE=$MATRIX_SOURCE_IMAGE
           fi
+
           echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV
-          echo "IMAGE_NAME=${{ matrix.image_name }}-main" >> $GITHUB_ENV
+          echo "IMAGE_NAME=$MATRIX_IMAGE_NAME-main" >> $GITHUB_ENV
+          echo "SOURCE_IMAGE=$SOURCE_IMAGE" >> $GITHUB_ENV
 
       - name: Generate tags
         id: generate-tags
