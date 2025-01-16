@@ -67,11 +67,15 @@ jobs:
       - name: Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Setup Dependencies
+      - name: Setup Dependencies (ARM64)
         if: ${{ matrix.platform == 'arm64' }}
         run: |
           sudo apt update
           sudo apt install -y podman
+
+          sudo mkdir -p /etc/containers
+          echo -e "[storage]\ndriver = \"overlay\"\nrunroot = \"/run/containers/storage\"\ngraphroot = \"/var/lib/containers/storage\"" \
+            | sudo tee /etc/containers/storage.conf
 
       - name: Build Image
         id: build-image
