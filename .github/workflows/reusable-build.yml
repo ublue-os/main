@@ -71,11 +71,14 @@ jobs:
         if: ${{ matrix.platform == 'arm64' }}
         run: |
           sudo apt update
-          sudo apt install -y podman
+          sudo apt install -y podman sqlite3
 
           sudo mkdir -p /etc/containers
           echo -e "[storage]\ndriver = \"overlay\"\nrunroot = \"/run/containers/storage\"\ngraphroot = \"/var/lib/containers/storage\"" \
             | sudo tee /etc/containers/storage.conf
+
+          # workaround https://github.com/containers/podman/issues/21683
+          echo "update DBConfig set GraphDriver = 'overlay' where GraphDriver = '';" | sudo sh -c '(cd /var/lib/containers/storage && sqlite3 db.sql)'
 
       - name: Build Image
         id: build-image
