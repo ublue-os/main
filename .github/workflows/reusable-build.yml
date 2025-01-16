@@ -1,233 +1,127 @@
-name: build-ublue
+name: Build Image
+
 on:
   workflow_call:
     inputs:
-      fedora_version:
-        description: "The Fedora release version: 39, 40, 41 etc"
+      image-registry:
+        description: "The registry to push the image to.  E.G. ghcr.io/ublue-os"
         required: true
         type: string
-env:
-  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+      image-name:
+        description: "The name of the image to build.  E.G. main"
+        required: true
+        type: string
+      platforms:
+        description: "The platforms to build for.  E.G. aarch64, x86_64 etc"
+        required: true
+        type: string
+      tags:
+        description: "The tags to apply to the image"
+        required: true
+        type: string
+      build-args:
+        description: "The build arguments to pass to the build"
+        required: false
+        type: string
+      validate-secureboot:
+        description: "Whether to validate secureboot"
+        required: false
+        type: boolean
+    outputs:
+      manifest-digest:
+        description: "The digest of the remote manifest"
+        value: ${{ jobs.manifest.outputs.manifest-digest }}
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.fedora_version }}
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.fedora_version }}-${{ inputs.fedora_edition }}-${{ inputs.platforms }}
   cancel-in-progress: true
 
 jobs:
-  build_ublue:
-    name: main
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    strategy:
-      fail-fast: false
-      matrix:
-        fedora_version:
-          - ${{ inputs.fedora_version }}
-        image_name:
-          - silverblue
-          - kinoite
-          - sericea
-          - onyx
-          - base
-          - lazurite
-          - vauxite
-        include:
-          - image_name: base
-            source_image: ${{ inputs.fedora_version == '41' && 'base-atomic' || '' }}
-          - image_name: sericea
-            source_image: ${{ inputs.fedora_version == '41' && 'sway-atomic' || '' }}
-          - image_name: onyx
-            source_image: ${{ inputs.fedora_version == '41' && 'budgie-atomic' || '' }}
-          - image_name: lazurite
-            source_image: ${{ inputs.fedora_version == '41' && 'lxqt-atomic' || '' }}
-          - image_name: vauxite
-            source_image: ${{ inputs.fedora_version == '41' && 'xfce-atomic' || '' }}
-
+  generate_matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      # Checkout push-to-registry action GitHub repository
-      - name: Checkout Push to Registry action
+      - name: Set Matrix
+        id: set-matrix
+        env:
+          PLATFORMS: ${{ inputs.platforms }}
+        run: |
+          MATRIX='{"include":[]}'
+          # Split platforms string by comma and iterate over each platform
+          for platform in $(echo $PLATFORMS | tr ',' '\n'); do
+            MATRIX=$(echo $MATRIX | jq ".include += [{\"platform\": \"${platform}\"}]")
+          done
+
+          echo "matrix=$(echo $MATRIX | jq -c  '.')" >> $GITHUB_OUTPUT
+
+  build:
+    runs-on: ${{ matrix.platform == 'amd64' && 'ubuntu-24.04' || 'ubuntu-24.04-arm' }}
+    needs: generate_matrix
+    strategy:
+      matrix: ${{fromJson(needs.generate_matrix.outputs.matrix)}}
+    steps:
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Matrix Variables
-        shell: bash
-        env:
-          MATRIX_SOURCE_IMAGE: ${{ matrix.source_image }}
-          MATRIX_IMAGE_NAME: ${{ matrix.image_name }}
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Setup Dependencies (ARM64)
+        if: ${{ matrix.platform == 'arm64' }}
         run: |
-          if [[ -z $MATRIX_SOURCE_IMAGE ]]; then
-              echo "MATRIX_SOURCE_IMAGE empty"
-              SOURCE_IMAGE=$MATRIX_IMAGE_NAME
-          else
-              echo "MATRIX_SOURCE_IMAGE not empty"
-              SOURCE_IMAGE=$MATRIX_SOURCE_IMAGE
-          fi
+          sudo apt update
+          sudo apt install -y podman sqlite3
 
-          echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV
-          echo "IMAGE_NAME=$MATRIX_IMAGE_NAME-main" >> $GITHUB_ENV
-          echo "SOURCE_IMAGE=$SOURCE_IMAGE" >> $GITHUB_ENV
+          sudo mkdir -p /etc/containers
+          echo -e "[storage]\ndriver = \"overlay\"\nrunroot = \"/run/containers/storage\"\ngraphroot = \"/var/lib/containers/storage\"" \
+            | sudo tee /etc/containers/storage.conf
 
-      - name: Generate tags
-        id: generate-tags
-        shell: bash
-        run: |
-          # Generate a timestamp for creating an image version history
-          TIMESTAMP="$(date +%Y%m%d)"
-          VARIANT="${{ matrix.fedora_version }}"
+          # workaround https://github.com/containers/podman/issues/21683
+          echo "update DBConfig set GraphDriver = 'overlay' where GraphDriver = '';" | sudo sh -c '(cd /var/lib/containers/storage && sqlite3 db.sql)'
 
-          if [[ "${{ matrix.fedora_version }}" -eq "39" ]]; then
-            IS_LATEST_VERSION=false
-            IS_STABLE_VERSION=true
-            IS_GTS_VERSION=false
-            IS_BETA_VERSION=false
-          elif [[ "${{ matrix.fedora_version }}" -eq "40" ]]; then
-            IS_LATEST_VERSION=false
-            IS_STABLE_VERSION=true
-            IS_GTS_VERSION=true
-            IS_BETA_VERSION=false
-          elif [[ "${{ matrix.fedora_version }}" -eq "41" ]]; then
-            IS_LATEST_VERSION=true
-            IS_STABLE_VERSION=true
-            IS_GTS_VERSION=false
-            IS_BETA_VERSION=true
-          fi
-
-          COMMIT_TAGS=()
-          BUILD_TAGS=()
-
-          # Have tags for tracking builds during pull request
-          SHA_SHORT="${GITHUB_SHA::7}"
-          COMMIT_TAGS+=("pr-${{ github.event.number }}-${VARIANT}")
-          COMMIT_TAGS+=("${SHA_SHORT}-${VARIANT}")
-
-          if [[ "${IS_LATEST_VERSION}" == "true" ]] && \
-             [[ "${IS_STABLE_VERSION}" == "true" ]]; then
-              COMMIT_TAGS+=("pr-${{ github.event.number }}")
-              COMMIT_TAGS+=("${SHA_SHORT}")
-          fi
-
-          BUILD_TAGS=("${VARIANT}")
-
-          # Append matching timestamp tags to keep a version history
-          for TAG in "${BUILD_TAGS[@]}"; do
-              BUILD_TAGS+=("${TAG}-${TIMESTAMP}")
-          done
-
-          if [[ "${IS_LATEST_VERSION}" == "true" ]] && \
-             [[ "${IS_STABLE_VERSION}" == "true" ]]; then
-              BUILD_TAGS+=("${TIMESTAMP}")
-              BUILD_TAGS+=("latest")
-              echo "DEFAULT_TAG=latest" >> $GITHUB_ENV
-          elif [[ "${IS_GTS_VERSION}" == "true" ]]; then
-              BUILD_TAGS+=("gts-${TIMESTAMP}")
-              BUILD_TAGS+=("gts")
-              echo "DEFAULT_TAG=gts" >> $GITHUB_ENV
-          elif [[ "${IS_BETA_VERSION}" == "true" ]]; then
-              BUILD_TAGS+=("beta-${TIMESTAMP}")
-              BUILD_TAGS+=("beta")
-              echo "DEFAULT_TAG=beta" >> $GITHUB_ENV
-          fi
-
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-              echo "Generated the following commit tags: "
-              for TAG in "${COMMIT_TAGS[@]}"; do
-                  echo "${TAG}"
-              done
-              alias_tags=("${COMMIT_TAGS[@]}")
-              echo "DEFAULT_TAG=${SHA_SHORT}-${VARIANT}" >> $GITHUB_ENV
-          else
-              alias_tags=("${BUILD_TAGS[@]}")
-          fi
-
-          echo "Generated the following build tags: "
-          for TAG in "${BUILD_TAGS[@]}"; do
-              echo "${TAG}"
-          done
-
-          echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
-
-      - name: Get current version
-        id: labels
-        uses: Wandalen/wretry.action@v3.7.3
-        with:
-          attempt_limit: 3
-          attempt_delay: 15000
-          command: |
-            set -eo pipefail
-            ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
-            if [ -z "$ver" ] || [ "null" = "$ver" ]; then
-              echo "inspected image version must not be empty or null"
-              exit 1
-            fi
-            linux=$(skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/main-kernel:${{ matrix.fedora_version }} | jq -r '.Labels["ostree.linux"]')
-            AKMODS_KERNEL_VERSION=$(skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/akmods:main-${{ matrix.fedora_version }} | jq -r '.Labels["ostree.linux"]')
-            if [[ "${linux}" != "${AKMODS_KERNEL_VERSION}" ]]; then
-              echo "Kernel Versions do not match between AKMODS and Cached-Kernel."
-              exit 1
-            fi
-            echo "KERNEL_VERSION=$linux" >> $GITHUB_ENV
-            echo "SOURCE_IMAGE_VERSION=$ver" >> $GITHUB_ENV
-
-      - name: Pull Images
-        uses: Wandalen/wretry.action@v3.7.3
-        with:
-          attempt_limit: 3
-          attempt_delay: 15000
-          command: |
-            # pull the base image used for FROM in containerfile so
-            # we can retry on that unfortunately common failure case
-            podman pull quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
-            podman pull ${{ env.IMAGE_REGISTRY }}/akmods:main-${{ matrix.fedora_version }}
-            podman pull ${{ env.IMAGE_REGISTRY }}/main-kernel:${{ env.KERNEL_VERSION }}
-
-      # Generate image metadata
-      - name: Image Metadata
-        uses: docker/metadata-action@v5
-        id: meta
-        with:
-          images: |
-            ${{ env.IMAGE_NAME }}
-          labels: |
-            org.opencontainers.image.title=${{ env.IMAGE_NAME }}
-            org.opencontainers.image.version=${{ env.SOURCE_IMAGE_VERSION }}
-            org.opencontainers.image.description=A base Universal Blue ${{ matrix.image_name }} image with batteries included
-            ostree.linux=${{ env.KERNEL_VERSION }}
-            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/main/README.md
-            io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/120078124?s=200&v=4
-
-      # Build image using Buildah action
       - name: Build Image
-        id: build_image
-        uses: redhat-actions/buildah-build@v2
-        with:
-          containerfiles: |
-            ./Containerfile
-          image: ${{ env.IMAGE_NAME }}
-          tags: |
-            ${{ steps.generate-tags.outputs.alias_tags }}
-          build-args: |
-            IMAGE_NAME=${{ matrix.image_name }}
-            SOURCE_ORG=${{ env.SOURCE_ORG }}
-            SOURCE_IMAGE=${{ env.SOURCE_IMAGE }}
-            FEDORA_MAJOR_VERSION=${{ matrix.fedora_version }}
-            KERNEL_VERSION=${{ env.KERNEL_VERSION }}
-            IMAGE_REGISTRY=${{ env.IMAGE_REGISTRY }}
-          labels: ${{ steps.meta.outputs.labels }}
-          oci: false
+        id: build-image
+        env:
+          IMAGE_REGISTRY: ${{ inputs.image-registry }}
+          IMAGE_NAME: ${{ inputs.image-name }}
+          BUILD_ARGS: ${{ inputs.build-args }}
+          PLATFORM: ${{ matrix.platform }}
+        run: |
+          BUILD_ARGS_FLAGS=()
+          for arg in $(echo $BUILD_ARGS | tr ',' '\n'); do
+            BUILD_ARGS_FLAGS+=("--build-arg" "$arg")
+          done
+
+          sudo podman build \
+            --arch $PLATFORM \
+            --iidfile /tmp/iidfile \
+            -t ${IMAGE_REGISTRY}/${IMAGE_NAME}:local \
+            "${BUILD_ARGS_FLAGS[@]}" \
+            .
+
+          IMAGE_ID=$(cat /tmp/iidfile)
+          IMAGE_DIGEST=$(sudo podman inspect --format '{{.Digest}}' $IMAGE_ID)
+
+          echo "IMAGE_DIGEST=${IMAGE_DIGEST}" >> $GITHUB_OUTPUT
 
       - name: Check Secureboot
-        shell: bash
+        if: ${{ inputs.validate-secureboot }}
+        env:
+          IMAGE_REGISTRY: ${{ inputs.image-registry }}
+          IMAGE_NAME: ${{ inputs.image-name }}
+          IMAGE_DIGEST: ${{ steps.build-image.outputs.IMAGE_DIGEST }}
         run: |
-          set -x
+          set -euxo pipefail
+
           if [[ ! $(command -v sbverify) || ! $(command -v curl) || ! $(command -v openssl) ]]; then
             sudo apt update
             sudo apt install sbsigntool curl openssl
           fi
-          podman run -d --rm --name ${{env.IMAGE_NAME}}-$(echo "${{ steps.generate-tags.outputs.alias_tags }}" | cut -d " " -f 1) "${{ env.IMAGE_NAME }}":$(echo "${{ steps.generate-tags.outputs.alias_tags }}" | cut -d " " -f 1) sleep 1000
-          podman cp ${{env.IMAGE_NAME}}-$(echo "${{ steps.generate-tags.outputs.alias_tags }}" | cut -d " " -f 1):/usr/lib/modules/${{ env.KERNEL_VERSION }}/vmlinuz .
-          podman rm -f ${{env.IMAGE_NAME}}-$(echo "${{ steps.generate-tags.outputs.alias_tags }}" | cut -d " " -f 1)
+          sudo podman run -d --rm --name ${IMAGE_NAME} ${IMAGE_REGISTRY}/${IMAGE_NAME}@${IMAGE_DIGEST} sleep 1000
+          KERNEL_VERSION=$(sudo podman exec ${IMAGE_NAME} rpm -q --qf "%{VERSION}-%{RELEASE}.%{ARCH}\n" kernel | tail -n 1)
+          sudo podman cp ${IMAGE_NAME}:/usr/lib/modules/${KERNEL_VERSION}/vmlinuz .
+          sudo podman rm -f ${IMAGE_NAME}
           sbverify --list vmlinuz
           curl --retry 3 -Lo kernel-sign.der https://github.com/ublue-os/kernel-cache/raw/main/certs/public_key.der
           curl --retry 3 -Lo akmods.der https://github.com/ublue-os/kernel-cache/raw/main/certs/public_key_2.der
@@ -236,70 +130,129 @@ jobs:
           sbverify --cert kernel-sign.crt vmlinuz || exit 1
           sbverify --cert akmods.crt vmlinuz || exit 1
 
-      # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
-      # https://github.com/macbre/push-to-ghcr/issues/12
-      - name: Lowercase Registry
-        id: registry_case
-        uses: ASzc/change-string-case-action@v6
-        with:
-          string: ${{ env.IMAGE_REGISTRY }}
-
-      - name: Push To GHCR
-        uses: Wandalen/wretry.action@v3.7.3
-        id: push
-        if: github.event_name != 'pull_request'
+      - name: Push Image
+        id: push-image
         env:
-          REGISTRY_USER: ${{ github.actor }}
-          REGISTRY_PASSWORD: ${{ github.token }}
-        with:
-          action: redhat-actions/push-to-registry@v2
-          attempt_limit: 3
-          attempt_delay: 15000
-          with: |
-            image: ${{ steps.build_image.outputs.image }}
-            tags: ${{ steps.build_image.outputs.tags }}
-            registry: ${{ steps.registry_case.outputs.lowercase }}
-            username: ${{ env.REGISTRY_USER }}
-            password: ${{ env.REGISTRY_PASSWORD }}
-            extra-args: |
-              --disable-content-trust
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        if: github.event_name != 'pull_request'
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      # Sign container
-      - uses: sigstore/cosign-installer@v3.7.0
-        if: github.event_name != 'pull_request'
-
-      - name: Sign container image
-        if: github.event_name != 'pull_request'
+          IMAGE_REGISTRY: ${{ inputs.image-registry }}
+          IMAGE_NAME: ${{ inputs.image-name }}
+          IMAGE_DIGEST: ${{ steps.build-image.outputs.IMAGE_DIGEST }}
         run: |
-          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image.outputs.image }}@${TAGS}
+          for i in {1..3}; do
+            sudo podman push --digestfile=/tmp/digestfile ${IMAGE_REGISTRY}/${IMAGE_NAME}@${IMAGE_DIGEST} && break || sleep $((10 ** i))
+          done
+
+          IMAGE_DIGEST=$(cat /tmp/digestfile)
+          echo "IMAGE_DIGEST=${IMAGE_DIGEST}" >> $GITHUB_OUTPUT
+
+      - name: Generate Outputs
         env:
-          TAGS: ${{ steps.push.outputs.outputs && fromJSON(steps.push.outputs.outputs).digest }}
-          COSIGN_EXPERIMENTAL: false
-          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
-
-      - name: Echo outputs
-        if: github.event_name != 'pull_request'
+          IMAGE_NAME: ${{ inputs.image-name }}
+          IMAGE_DIGEST: ${{ steps.push-image.outputs.IMAGE_DIGEST }}
+          PLATFORM: ${{ matrix.platform }}
         run: |
-          echo "${{ toJSON(steps.push.outputs) }}"
+          mkdir -p /tmp/outputs/digests
+          echo "$IMAGE_DIGEST" > /tmp/outputs/digests/${IMAGE_NAME}-${PLATFORM}.txt
 
-  check:
-    name: Check all ${{ inputs.fedora_version }} builds successful
-    if: ${{ !cancelled() }}
+      - name: Upload Output Artifacts
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4
+        with:
+          name: ${{ inputs.image-name }}-${{ matrix.platform }}
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            /tmp/outputs/digests/*.txt
+
+  manifest:
     runs-on: ubuntu-latest
-    needs: [build_ublue]
+    needs: build
+    outputs:
+      manifest-digest: ${{ steps.push-manifest.outputs.DIGEST }}
     steps:
-      - name: Exit on failure
-        if: ${{ needs.build_ublue.result == 'failure' }}
-        shell: bash
-        run: exit 1
-      - name: Exit
-        shell: bash
-        run: exit 0
+      - name: Fetch Build Outputs
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4
+        with:
+          pattern: ${{ inputs.image-name }}-*
+          merge-multiple: true
+          path: /tmp/artifacts
+
+      - name: Load Outputs
+        id: load-outputs
+        run: |
+          # Initialize an empty JSON object using jq
+          DIGESTS_JSON=$(jq -n '{}')
+
+          # Loop through digest files and construct the JSON
+          for digest_file in /tmp/artifacts/*.txt; do
+            # Extract the platform from the file name
+            PLATFORM=$(basename $digest_file | rev | cut -d'-' -f1 | rev | cut -d'.' -f1)
+            DIGEST=$(cat $digest_file)
+
+            # Add the platform and digest to the JSON object
+            DIGESTS_JSON=$(echo "$DIGESTS_JSON" | jq --arg key "$PLATFORM" --arg value "$DIGEST" '. + {($key): $value}')
+          done
+
+          echo "DIGESTS_JSON: $DIGESTS_JSON"
+          DIGESTS_JSON=$(echo "$DIGESTS_JSON" | jq -c '.')
+          echo "DIGESTS_JSON=$DIGESTS_JSON" >> $GITHUB_OUTPUT
+
+      - name: Create Manifest
+        id: create-manifest
+        env:
+          IMAGE_REGISTRY: ${{ inputs.image-registry }}
+          IMAGE_NAME: ${{ inputs.image-name }}
+        run: |
+          podman manifest create ${IMAGE_REGISTRY}/${IMAGE_NAME}
+          echo "MANIFEST=${IMAGE_REGISTRY}/${IMAGE_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Populate Manifest
+        env:
+          IMAGE_REGISTRY: ${{ inputs.image-registry }}
+          IMAGE_NAME: ${{ inputs.image-name }}
+          MANIFEST: ${{ steps.create-manifest.outputs.MANIFEST }}
+          PLATFORMS: ${{ inputs.platforms }}
+          DIGESTS_JSON: ${{ steps.load-outputs.outputs.DIGESTS_JSON }}
+        run: |
+          DIGESTS=$(echo "$DIGESTS_JSON" | jq -c '.')
+          for platform in $(echo $PLATFORMS | tr ',' '\n'); do
+            echo "Adding platform: $platform"
+            # Get the digest for the platform
+            DIGEST=$(echo "$DIGESTS" | jq -r ".$platform")
+
+            podman manifest add $MANIFEST \
+              --arch $platform \
+              $IMAGE_REGISTRY/$IMAGE_NAME@$DIGEST
+          done
+
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push Manifest
+        id: push-manifest
+        env:
+          TAGS: ${{ inputs.tags }}
+          MANIFEST: ${{ steps.create-manifest.outputs.MANIFEST }}
+          IMAGE_REGISTRY: ${{ inputs.image-registry }}
+          IMAGE_NAME: ${{ inputs.image-name }}
+        run: |
+          for tag in $(echo $TAGS | tr ',' '\n'); do
+            podman manifest push --digestfile=/tmp/digestfile --all=false $MANIFEST $IMAGE_REGISTRY/$IMAGE_NAME:$tag
+          done
+
+          # Temporarily populate the digest file with a dummy value
+          echo "dummy-digest" > /tmp/digestfile
+
+          echo "DIGEST=$(cat /tmp/digestfile)" >> $GITHUB_OUTPUT
+
+      - name: Setup Cosign
+        if: false
+        uses: sigstore/cosign-installer@v3.7.0
+
+      - name: Sign Image
+        if: false
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+          IMAGE_REGISTRY: ${{ inputs.image-registry }}
+          IMAGE_NAME: ${{ inputs.image-name }}
+          DIGEST: ${{ steps.push-manifest.outputs.DIGEST }}
+        run: |
+          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${IMAGE_REGISTRY}/${IMAGE_NAME}:${DIGEST}
