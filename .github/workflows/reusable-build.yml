@@ -67,6 +67,12 @@ jobs:
       - name: Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
+      - name: Setup Dependencies
+        if: ${{ matrix.platform == 'arm64' }}
+        run: |
+          sudo apt update
+          sudo apt install -y podman
+
       - name: Build Image
         id: build-image
         env:
