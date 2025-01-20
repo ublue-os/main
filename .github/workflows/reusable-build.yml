@@ -150,7 +150,7 @@ jobs:
 
       - name: Get current version
         id: labels
-        uses: Wandalen/wretry.action@v3.7.3
+        uses: Wandalen/wretry.action@v3.8.0
         with:
           attempt_limit: 3
           attempt_delay: 15000
@@ -171,7 +171,7 @@ jobs:
             echo "SOURCE_IMAGE_VERSION=$ver" >> $GITHUB_ENV
 
       - name: Pull Images
-        uses: Wandalen/wretry.action@v3.7.3
+        uses: Wandalen/wretry.action@v3.8.0
         with:
           attempt_limit: 3
           attempt_delay: 15000
@@ -245,7 +245,7 @@ jobs:
           string: ${{ env.IMAGE_REGISTRY }}
 
       - name: Push To GHCR
-        uses: Wandalen/wretry.action@v3.7.3
+        uses: Wandalen/wretry.action@v3.8.0
         id: push
         if: github.event_name != 'pull_request'
         env:
