@@ -21,6 +21,8 @@ ARG KERNEL_VERSION="${KERNEL_VERSION:-6.9.7-200.fc40.x86_64}"
 
 COPY sys_files/usr /usr
 
+RUN rpm-ostree override replace https://bodhi.fedoraproject.org/updates/FEDORA-2025-385734f715
+
 RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     --mount=type=bind,from=ctx,src=/,dst=/ctx \
     --mount=type=bind,from=config,src=/rpms,dst=/tmp/rpms \
@@ -37,3 +39,7 @@ RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     mkdir -p /var/lib && mv /staged-alternatives /var/lib/alternatives && \
     mkdir -p /var/tmp && \
     chmod -R 1777 /var/tmp
+
+RUN rm -rf /usr/etc
+
+RUN bootc container lint
