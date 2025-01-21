@@ -21,7 +21,7 @@ ARG KERNEL_VERSION="${KERNEL_VERSION:-6.9.7-200.fc40.x86_64}"
 
 COPY sys_files/usr /usr
 
-RUN dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-385734f715
+RUN rpm-ostree override replace https://bodhi.fedoraproject.org/updates/FEDORA-2025-385734f715
 
 RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     --mount=type=bind,from=ctx,src=/,dst=/ctx \
