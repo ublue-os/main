@@ -40,4 +40,6 @@ RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     mkdir -p /var/tmp && \
     chmod -R 1777 /var/tmp
 
+RUN mv /usr/etc/* /etc/
+
 RUN bootc container lint
