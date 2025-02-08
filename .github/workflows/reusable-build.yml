@@ -149,6 +149,13 @@ jobs:
 
           echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
 
+      # Download skopeo if using the ubuntu-22.04-arm runner
+      - name: Install skopeo
+        if: ${{ matrix.build_arch == 'aarch64' }}
+        run: |
+          sudo apt update
+          sudo apt install -y skopeo
+
       - name: Get current version
         id: labels
         uses: Wandalen/wretry.action@v3.8.0
