@@ -16,7 +16,7 @@ concurrency:
 jobs:
   build_ublue:
     name: main
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.build_arch == 'aarch64' && 'ubuntu-22.04-arm' || 'ubuntu-22.04' }}
     permissions:
       contents: read
       packages: write
@@ -24,6 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        build_arch: [aarch64, x86_64]
         fedora_version:
           - ${{ inputs.fedora_version }}
         image_name:
