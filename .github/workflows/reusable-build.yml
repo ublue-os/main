@@ -10,6 +10,11 @@ on:
         description: The name of the image to build.  E.G. base, silverblue
         required: true
         type: string
+      source_image_name:
+        description: The name of the image to use as a source.  E.G. sway-atomic
+        required: false
+        type: string
+        default: ""
 env:
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
@@ -31,10 +36,11 @@ jobs:
         env:
           IMAGE_NAME: ${{ inputs.image_name }}
           FEDORA_VERSION: ${{ inputs.fedora_version }}
+          SOURCE_IMAGE_NAME: ${{ inputs.source_image_name }}
         run: |
-          SOURCE_IMAGE="$IMAGE_NAME"
-          if [[ "$IMAGE_NAME" == "sericea" && "$FEDORA_VERSION" -gt 40 ]]; then
-              SOURCE_IMAGE="sway-atomic"
+          SOURCE_IMAGE=$IMAGE_NAME
+          if [[ "$SOURCE_IMAGE_NAME" != "" ]]; then
+            SOURCE_IMAGE=$SOURCE_IMAGE_NAME
           fi
 
           echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV

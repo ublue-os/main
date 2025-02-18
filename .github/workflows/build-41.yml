@@ -23,6 +23,10 @@ jobs:
           - kinoite
           - sericea
           - base
+        include:
+          - image_name: sericea
+            source_image_name: sway-atomic
     with:
       image_name: ${{ matrix.image_name }}
+      source_image_name: ${{ matrix.source_image_name }}
       fedora_version: 41
