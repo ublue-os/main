@@ -1,4 +1,5 @@
 name: ublue main 40
+
 on:
   pull_request:
   merge_group:
@@ -19,10 +20,13 @@ jobs:
       fail-fast: false
       matrix:
         image_name:
+          - base
           - silverblue
           - kinoite
           - sericea
-          - base
+          - onyx
+          - lazurite
+          - vauxite
     with:
       image_name: ${{ matrix.image_name }}
       fedora_version: 40
