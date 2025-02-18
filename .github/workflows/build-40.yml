@@ -11,5 +11,17 @@ jobs:
     name: build
     uses: ./.github/workflows/reusable-build.yml
     secrets: inherit
+    strategy:
+      fail-fast: false
+      matrix:
+        image_name:
+          - silverblue
+          - kinoite
+          - sericea
+          - onyx
+          - base
+          - lazurite
+          - vauxite
     with:
+      image_name: ${{ matrix.image_name }}
       fedora_version: 40
