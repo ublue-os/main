@@ -22,10 +22,7 @@ jobs:
           - silverblue
           - kinoite
           - sericea
-          - onyx
           - base
-          - lazurite
-          - vauxite
     with:
       image_name: ${{ matrix.image_name }}
       fedora_version: 41

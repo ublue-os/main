@@ -265,15 +265,22 @@ jobs:
           echo "${{ toJSON(steps.push.outputs) }}"
 
   check:
-    name: Check all ${{ inputs.fedora_version }} builds successful
-    if: ${{ !cancelled() }}
+    name: Check all ${{ inputs.image_name }}:${{ inputs.fedora_version }} builds successful
+    if: always()
     runs-on: ubuntu-latest
     needs: [build_ublue]
     steps:
-      - name: Exit on failure
-        if: ${{ needs.build_ublue.result == 'failure' }}
-        shell: bash
-        run: exit 1
-      - name: Exit
-        shell: bash
-        run: exit 0
+      - name: Check Jobs
+        env:
+          JOBS: ${{ toJson(needs) }}
+        run: |
+          echo "Job status:"
+          echo $JOBS | jq -r 'to_entries[] | " - \(.key): \(.value.result)"'
+
+          for i in $(echo $JOBS | jq -r 'to_entries[] | .value.result'); do
+            if [ "$i" != "success" ] && [ "$i" != "skipped" ]; then
+              echo ""
+              echo "Status check not okay!"
+              exit 1
+            fi
+          done
