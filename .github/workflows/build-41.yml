@@ -6,6 +6,10 @@ on:
     - cron: '5 4 * * *'  # 4am-ish UTC everyday (timed against official fedora container pushes)
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: build
