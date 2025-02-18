@@ -32,10 +32,8 @@ jobs:
           IMAGE_NAME: ${{ inputs.image_name }}
           FEDORA_VERSION: ${{ inputs.fedora_version }}
         run: |
-          SOURCE_IMAGE=""
+          SOURCE_IMAGE="$IMAGE_NAME"
           if [[ "$IMAGE_NAME" == "sericea" && "$FEDORA_VERSION" -gt 40 ]]; then
-              SOURCE_IMAGE="$IMAGE_NAME"
-          else
               SOURCE_IMAGE="sway-atomic"
           fi
 
