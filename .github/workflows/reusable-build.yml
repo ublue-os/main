@@ -139,7 +139,7 @@ jobs:
               echo "inspected image version must not be empty or null"
               exit 1
             fi
-            linux=$(skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/akmods:main-${{ matrix.fedora_version }} | jq -r '.Labels["ostree.linux"]')
+            linux=$(skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/akmods:main-${{ inputs.fedora_version }} | jq -r '.Labels["ostree.linux"]')
             echo "KERNEL_VERSION=$linux" >> $GITHUB_ENV
             echo "SOURCE_IMAGE_VERSION=$ver" >> $GITHUB_ENV
 
