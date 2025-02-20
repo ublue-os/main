@@ -34,6 +34,17 @@ jobs:
           - base
           - lazurite
           - vauxite
+        include:
+          - image_name: base
+            source_image: ${{ inputs.fedora_version == '41' && 'base-atomic' || '' }}
+          - image_name: sericea
+            source_image: ${{ inputs.fedora_version == '41' && 'sway-atomic' || '' }}
+          - image_name: onyx
+            source_image: ${{ inputs.fedora_version == '41' && 'budgie-atomic' || '' }}
+          - image_name: lazurite
+            source_image: ${{ inputs.fedora_version == '41' && 'lxqt-atomic' || '' }}
+          - image_name: vauxite
+            source_image: ${{ inputs.fedora_version == '41' && 'xfce-atomic' || '' }}
 
     steps:
       # Checkout push-to-registry action GitHub repository
@@ -42,14 +53,21 @@ jobs:
 
       - name: Matrix Variables
         shell: bash
+        env:
+          MATRIX_SOURCE_IMAGE: ${{ matrix.source_image }}
+          MATRIX_IMAGE_NAME: ${{ matrix.image_name }}
         run: |
-          if [[ "${{ matrix.image_name }}" == "mate" ]]; then
-              echo "SOURCE_IMAGE=base" >> $GITHUB_ENV
+          if [[ -z $MATRIX_SOURCE_IMAGE ]]; then
+              echo "MATRIX_SOURCE_IMAGE empty"
+              SOURCE_IMAGE=$MATRIX_IMAGE_NAME
           else
-              echo "SOURCE_IMAGE=${{ matrix.image_name }}" >> $GITHUB_ENV
+              echo "MATRIX_SOURCE_IMAGE not empty"
+              SOURCE_IMAGE=$MATRIX_SOURCE_IMAGE
           fi
+
           echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV
-          echo "IMAGE_NAME=${{ matrix.image_name }}-main" >> $GITHUB_ENV
+          echo "IMAGE_NAME=$MATRIX_IMAGE_NAME-main" >> $GITHUB_ENV
+          echo "SOURCE_IMAGE=$SOURCE_IMAGE" >> $GITHUB_ENV
 
       - name: Generate tags
         id: generate-tags
@@ -132,7 +150,7 @@ jobs:
 
       - name: Get current version
         id: labels
-        uses: Wandalen/wretry.action@v3.7.2
+        uses: Wandalen/wretry.action@v3.8.0
         with:
           attempt_limit: 3
           attempt_delay: 15000
@@ -143,17 +161,12 @@ jobs:
               echo "inspected image version must not be empty or null"
               exit 1
             fi
-            linux=$(skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/main-kernel:${{ matrix.fedora_version }} | jq -r '.Labels["ostree.linux"]')
-            AKMODS_KERNEL_VERSION=$(skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/akmods:main-${{ matrix.fedora_version }} | jq -r '.Labels["ostree.linux"]')
-            if [[ "${linux}" != "${AKMODS_KERNEL_VERSION}" ]]; then
-              echo "Kernel Versions do not match between AKMODS and Cached-Kernel."
-              exit 1
-            fi
+            linux=$(skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/akmods:main-${{ matrix.fedora_version }} | jq -r '.Labels["ostree.linux"]')
             echo "KERNEL_VERSION=$linux" >> $GITHUB_ENV
             echo "SOURCE_IMAGE_VERSION=$ver" >> $GITHUB_ENV
 
       - name: Pull Images
-        uses: Wandalen/wretry.action@v3.7.2
+        uses: Wandalen/wretry.action@v3.8.0
         with:
           attempt_limit: 3
           attempt_delay: 15000
@@ -162,7 +175,6 @@ jobs:
             # we can retry on that unfortunately common failure case
             podman pull quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ matrix.fedora_version }}
             podman pull ${{ env.IMAGE_REGISTRY }}/akmods:main-${{ matrix.fedora_version }}
-            podman pull ${{ env.IMAGE_REGISTRY }}/main-kernel:${{ env.KERNEL_VERSION }}
 
       # Generate image metadata
       - name: Image Metadata
@@ -227,7 +239,7 @@ jobs:
           string: ${{ env.IMAGE_REGISTRY }}
 
       - name: Push To GHCR
-        uses: Wandalen/wretry.action@v3.7.2
+        uses: Wandalen/wretry.action@v3.8.0
         id: push
         if: github.event_name != 'pull_request'
         env:

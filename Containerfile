@@ -8,7 +8,6 @@ ARG IMAGE_REGISTRY=ghcr.io/ublue-os
 
 FROM ${IMAGE_REGISTRY}/config:latest AS config
 FROM ${IMAGE_REGISTRY}/akmods:main-${FEDORA_MAJOR_VERSION} AS akmods
-FROM ${IMAGE_REGISTRY}/main-kernel:${KERNEL_VERSION} AS kernel
 
 FROM scratch AS ctx
 COPY / /
@@ -25,7 +24,7 @@ RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     --mount=type=bind,from=ctx,src=/,dst=/ctx \
     --mount=type=bind,from=config,src=/rpms,dst=/tmp/rpms \
     --mount=type=bind,from=akmods,src=/rpms/ublue-os,dst=/tmp/akmods-rpms \
-    --mount=type=bind,from=kernel,src=/tmp/rpms,dst=/tmp/kernel-rpms \
+    --mount=type=bind,from=akmods,src=/kernel-rpms,dst=/tmp/kernel-rpms \
     rm -f /usr/bin/chsh && \
     rm -f /usr/bin/lchsh && \
     mkdir -p /var/lib/alternatives && \
