@@ -27,12 +27,9 @@ RUN --mount=type=cache,dst=/var/cache/rpm-ostree \
     --mount=type=bind,from=akmods,src=/kernel-rpms,dst=/tmp/kernel-rpms \
     rm -f /usr/bin/chsh && \
     rm -f /usr/bin/lchsh && \
-    mkdir -p /var/lib/alternatives && \
     /ctx/install.sh && \
     /ctx/post-install.sh && \
-    mv /var/lib/alternatives /staged-alternatives && \
     /ctx/cleanup.sh && \
     ostree container commit && \
-    mkdir -p /var/lib && mv /staged-alternatives /var/lib/alternatives && \
     mkdir -p /var/tmp && \
     chmod -R 1777 /var/tmp
