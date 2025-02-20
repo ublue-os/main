@@ -24,7 +24,6 @@ rpm-ostree install \
     fedora-repos-archive
 
 # Handle Kernel Skew with override replace
-rpm-ostree cliwrap install-to-root /
 if [[ "${KERNEL_VERSION}" == "${QUALIFIED_KERNEL}" ]]; then
     echo "Installing signed kernel from kernel-cache."
     cd /tmp
