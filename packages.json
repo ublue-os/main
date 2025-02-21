@@ -65,8 +65,10 @@
             "kinoite": [
                 "icoutils",
                 "kate",
+                "kf6-kimageformats",
                 "kio-admin",
-                "ksshaskpass"
+                "ksshaskpass",
+                "qt6-qtimageformats"
             ],
             "sericea": [
                 "clipman",
@@ -74,9 +76,11 @@
                 "thunar-volman",
                 "tumbler"
             ],
-            "vauxite": [
-                "xfce4-clipman-plugin",
-                "xfce4-whiskermenu-plugin"
+            "sway-atomic": [
+                "clipman",
+                "gvfs-mtp",
+                "thunar-volman",
+                "tumbler"
             ]
         },
         "exclude": {
@@ -101,20 +105,12 @@
             "kinoite": [
                 "ffmpegthumbnailer",
                 "plasma-discover-rpm-ostree"
-            ],
-            "mate": [
-                "python3-unbound",
-                "systemd-oomd-defaults"
             ]
         }
     },
     "40": {
         "include": {
-            "all": [],
-            "kinoite": [
-                "kf6-kimageformats",
-                "qt6-qtimageformats"
-            ]
+            "all": []
         },
         "exclude": {
             "all": []
@@ -122,11 +118,7 @@
     },
     "41": {
         "include": {
-            "all": [],
-            "kinoite": [
-                "kf6-kimageformats",
-                "qt6-qtimageformats"
-            ]
+            "all": []
         },
         "exclude": {
             "all": []
@@ -134,11 +126,7 @@
     },
     "42": {
         "include": {
-            "all": [],
-            "kinoite": [
-                "kf6-kimageformats",
-                "qt6-qtimageformats"
-            ]
+            "all": []
         },
         "exclude": {
             "all": []
