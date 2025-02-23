@@ -48,7 +48,7 @@ if [[ "$FEDORA_MAJOR_VERSION" -le "40" ]]; then
     # use override to replace mesa and others with less crippled versions
     rpm-ostree override replace \
       --experimental \
-      --from repo='fedora-multimedia' \  
+      --from repo='fedora-multimedia' \
         libheif \
         libva \
         libva-intel-media-driver \
@@ -68,7 +68,7 @@ if [[ "$FEDORA_MAJOR_VERSION" -ge "41" ]]; then
     # use override to replace mesa and others with less crippled versions
     rpm-ostree override replace \
       --experimental \
-      --from repo='fedora-multimedia' \  
+      --from repo='fedora-multimedia' \
       --remove=mesa-libglapi \
         libheif \
         libva \
