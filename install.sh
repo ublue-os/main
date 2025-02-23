@@ -44,7 +44,7 @@ fi
 curl -Lo /etc/yum.repos.d/negativo17-fedora-multimedia.repo https://negativo17.org/repos/fedora-multimedia.repo
 sed -i '0,/enabled=1/{s/enabled=1/enabled=1\npriority=90/}' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
 
-if [[ "$FEDORA_MAJOR_VERSION" -ne "40" ]]; then
+if [[ "$FEDORA_MAJOR_VERSION" -le "40" ]]; then
     # use override to replace mesa and others with less crippled versions
     rpm-ostree override replace \
       --experimental \
@@ -60,10 +60,11 @@ if [[ "$FEDORA_MAJOR_VERSION" -ne "40" ]]; then
         mesa-libgbm \
         mesa-libxatracker \
         mesa-va-drivers \
-        mesa-vulkan-drivers
+        mesa-vulkan-drivers \
+        libvdpau
 fi
 
-if [[ "$FEDORA_MAJOR_VERSION" -ne "41" ]]; then
+if [[ "$FEDORA_MAJOR_VERSION" -ge "41" ]]; then
     # use override to replace mesa and others with less crippled versions
     rpm-ostree override replace \
       --experimental \
@@ -79,8 +80,7 @@ if [[ "$FEDORA_MAJOR_VERSION" -ne "41" ]]; then
         mesa-libgbm \
         mesa-libxatracker \
         mesa-va-drivers \
-        mesa-vulkan-drivers \
-        libvdpau
+        mesa-vulkan-drivers
 fi
 
 # Disable DKMS support in gnome-software
