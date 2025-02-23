@@ -28,7 +28,7 @@ rpm-ostree install \
     /tmp/akmods-rpms/*.rpm \
     fedora-repos-archive
 
-cp /usr/etc/containers/policy.json /etc/containers/policy.json
+mv /usr/etc/containers/policy.json /etc/containers/policy.json
 
 # Handle Kernel Skew with override replace
 if [[ "${KERNEL_VERSION}" == "${QUALIFIED_KERNEL}" ]]; then
