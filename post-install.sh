@@ -16,4 +16,5 @@ cp /usr/share/ublue-os/update-services/etc/rpm-ostreed.conf /etc/rpm-ostreed.con
 ln -s "/usr/share/fonts/google-noto-sans-cjk-fonts" "/usr/share/fonts/noto-cjk" 
 
 rm -f /etc/yum.repos.d/_copr_ublue-os_staging.repo
+rm -f /etc/yum.repos.d/_copr_ublue-os_packages.repo
 rm -f /etc/yum.repos.d/_copr_kylegospo_oversteer.repo
