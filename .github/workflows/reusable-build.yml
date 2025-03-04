@@ -208,6 +208,26 @@ jobs:
           sbverify --cert kernel-sign.crt vmlinuz || exit 1
           sbverify --cert akmods.crt vmlinuz || exit 1
 
+      - name: Setup Syft
+        id: setup-syft
+        if: github.event_name != 'pull_request'
+        uses: anchore/sbom-action/download-syft@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0
+
+      - name: Generate SBOM
+        id: generate-sbom
+        if: github.event_name != 'pull_request'
+        env:
+          IMAGE: ${{ env.IMAGE_NAME }}
+          DEFAULT_TAG: ${{ env.DEFAULT_TAG }}
+          SYFT_CMD: ${{ steps.setup-syft.outputs.cmd }}
+        run: |
+          sudo systemctl start podman.socket
+
+          OUTPUT_PATH="$(mktemp -d)/sbom.json"
+          export SYFT_PARALLELISM=$(($(nproc)*2))
+          sudo $SYFT_CMD ${IMAGE}:${DEFAULT_TAG} -o spdx-json=${OUTPUT_PATH}
+          echo "OUTPUT_PATH=${OUTPUT_PATH}" >> $GITHUB_OUTPUT
+
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
       - name: Lowercase Registry
@@ -233,6 +253,7 @@ jobs:
             registry: ${{ steps.registry_case.outputs.lowercase }}
             username: ${{ env.REGISTRY_USER }}
             password: ${{ env.REGISTRY_PASSWORD }}
+            digestfile: /tmp/digestfile
             extra-args: |
               --disable-content-trust
 
@@ -256,6 +277,23 @@ jobs:
           TAGS: ${{ steps.push.outputs.outputs && fromJSON(steps.push.outputs.outputs).digest }}
           COSIGN_EXPERIMENTAL: false
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+
+      - name: Add SBOM Attestation
+        if: github.event_name != 'pull_request'
+        env:
+          IMAGE: ${{ steps.registry_case.outputs.lowercase }}/${{ steps.build_image.outputs.image }}
+          DIGESTFILE: /tmp/digestfile
+          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+          SBOM_OUTPUT: ${{ steps.generate-sbom.outputs.OUTPUT_PATH }}
+        run: |
+          DIGEST=$(cat "${DIGESTFILE}")
+
+          cd "$(dirname "$SBOM_OUTPUT")"
+          cosign attest -y \
+            --predicate ./sbom.json \
+            --type spdxjson \
+            --key env://COSIGN_PRIVATE_KEY \
+            "${IMAGE}@${DIGEST}"
 
       - name: Echo outputs
         if: github.event_name != 'pull_request'
