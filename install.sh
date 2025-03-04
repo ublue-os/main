@@ -76,7 +76,6 @@ if [[ "$FEDORA_MAJOR_VERSION" -ge "41" ]]; then
     rpm-ostree override replace \
       --experimental \
       --from repo='fedora-multimedia' \
-      --remove=mesa-libglapi \
         libheif \
         libva \
         libva-intel-media-driver \
