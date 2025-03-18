@@ -9,11 +9,11 @@ QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\
 # mitigate upstream packaging bug: https://bugzilla.redhat.com/show_bug.cgi?id=2332429
 # swap the incorrectly installed OpenCL-ICD-Loader for ocl-icd, the expected package
 rpm-ostree override replace \
-  --from repo='fedora' \
-  --experimental \
-  --remove=OpenCL-ICD-Loader \
-  ocl-icd \
-  || true
+    --from repo='fedora' \
+    --experimental \
+    --remove=OpenCL-ICD-Loader \
+    ocl-icd ||
+    true
 
 curl -Lo /etc/yum.repos.d/_copr_ublue-os_staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
 curl -Lo /etc/yum.repos.d/_copr_kylegospo_oversteer.repo https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-"${RELEASE}"/kylegospo-oversteer-fedora-"${RELEASE}".repo
@@ -46,22 +46,28 @@ sed -i '0,/enabled=1/{s/enabled=1/enabled=1\npriority=90/}' /etc/yum.repos.d/neg
 
 # use override to replace mesa and others with less crippled versions
 rpm-ostree override replace \
-  --experimental \
-  --from repo='fedora-multimedia' \
-    libheif \
-    libva \
-    libva-intel-media-driver \
-    mesa-dri-drivers \
-    mesa-filesystem \
-    mesa-libEGL \
-    mesa-libGL \
-    mesa-libgbm \
-    mesa-libglapi \
-    mesa-libxatracker \
-    mesa-va-drivers \
-    mesa-vulkan-drivers
+    --experimental \
+    --from repo='fedora-multimedia' \
+    libva
 
-if [[ "$FEDORA_MAJOR_VERSION" -ne "41" ]]; then
+if [[ "$FEDORA_MAJOR_VERSION" -ne "42" ]]; then
+    rpm-ostree override replace \
+        --experimental \
+        --from repo='fedora-multimedia' \
+        libheif \
+        libva-intel-media-driver \
+        mesa-dri-drivers \
+        mesa-filesystem \
+        mesa-libEGL \
+        mesa-libGL \
+        mesa-libgbm \
+        mesa-libglapi \
+        mesa-libxatracker \
+        mesa-va-drivers \
+        mesa-vulkan-drivers
+fi
+
+if [[ "$FEDORA_MAJOR_VERSION" -lt "41" ]]; then
     rpm-ostree override replace \
         --experimental \
         --from repo='fedora-multimedia' \
