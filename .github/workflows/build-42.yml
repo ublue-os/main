@@ -1,10 +1,10 @@
 name: ublue main 42
 
 on:
-  # pull_request:
-  # merge_group:
-  # schedule:
-  #   - cron: '5 4 * * *'  # 4am-ish UTC everyday (timed against official fedora container pushes)
+   pull_request:
+   merge_group:
+   schedule:
+     - cron: '5 4 * * *'  # 4am-ish UTC everyday (timed against official fedora container pushes)
   workflow_dispatch:
 
 concurrency:
