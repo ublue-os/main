@@ -15,13 +15,20 @@ rpm-ostree override replace \
     ocl-icd ||
     true
 
+curl -Lo /etc/yum.repos.d/_copr_ublue-os_packages.repo https://copr.fedorainfracloud.org/coprs/ublue-os/packages/repo/fedora-"${RELEASE}"/ublue-os-packages-fedora-"${RELEASE}".repo
 curl -Lo /etc/yum.repos.d/_copr_ublue-os_staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
 curl -Lo /etc/yum.repos.d/_copr_kylegospo_oversteer.repo https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-"${RELEASE}"/kylegospo-oversteer-fedora-"${RELEASE}".repo
 
 rpm-ostree install \
-    /tmp/rpms/*.rpm \
+    ublue-os-just \
+    ublue-os-luks \
+    ublue-os-signing \
+    ublue-os-udev-rules \
+    ublue-os-update-services \
     /tmp/akmods-rpms/*.rpm \
     fedora-repos-archive
+
+mv /usr/etc/containers/policy.json /etc/containers/policy.json
 
 # Handle Kernel Skew with override replace
 if [[ "${KERNEL_VERSION}" == "${QUALIFIED_KERNEL}" ]]; then
@@ -66,7 +73,6 @@ if [[ "$FEDORA_MAJOR_VERSION" -lt "42" ]]; then
 fi
 
 if [[ "$FEDORA_MAJOR_VERSION" -lt "41" ]]; then
-    OVERRIDES+=(
         libvdpau
     )
 fi
@@ -75,6 +81,7 @@ rpm-ostree override replace \
         --experimental \
         --from repo='fedora-multimedia' \
         "${OVERRIDES[@]}"
+
 
 # Disable DKMS support in gnome-software
 if [[ "$FEDORA_MAJOR_VERSION" -ge "41" && "$IMAGE_NAME" == "silverblue" ]]; then
