@@ -45,34 +45,36 @@ curl -Lo /etc/yum.repos.d/negativo17-fedora-multimedia.repo https://negativo17.o
 sed -i '0,/enabled=1/{s/enabled=1/enabled=1\npriority=90/}' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
 
 # use override to replace mesa and others with less crippled versions
-rpm-ostree override replace \
-    --experimental \
-    --from repo='fedora-multimedia' \
+OVERRIDES=(
     libva
+    libva-intel-media-driver
+    mesa-dri-drivers
+    mesa-filesystem
+    mesa-libEGL
+    mesa-libGL
+    mesa-libgbm
+    mesa-libglapi
+    mesa-libxatracker
+    mesa-va-drivers
+    mesa-vulkan-drivers
+)
 
-if [[ "$FEDORA_MAJOR_VERSION" -ne "42" ]]; then
-    rpm-ostree override replace \
-        --experimental \
-        --from repo='fedora-multimedia' \
-        libheif \
-        libva-intel-media-driver \
-        mesa-dri-drivers \
-        mesa-filesystem \
-        mesa-libEGL \
-        mesa-libGL \
-        mesa-libgbm \
-        mesa-libglapi \
-        mesa-libxatracker \
-        mesa-va-drivers \
-        mesa-vulkan-drivers
+if [[ "$FEDORA_MAJOR_VERSION" -lt "42" ]]; then
+    OVERRIDES+=(
+        libheif
+    )
 fi
 
 if [[ "$FEDORA_MAJOR_VERSION" -lt "41" ]]; then
-    rpm-ostree override replace \
+    OVERRIDES+=(
+        libvdpau
+    )
+fi
+
+rpm-ostree override replace \
         --experimental \
         --from repo='fedora-multimedia' \
-        libvdpau
-fi
+        "${OVERRIDES[@]}"
 
 # Disable DKMS support in gnome-software
 if [[ "$FEDORA_MAJOR_VERSION" -ge "41" && "$IMAGE_NAME" == "silverblue" ]]; then
