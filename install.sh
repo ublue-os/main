@@ -73,6 +73,7 @@ if [[ "$FEDORA_MAJOR_VERSION" -lt "42" ]]; then
 fi
 
 if [[ "$FEDORA_MAJOR_VERSION" -lt "41" ]]; then
+    OVERRIDES+=(
         libvdpau
     )
 fi
