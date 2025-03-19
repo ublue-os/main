@@ -60,7 +60,6 @@ OVERRIDES=(
     mesa-libEGL
     mesa-libGL
     mesa-libgbm
-    mesa-libglapi
     mesa-libxatracker
     mesa-va-drivers
     mesa-vulkan-drivers
@@ -75,6 +74,7 @@ fi
 if [[ "$FEDORA_MAJOR_VERSION" -lt "41" ]]; then
     OVERRIDES+=(
         libvdpau
+        mesa-libglapi
     )
 fi
 
