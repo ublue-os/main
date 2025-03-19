@@ -54,7 +54,6 @@ sed -i '0,/enabled=1/{s/enabled=1/enabled=1\npriority=90/}' /etc/yum.repos.d/neg
 # use override to replace mesa and others with less crippled versions
 OVERRIDES=(
     libva
-    libva-intel-media-driver
     mesa-dri-drivers
     mesa-filesystem
     mesa-libEGL
@@ -67,6 +66,7 @@ OVERRIDES=(
 
 if [[ "$FEDORA_MAJOR_VERSION" -lt "42" ]]; then
     OVERRIDES+=(
+        libva-intel-media-driver
         libheif
     )
 fi
