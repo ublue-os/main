@@ -93,6 +93,7 @@ fi
 for override in "${OVERRIDES[@]}"; do
     dnf5 swap -y --repo='fedora-multimedia' \
         "$override" "$override"
+    dnf5 versionlock add "$override"
 done
 
 # Disable DKMS support in gnome-software
