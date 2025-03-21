@@ -27,9 +27,10 @@ dnf5 -y copr remove ublue-os/packages
 dnf5 -y copr remove kylegospo/oversteer
 
 # Cleanup
-# Remove tmp files and everything in /var and /usr/etc
+# Remove tmp files and everything in dirs that make bootc unhappy
 rm -rf /tmp/* || true
 rm -rf /usr/etc
+rm -rf /boot && mkdir /boot
 
 shopt -s extglob
 rm -rf /var/!(cache)
