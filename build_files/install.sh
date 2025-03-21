@@ -2,50 +2,62 @@
 
 set -ouex pipefail
 
-RELEASE="$(rpm -E %fedora)"
-KERNEL_SUFFIX=""
-QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\d+)' | sed -E 's/kernel-(|'"$KERNEL_SUFFIX"'-)//')"
+# Copy System Files onto root
+rsync -rvK /ctx/sys_files/ /
+
+# make root's home
+mkdir -p /var/roothome
+
+# Install dnf5 if not installed
+if ! rpm -q dnf5 >/dev/null; then
+    rpm-ostree install dnf5 dnf5-plugins
+fi
 
 # mitigate upstream packaging bug: https://bugzilla.redhat.com/show_bug.cgi?id=2332429
 # swap the incorrectly installed OpenCL-ICD-Loader for ocl-icd, the expected package
-rpm-ostree override replace \
-    --from repo='fedora' \
-    --experimental \
-    --remove=OpenCL-ICD-Loader \
-    ocl-icd ||
-    true
+dnf5 -y swap --repo='fedora' \
+    OpenCL-ICD-Loader ocl-icd
 
-curl -Lo /etc/yum.repos.d/_copr_ublue-os_packages.repo https://copr.fedorainfracloud.org/coprs/ublue-os/packages/repo/fedora-"${RELEASE}"/ublue-os-packages-fedora-"${RELEASE}".repo
-curl -Lo /etc/yum.repos.d/_copr_ublue-os_staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
-curl -Lo /etc/yum.repos.d/_copr_kylegospo_oversteer.repo https://copr.fedorainfracloud.org/coprs/kylegospo/oversteer/repo/fedora-"${RELEASE}"/kylegospo-oversteer-fedora-"${RELEASE}".repo
+# Add COPRs
+dnf5 -y copr enable ublue-os/packages
+dnf5 -y copr enable ublue-os/staging
+dnf5 -y copr enable kylegospo/oversteer
 
-rpm-ostree install \
+# Install ublue-os pacakges, fedora archives,and zstd
+dnf5 -y install \
     ublue-os-just \
     ublue-os-luks \
     ublue-os-signing \
     ublue-os-udev-rules \
     ublue-os-update-services \
     /tmp/akmods-rpms/*.rpm \
-    fedora-repos-archive
+    fedora-repos-archive \
+    zstd
 
+# Replace podman provided policy.json with ublue-os one.
 mv /usr/etc/containers/policy.json /etc/containers/policy.json
 
-# Handle Kernel Skew with override replace
-if [[ "${KERNEL_VERSION}" == "${QUALIFIED_KERNEL}" ]]; then
-    echo "Installing signed kernel from kernel-cache."
-    cd /tmp
-    rpm2cpio /tmp/kernel-rpms/kernel-core-*.rpm | cpio -idmv
-    cp ./lib/modules/*/vmlinuz /usr/lib/modules/*/vmlinuz
-    cd /
-else
-    echo "Install kernel version ${KERNEL_VERSION} from kernel-cache."
-    rpm-ostree override replace \
-        --experimental \
-        --install=zstd \
-        /tmp/kernel-rpms/kernel-[0-9]*.rpm \
-        /tmp/kernel-rpms/kernel-core-*.rpm \
-        /tmp/kernel-rpms/kernel-modules-*.rpm
-fi
+# Use Signed Kernel and Versionlock
+for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra; do
+    rpm --erase $pkg --nodeps
+done
+
+KERNEL_VERSION="$(find /tmp/kernel-rpms/kernel-core-*.rpm -prune -printf "%f\n" | sed 's/kernel-core-//g' | sed 's/.rpm//g')"
+
+KERNEL_RPMS=(
+    "/tmp/kernel-rpms/kernel-${KERNEL_VERSION}.rpm"
+    "/tmp/kernel-rpms/kernel-core-${KERNEL_VERSION}.rpm"
+    "/tmp/kernel-rpms/kernel-modules-${KERNEL_VERSION}.rpm"
+    "/tmp/kernel-rpms/kernel-modules-core-${KERNEL_VERSION}.rpm"
+    "/tmp/kernel-rpms/kernel-modules-extra-${KERNEL_VERSION}.rpm"
+    "/tmp/kernel-rpms/kernel-uki-virt-${KERNEL_VERSION}.rpm"
+)
+dnf5 -y install "${KERNEL_RPMS[@]}"
+dnf5 versionlock add kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
+
+# Ensure Initramfs is generated (Likely unneeded)
+/usr/bin/dracut --no-hostonly --kver "${KERNEL_VERSION}" --reproducible -v --add ostree -f "/lib/modules/${KERNEL_VERSION}/initramfs.img"
+chmod 0600 "/lib/modules/${KERNEL_VERSION}/initramfs.img"
 
 # use negativo17 for 3rd party packages with higher priority than default
 curl -Lo /etc/yum.repos.d/negativo17-fedora-multimedia.repo https://negativo17.org/repos/fedora-multimedia.repo
@@ -54,7 +66,6 @@ sed -i '0,/enabled=1/{s/enabled=1/enabled=1\npriority=90/}' /etc/yum.repos.d/neg
 # use override to replace mesa and others with less crippled versions
 OVERRIDES=(
     libva
-    
 )
 
 if [[ "$FEDORA_MAJOR_VERSION" -lt "42" ]]; then
@@ -79,20 +90,19 @@ if [[ "$FEDORA_MAJOR_VERSION" -lt "41" ]]; then
     )
 fi
 
-rpm-ostree override replace \
-        --experimental \
-        --from repo='fedora-multimedia' \
-        "${OVERRIDES[@]}"
-
+for override in "${OVERRIDES[@]}"; do
+    dnf5 swap -y --repo='fedora-multimedia' \
+        "$override" "$override"
+done
 
 # Disable DKMS support in gnome-software
 if [[ "$FEDORA_MAJOR_VERSION" -ge "41" && "$IMAGE_NAME" == "silverblue" ]]; then
-    rpm-ostree override remove \
+    dnf5 remove -y \
         gnome-software-rpm-ostree
-    rpm-ostree override replace \
-        --experimental \
-        --from repo=copr:copr.fedorainfracloud.org:ublue-os:staging \
-        gnome-software
+    dnf5 swap -y \
+        --repo=copr:copr.fedorainfracloud.org:ublue-os:staging \
+        gnome-software gnome-software
+    dnf5 versionlock add gnome-software
 fi
 
 # run common packages script
@@ -106,7 +116,3 @@ fi
 CSFG=/usr/lib/systemd/system-generators/coreos-sulogin-force-generator
 curl -sSLo ${CSFG} https://raw.githubusercontent.com/coreos/fedora-coreos-config/refs/heads/stable/overlay.d/05core/usr/lib/systemd/system-generators/coreos-sulogin-force-generator
 chmod +x ${CSFG}
-
-if [[ "${KERNEL_VERSION}" == "${QUALIFIED_KERNEL}" ]]; then
-    /ctx/initramfs.sh
-fi
