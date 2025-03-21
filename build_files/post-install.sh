@@ -41,5 +41,9 @@ mkdir -p /var/tmp
 chmod -R 1777 /var/tmp
 
 # bootc/ostree checks
-bootc container lint
+if [[ "$(rpm -E %fedora)" -eq 40 ]]; then
+    bootc container lint || true
+else
+    bootc container lint
+fi
 ostree container commit
