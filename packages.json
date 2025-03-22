@@ -70,6 +70,8 @@
     "40": {
         "include": {
             "all": [
+                "fdk-aac",
+                "ffmpeg",
                 "ffmpeg-libs",
                 "ffmpegthumbnailer",
                 "grub2-tools-extra",
@@ -78,7 +80,9 @@
                 "google-noto-sans-javanese-fonts",
                 "google-noto-sans-sundanese-fonts",
                 "intel-vaapi-driver",
+                "libavcodec",
                 "libcamera-gstreamer",
+                "mesa-libxatracker",
                 "openssl",
                 "pipewire-libs-extra",
                 "vim"
@@ -92,6 +96,7 @@
     "41": {
         "include": {
             "all": [
+                "fdk-aac",
                 "ffmpeg",
                 "ffmpeg-libs",
                 "ffmpegthumbnailer",
@@ -101,7 +106,9 @@
                 "google-noto-sans-javanese-fonts",
                 "google-noto-sans-sundanese-fonts",
                 "intel-vaapi-driver",
+                "libavcodec",
                 "libcamera-gstreamer",
+                "mesa-libxatracker",
                 "openssl",
                 "pipewire-libs-extra",
                 "vim"
