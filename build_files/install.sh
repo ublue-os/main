@@ -60,7 +60,7 @@ dnf5 versionlock add kernel kernel-core kernel-modules kernel-modules-core kerne
 chmod 0600 "/lib/modules/${KERNEL_VERSION}/initramfs.img"
 
 # use negativo17 for 3rd party packages with higher priority than default
-dnf5 config-manager add-repo --from-repofile="https://negativo17.org/repos/fedora-multimedia.repo"
+dnf5 config-manager addrepo --from-repofile="https://negativo17.org/repos/fedora-multimedia.repo"
 dnf5 config-manager setopt fedora-multimedia.priority=90
 
 # use override to replace mesa and others with less crippled versions
