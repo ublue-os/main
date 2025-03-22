@@ -27,7 +27,8 @@ dnf5 -y copr remove ublue-os/packages
 dnf5 -y copr remove kylegospo/oversteer
 
 # Disable Negativo17 Fedora Multimedia
-dnf5 config-manager setopt fedora-multimedia.enabled=0
+# This needs to be a whole organiztion change
+# dnf5 config-manager setopt fedora-multimedia.enabled=0
 
 # Cleanup
 # Remove tmp files and everything in dirs that make bootc unhappy
