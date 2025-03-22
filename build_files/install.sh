@@ -95,7 +95,7 @@ if [[ "$FEDORA_MAJOR_VERSION" -lt "41" ]]; then
 fi
 
 for override in "${!OVERRIDES[@]}"; do
-    dnf5 swap -y --repo='fedora-multimedia' \
+    dnf5 swap -y --repo='fedora-multimedia fedora' \
         "$override" "${OVERRIDES[$override]}"
     dnf5 versionlock add "${OVERRIDES[$override]}"
 done

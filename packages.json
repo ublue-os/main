@@ -124,7 +124,7 @@
                 "libcamera-gstreamer",
                 "openssl",
                 "vim"
-            ]
+            ],
             "silverblue": ["gvfs-nfs"]
         },
         "exclude": {
