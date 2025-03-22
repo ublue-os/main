@@ -64,36 +64,40 @@ curl -Lo /etc/yum.repos.d/negativo17-fedora-multimedia.repo https://negativo17.o
 sed -i '0,/enabled=1/{s/enabled=1/enabled=1\npriority=90/}' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
 
 # use override to replace mesa and others with less crippled versions
-OVERRIDES=(
-    libva
+declare -A OVERRIDES
+OVERRIDES+=(
+    ["libva"]="libva"
 )
 
 if [[ "$FEDORA_MAJOR_VERSION" -lt "42" ]]; then
     OVERRIDES+=(
-        libheif
-        libva-intel-media-driver
-        mesa-dri-drivers
-        mesa-filesystem
-        mesa-libEGL
-        mesa-libGL
-        mesa-libgbm
-        mesa-libxatracker
-        mesa-va-drivers
-        mesa-vulkan-drivers
+        ["libheif"]="libheif"
+        ["libva-intel-media-driver"]="libva-intel-media-driver"
+        ["mesa-dri-drivers"]="mesa-dri-drivers"
+        ["mesa-filesystem"]="mesa-filesystem"
+        ["mesa-libEGL"]="mesa-libEGL"
+        ["mesa-libGL"]="mesa-libGL"
+        ["mesa-libgbm"]="mesa-libgbm"
+        ["mesa-libxatracker"]="mesa-libxatracker"
+        ["mesa-va-drivers"]="mesa-va-drivers"
+        ["mesa-vulkan-drivers"]="mesa-vulkan-drivers"
+        ["fdk-aac-free"]="fdk-aac"
+        ["ffmpeg-free"]="ffmpeg"
+        ["libavcodec-free"]="libavcodec"
     )
 fi
 
 if [[ "$FEDORA_MAJOR_VERSION" -lt "41" ]]; then
     OVERRIDES+=(
-        libvdpau
-        mesa-libglapi
+        ["libvdpau"]="libvdpau"
+        ["mesa-libglapi"]="mesa-libglapi"
     )
 fi
 
-for override in "${OVERRIDES[@]}"; do
+for override in "${!OVERRIDES[@]}"; do
     dnf5 swap -y --repo='fedora-multimedia' \
-        "$override" "$override"
-    dnf5 versionlock add "$override"
+        "$override" "${OVERRIDES[$override]}"
+    dnf5 versionlock add "${OVERRIDES[$override]}"
 done
 
 # Disable DKMS support in gnome-software

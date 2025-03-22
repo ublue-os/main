@@ -55,47 +55,21 @@
                 "ksshaskpass",
                 "qt6-qtimageformats"
             ],
-            "sericea": [
-                "clipman",
-                "gvfs-mtp",
-                "thunar-volman",
-                "tumbler"
-            ],
-            "sway-atomic": [
-                "clipman",
-                "thunar-volman",
-                "tumbler"
-            ]
+            "sericea": ["clipman", "gvfs-mtp", "thunar-volman", "tumbler"],
+            "sway-atomic": ["clipman", "thunar-volman", "tumbler"]
         },
         "exclude": {
-            "all": [
-                "fdk-aac-free",
-                "ffmpeg-free",
-                "google-noto-sans-cjk-vf-fonts",
-                "libavcodec-free",
-                "libavdevice-free",
-                "libavfilter-free",
-                "libavformat-free",
-                "libavutil-free",
-                "libpostproc-free",
-                "libswresample-free",
-                "libswscale-free",
-                "default-fonts-cjk-sans"
-            ],
+            "all": ["google-noto-sans-cjk-vf-fonts", "default-fonts-cjk-sans"],
             "silverblue": [
                 "totem-video-thumbnailer",
                 "gnome-software-rpm-ostree"
             ],
-            "kinoite": [
-                "ffmpegthumbnailer",
-                "plasma-discover-rpm-ostree"
-            ]
+            "kinoite": ["ffmpegthumbnailer", "plasma-discover-rpm-ostree"]
         }
     },
     "40": {
         "include": {
             "all": [
-                "ffmpeg",
                 "ffmpeg-libs",
                 "ffmpegthumbnailer",
                 "grub2-tools-extra",
@@ -109,9 +83,7 @@
                 "pipewire-libs-extra",
                 "vim"
             ],
-            "silverblue": [
-                "gvfs-nfs"
-            ]
+            "silverblue": ["gvfs-nfs"]
         },
         "exclude": {
             "all": []
@@ -134,9 +106,7 @@
                 "pipewire-libs-extra",
                 "vim"
             ],
-            "silverblue": [
-                "gvfs-nfs"
-            ]
+            "silverblue": ["gvfs-nfs"]
         },
         "exclude": {
             "all": []
@@ -144,7 +114,18 @@
     },
     "42": {
         "include": {
-            "all": []
+            "all": [
+                "ffmpegthumbnailer",
+                "grub2-tools-extra",
+                "google-noto-sans-balinese-fonts",
+                "google-noto-sans-cjk-fonts",
+                "google-noto-sans-javanese-fonts",
+                "google-noto-sans-sundanese-fonts",
+                "libcamera-gstreamer",
+                "openssl",
+                "vim"
+            ]
+            "silverblue": ["gvfs-nfs"]
         },
         "exclude": {
             "all": []
