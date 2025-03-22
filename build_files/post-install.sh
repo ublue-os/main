@@ -44,6 +44,9 @@ rm -rf /var/cache/!(libdnf5)
 mkdir -p /var/tmp
 chmod -R 1777 /var/tmp
 
+# Check to make sure important packages are present
+/ctx/build_files/check-build.sh
+
 # bootc/ostree checks
 if [[ "$(rpm -E %fedora)" -eq 40 ]]; then
     bootc container lint || true
