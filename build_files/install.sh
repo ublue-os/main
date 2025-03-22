@@ -34,6 +34,15 @@ dnf5 -y install \
     fedora-repos-archive \
     zstd
 
+# use negativo17 for 3rd party packages with higher priority than default
+if ! grep -q fedora-multimedia <(dnf5 repolist); then
+    # Enable or Install Repofile
+    dnf5 config-manager setopt fedora-multimedia.enabled=1 ||
+        dnf5 config-manager addrepo --from-repofile="https://negativo17.org/repos/fedora-multimedia.repo"
+fi
+# Set higher priority
+dnf5 config-manager setopt fedora-multimedia.priority=90
+
 # Replace podman provided policy.json with ublue-os one.
 mv /usr/etc/containers/policy.json /etc/containers/policy.json
 
@@ -58,12 +67,6 @@ dnf5 versionlock add kernel kernel-core kernel-modules kernel-modules-core kerne
 # Ensure Initramfs is generated (Likely unneeded)
 /usr/bin/dracut --no-hostonly --kver "${KERNEL_VERSION}" --reproducible -v --add ostree -f "/lib/modules/${KERNEL_VERSION}/initramfs.img"
 chmod 0600 "/lib/modules/${KERNEL_VERSION}/initramfs.img"
-
-# use negativo17 for 3rd party packages with higher priority than default
-if ! grep -q fedora-multimedia <(dnf5 repolist); then
-    dnf5 config-manager addrepo --from-repofile="https://negativo17.org/repos/fedora-multimedia.repo"
-fi
-dnf5 config-manager setopt fedora-multimedia.priority=90
 
 # use override to replace mesa and others with less crippled versions
 OVERRIDES=(
