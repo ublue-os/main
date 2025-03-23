@@ -175,7 +175,8 @@ fedora-version-check $fedora_version=latest:
 secureboot $fedora_version=latest $image_name=default_image:
     #!/usr/bin/env bash
     set -eoux pipefail
-    image_name="$(just image-name-check $image_name)"
+    declare -a _images="$(just image-name-check $image_name)"
+    image_name="${_images[0]}"
     fedora_version="$(just fedora-version-check $fedora_version)"
     # Get the vmlinuz to check
     kernel_release=$(podman inspect "$image_name":"$fedora_version" | jq -r '.[].Config.Labels["ostree.linux"]')
