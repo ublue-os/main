@@ -7,14 +7,21 @@
                 "apr",
                 "apr-util",
                 "distrobox",
+                "ffmpegthumbnailer",
                 "flatpak-spawn",
                 "fuse",
                 "fzf",
+                "grub2-tools-extra",
+                "google-noto-sans-balinese-fonts",
+                "google-noto-sans-cjk-fonts",
+                "google-noto-sans-javanese-fonts",
+                "google-noto-sans-sundanese-fonts",
                 "heif-pixbuf-loader",
                 "htop",
                 "just",
                 "libcamera",
                 "libcamera-tools",
+                "libcamera-gstreamer",
                 "libcamera-ipa",
                 "libfdk-aac",
                 "libratbag-ratbagd",
@@ -24,6 +31,7 @@
                 "nvme-cli",
                 "nvtop",
                 "openrgb-udev-rules",
+                "openssl",
                 "oversteer-udev",
                 "pam-u2f",
                 "pam_yubico",
@@ -37,6 +45,7 @@
                 "tcpdump",
                 "tmux",
                 "traceroute",
+                "vim",
                 "wireguard-tools",
                 "wl-clipboard",
                 "yubikey-manager",
@@ -45,7 +54,8 @@
             "silverblue": [
                 "adw-gtk3-theme",
                 "gnome-epub-thumbnailer",
-                "gnome-tweaks"
+                "gnome-tweaks",
+                "gvfs-nfs"
             ],
             "kinoite": [
                 "icoutils",
@@ -54,9 +64,7 @@
                 "kio-admin",
                 "ksshaskpass",
                 "qt6-qtimageformats"
-            ],
-            "sericea": ["clipman", "gvfs-mtp", "thunar-volman", "tumbler"],
-            "sway-atomic": ["clipman", "thunar-volman", "tumbler"]
+            ]
         },
         "exclude": {
             "all": ["google-noto-sans-cjk-vf-fonts", "default-fonts-cjk-sans"],
@@ -73,22 +81,13 @@
                 "fdk-aac",
                 "ffmpeg",
                 "ffmpeg-libs",
-                "ffmpegthumbnailer",
-                "grub2-tools-extra",
-                "google-noto-sans-balinese-fonts",
-                "google-noto-sans-cjk-fonts",
-                "google-noto-sans-javanese-fonts",
-                "google-noto-sans-sundanese-fonts",
                 "intel-vaapi-driver",
                 "libavcodec",
-                "libcamera-gstreamer",
                 "libheif",
                 "mesa-libxatracker",
-                "openssl",
-                "pipewire-libs-extra",
-                "vim"
+                "pipewire-libs-extra"
             ],
-            "silverblue": ["gvfs-nfs"]
+            "sericea": ["clipman", "gvfs-mtp", "thunar-volman", "tumbler"]
         },
         "exclude": {
             "all": []
@@ -100,22 +99,13 @@
                 "fdk-aac",
                 "ffmpeg",
                 "ffmpeg-libs",
-                "ffmpegthumbnailer",
-                "grub2-tools-extra",
-                "google-noto-sans-balinese-fonts",
-                "google-noto-sans-cjk-fonts",
-                "google-noto-sans-javanese-fonts",
-                "google-noto-sans-sundanese-fonts",
                 "intel-vaapi-driver",
                 "libavcodec",
-                "libcamera-gstreamer",
                 "libheif",
                 "mesa-libxatracker",
-                "openssl",
-                "pipewire-libs-extra",
-                "vim"
+                "pipewire-libs-extra"
             ],
-            "silverblue": ["gvfs-nfs"]
+            "sericea": ["clipman", "gvfs-mtp", "thunar-volman", "tumbler"]
         },
         "exclude": {
             "all": []
@@ -123,18 +113,8 @@
     },
     "42": {
         "include": {
-            "all": [
-                "ffmpegthumbnailer",
-                "grub2-tools-extra",
-                "google-noto-sans-balinese-fonts",
-                "google-noto-sans-cjk-fonts",
-                "google-noto-sans-javanese-fonts",
-                "google-noto-sans-sundanese-fonts",
-                "libcamera-gstreamer",
-                "openssl",
-                "vim"
-            ],
-            "silverblue": ["gvfs-nfs"]
+            "all": [],
+            "sway-atomic": ["clipman", "gvfs-mtp", "thunar-volman", "tumbler"]
         },
         "exclude": {
             "all": []
