@@ -6,7 +6,6 @@ export source_org := "fedora-ostree-desktops"
 export org := "ublue-os"
 export repo := "main"
 export IMAGE_REGISTRY := "ghcr.io/" + org
-
 images := '(
     ["base-atomic"]="base"
     ["silverblue"]="silverblue"
@@ -18,14 +17,13 @@ images := '(
     ["lazurite"]="lxqt-atomic"
     ["vauxite"]="xfce-atomic"
 )'
-
 fedora_versions := '(
-    ["gts"]="' + gts +'"
-    ["'+ gts +'"]="' + gts +'"
-    ["latest"]="' + latest +'"
-    ["'+ latest +'"]="' + latest +'"
-    ["beta"]="' + beta +'"
-    ["'+ beta +'"]="' + beta +'"
+    ["gts"]="' + gts + '"
+    ["' + gts + '"]="' + gts + '"
+    ["latest"]="' + latest + '"
+    ["' + latest + '"]="' + latest + '"
+    ["beta"]="' + beta + '"
+    ["' + beta + '"]="' + beta + '"
 )'
 
 _default:
