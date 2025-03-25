@@ -10,6 +10,7 @@
                 "flatpak-spawn",
                 "fuse",
                 "fzf",
+                "git-email",
                 "heif-pixbuf-loader",
                 "htop",
                 "just",
