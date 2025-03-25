@@ -1,165 +1,143 @@
 {
-  "all": {
-    "include": {
-      "all": [
-        "alsa-firmware",
-        "android-udev-rules",
-        "apr",
-        "apr-util",
-        "distrobox",
-        "flatpak-spawn",
-        "fuse",
-        "fzf",
-        "git-email",
-        "heif-pixbuf-loader",
-        "htop",
-        "just",
-        "libcamera",
-        "libcamera-tools",
-        "libcamera-ipa",
-        "libfdk-aac",
-        "libratbag-ratbagd",
-        "libva-utils",
-        "lshw",
-        "net-tools",
-        "nvme-cli",
-        "nvtop",
-        "openrgb-udev-rules",
-        "oversteer-udev",
-        "pam-u2f",
-        "pam_yubico",
-        "pamu2fcfg",
-        "pipewire-plugin-libcamera",
-        "powerstat",
-        "smartmontools",
-        "solaar-udev",
-        "squashfs-tools",
-        "symlinks",
-        "tcpdump",
-        "tmux",
-        "traceroute",
-        "wireguard-tools",
-        "wl-clipboard",
-        "yubikey-manager",
-        "zstd"
-      ],
-      "silverblue": [
-        "adw-gtk3-theme",
-        "gnome-epub-thumbnailer",
-        "gnome-tweaks"
-      ],
-      "kinoite": [
-        "icoutils",
-        "kate",
-        "kf6-kimageformats",
-        "kio-admin",
-        "ksshaskpass",
-        "qt6-qtimageformats"
-      ],
-      "sericea": [
-        "clipman",
-        "gvfs-mtp",
-        "thunar-volman",
-        "tumbler"
-      ],
-      "sway-atomic": [
-        "clipman",
-        "thunar-volman",
-        "tumbler"
-      ]
+    "all": {
+        "include": {
+            "all": [
+                "alsa-firmware",
+                "android-udev-rules",
+                "apr",
+                "apr-util",
+                "distrobox",
+                "flatpak-spawn",
+                "fuse",
+                "fzf",
+                "heif-pixbuf-loader",
+                "htop",
+                "just",
+                "libcamera",
+                "libcamera-tools",
+                "libcamera-ipa",
+                "libfdk-aac",
+                "libratbag-ratbagd",
+                "libva-utils",
+                "lshw",
+                "net-tools",
+                "nvme-cli",
+                "nvtop",
+                "openrgb-udev-rules",
+                "oversteer-udev",
+                "pam-u2f",
+                "pam_yubico",
+                "pamu2fcfg",
+                "pipewire-plugin-libcamera",
+                "powerstat",
+                "smartmontools",
+                "solaar-udev",
+                "squashfs-tools",
+                "symlinks",
+                "tcpdump",
+                "tmux",
+                "traceroute",
+                "wireguard-tools",
+                "wl-clipboard",
+                "yubikey-manager",
+                "zstd"
+            ],
+            "silverblue": [
+                "adw-gtk3-theme",
+                "gnome-epub-thumbnailer",
+                "gnome-tweaks"
+            ],
+            "kinoite": [
+                "icoutils",
+                "kate",
+                "kf6-kimageformats",
+                "kio-admin",
+                "ksshaskpass",
+                "qt6-qtimageformats"
+            ],
+            "sericea": ["clipman", "gvfs-mtp", "thunar-volman", "tumbler"],
+            "sway-atomic": ["clipman", "thunar-volman", "tumbler"]
+        },
+        "exclude": {
+            "all": ["google-noto-sans-cjk-vf-fonts", "default-fonts-cjk-sans"],
+            "silverblue": [
+                "totem-video-thumbnailer",
+                "gnome-software-rpm-ostree"
+            ],
+            "kinoite": ["ffmpegthumbnailer", "plasma-discover-rpm-ostree"]
+        }
     },
-    "exclude": {
-      "all": [
-        "google-noto-sans-cjk-vf-fonts",
-        "default-fonts-cjk-sans"
-      ],
-      "silverblue": [
-        "totem-video-thumbnailer",
-        "gnome-software-rpm-ostree"
-      ],
-      "kinoite": [
-        "ffmpegthumbnailer",
-        "plasma-discover-rpm-ostree"
-      ]
-    }
-  },
-  "40": {
-    "include": {
-      "all": [
-        "fdk-aac",
-        "ffmpeg",
-        "ffmpeg-libs",
-        "ffmpegthumbnailer",
-        "grub2-tools-extra",
-        "google-noto-sans-balinese-fonts",
-        "google-noto-sans-cjk-fonts",
-        "google-noto-sans-javanese-fonts",
-        "google-noto-sans-sundanese-fonts",
-        "intel-vaapi-driver",
-        "libavcodec",
-        "libcamera-gstreamer",
-        "libheif",
-        "mesa-libxatracker",
-        "openssl",
-        "pipewire-libs-extra",
-        "vim"
-      ],
-      "silverblue": [
-        "gvfs-nfs"
-      ]
+    "40": {
+        "include": {
+            "all": [
+                "fdk-aac",
+                "ffmpeg",
+                "ffmpeg-libs",
+                "ffmpegthumbnailer",
+                "grub2-tools-extra",
+                "google-noto-sans-balinese-fonts",
+                "google-noto-sans-cjk-fonts",
+                "google-noto-sans-javanese-fonts",
+                "google-noto-sans-sundanese-fonts",
+                "intel-vaapi-driver",
+                "libavcodec",
+                "libcamera-gstreamer",
+                "libheif",
+                "mesa-libxatracker",
+                "openssl",
+                "pipewire-libs-extra",
+                "vim"
+            ],
+            "silverblue": ["gvfs-nfs"]
+        },
+        "exclude": {
+            "all": []
+        }
     },
-    "exclude": {
-      "all": []
-    }
-  },
-  "41": {
-    "include": {
-      "all": [
-        "fdk-aac",
-        "ffmpeg",
-        "ffmpeg-libs",
-        "ffmpegthumbnailer",
-        "grub2-tools-extra",
-        "google-noto-sans-balinese-fonts",
-        "google-noto-sans-cjk-fonts",
-        "google-noto-sans-javanese-fonts",
-        "google-noto-sans-sundanese-fonts",
-        "intel-vaapi-driver",
-        "libavcodec",
-        "libcamera-gstreamer",
-        "libheif",
-        "mesa-libxatracker",
-        "openssl",
-        "pipewire-libs-extra",
-        "vim"
-      ],
-      "silverblue": [
-        "gvfs-nfs"
-      ]
+    "41": {
+        "include": {
+            "all": [
+                "fdk-aac",
+                "ffmpeg",
+                "ffmpeg-libs",
+                "ffmpegthumbnailer",
+                "grub2-tools-extra",
+                "google-noto-sans-balinese-fonts",
+                "google-noto-sans-cjk-fonts",
+                "google-noto-sans-javanese-fonts",
+                "google-noto-sans-sundanese-fonts",
+                "intel-vaapi-driver",
+                "libavcodec",
+                "libcamera-gstreamer",
+                "libheif",
+                "mesa-libxatracker",
+                "openssl",
+                "pipewire-libs-extra",
+                "vim"
+            ],
+            "silverblue": ["gvfs-nfs"]
+        },
+        "exclude": {
+            "all": []
+        }
     },
-    "exclude": {
-      "all": []
+    "42": {
+        "include": {
+            "all": [
+                "ffmpegthumbnailer",
+                "grub2-tools-extra",
+                "google-noto-sans-balinese-fonts",
+                "google-noto-sans-cjk-fonts",
+                "google-noto-sans-javanese-fonts",
+                "google-noto-sans-sundanese-fonts",
+                "libcamera-gstreamer",
+                "openssl",
+                "vim"
+            ],
+            "silverblue": ["gvfs-nfs"]
+        },
+        "exclude": {
+            "all": []
+        }
     }
-  },
-  "42": {
-    "include": {
-      "all": [
-        "ffmpegthumbnailer",
-        "grub2-tools-extra",
-        "google-noto-sans-balinese-fonts",
-        "google-noto-sans-cjk-fonts",
-        "google-noto-sans-javanese-fonts",
-        "google-noto-sans-sundanese-fonts",
-        "libcamera-gstreamer",
-        "openssl",
-        "vim"
-      ],
-      "silverblue": [
-        "gvfs-nfs"
-      ]
-    },
-    "exclude": {
-      "all": []
-    }
-  }
 }
