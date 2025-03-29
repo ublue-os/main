@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.3.0](https://github.com/ublue-os/main/compare/v2.2.0...v2.3.0) (2025-03-29)
+
+
+### Features
+
+* **ci:** add registry cleanup script ([#680](https://github.com/ublue-os/main/issues/680)) ([1e2bc12](https://github.com/ublue-os/main/commit/1e2bc1205d9807049b5248a105e65eb54e2801cd))
+* Switch to dnf5, F42 ([#766](https://github.com/ublue-os/main/issues/766)) ([a1ba197](https://github.com/ublue-os/main/commit/a1ba1973eaa8415882cb4d2508b6e39c330eb926))
+
+
+### Bug Fixes
+
+* change just's Chinese readme file name to prevent deploy issues ([#771](https://github.com/ublue-os/main/issues/771)) ([0b98781](https://github.com/ublue-os/main/commit/0b98781bd50baddb8886f8cea2a76cb3b8668812))
+* ensure xorg-x11-xauth package is installed ([#774](https://github.com/ublue-os/main/issues/774)) ([8736d15](https://github.com/ublue-os/main/commit/8736d15a1e934b76cdec03284963139cc83ed38e))
+* **install.sh:** Intel video GPU acceleration ([#775](https://github.com/ublue-os/main/issues/775)) ([3020278](https://github.com/ublue-os/main/commit/3020278bc1485ce11538905498d2c45279429730))
+* **install.sh:** There is no need now to manually remove `mesa-libglapi` ([#751](https://github.com/ublue-os/main/issues/751)) ([7bac3e7](https://github.com/ublue-os/main/commit/7bac3e7bdd83ad50e20fd363c954a56e05e45ad3))
+* mitigate OpenCL packaging error ([#692](https://github.com/ublue-os/main/issues/692)) ([f6f9024](https://github.com/ublue-os/main/commit/f6f90249e419d8b694c660b62cba4d679728a11c))
+* remove dependency on kernel images ([#719](https://github.com/ublue-os/main/issues/719)) ([8e8c72b](https://github.com/ublue-os/main/commit/8e8c72bb33c4f84511cc5ded5214dd80bdb662ae))
+* remove F39 and add F41 build status from README ([#686](https://github.com/ublue-os/main/issues/686)) ([fa108e3](https://github.com/ublue-os/main/commit/fa108e343f1a212ab035756aa0e3df93aeef4790))
+* suffix the Fedora 41 source image names with -atomic for non-sil… ([#702](https://github.com/ublue-os/main/issues/702)) ([a70140c](https://github.com/ublue-os/main/commit/a70140c66d31fe5072275e6cd940c12558f70ec8))
+
 ## [2.2.0](https://github.com/ublue-os/main/compare/v2.1.0...v2.2.0) (2024-11-17)
 
 
