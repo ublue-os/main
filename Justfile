@@ -41,7 +41,7 @@ run-container $fedora_version=default_version $image_name=default_image:
 
     declare -a _images="$(just image-name-check $fedora_version $image_name)"
     image_name="${_images[0]}"
-    fedora_version="$(just fedora-version-check $fedora_version)"
+    fedora_version="${_images[2]}"
 
     podman image exists "localhost/$image_name:$fedora_version" ||
         just build "$fedora_version" "$image_name"
@@ -56,7 +56,7 @@ build-container $fedora_version=default_version $image_name=default_image $githu
     declare -a _images="$(just image-name-check $fedora_version $image_name)"
     image_name="${_images[0]}"
     source_image_name="${_images[1]}"
-    fedora_version="$(just fedora-version-check $fedora_version)"
+    fedora_version="${_images[2]}"
 
     # Tags
     declare -A gen_tags="($(just gen-tags $fedora_version $image_name))"
@@ -109,7 +109,7 @@ gen-tags $fedora_version=default_version $image_name=default_image:
 
     declare -a _images="$(just image-name-check $fedora_version $image_name)"
     image_name="${_images[0]}"
-    fedora_version="$(just fedora-version-check $fedora_version)"
+    fedora_version="${_images[2]}"
 
     TIMESTAMP="$(date +%Y%m%d)"
     LIST_TAGS="$(skopeo list-tags docker://${IMAGE_REGISTRY}/$image_name)"
@@ -182,9 +182,9 @@ image-name-check $fedora_version=default_version $image_name=default_image:
         echo "()"
         exit 1
     elif [[ "$fedora_version" -eq "40" ]]; then
-        echo "($image_name-main $image_name)"
+        echo "($image_name-main $image_name $fedora_version)"
     else
-        echo "($image_name-main $source_image_name)"
+        echo "($image_name-main $source_image_name $fedora_version)"
     fi
 
 # Check Valid Fedora Version
@@ -206,7 +206,7 @@ secureboot $fedora_version=default_version $image_name=default_image:
     set -eoux pipefail
     declare -a _images="$(just image-name-check $fedora_version $image_name)"
     image_name="${_images[0]}"
-    fedora_version="$(just fedora-version-check $fedora_version)"
+    fedora_version="${_images[2]}"
     # Get the vmlinuz to check
     kernel_release=$(podman inspect "$image_name":"$fedora_version" | jq -r '.[].Config.Labels["ostree.linux"]')
     TMP=$(podman create "$image_name":"$fedora_version" bash)
