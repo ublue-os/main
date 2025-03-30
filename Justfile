@@ -49,9 +49,21 @@ run-container $fedora_version=default_version $image_name=default_image:
     image_name="${_images[0]}"
     fedora_version="${_images[2]}"
 
-    podman image exists "localhost/$image_name:$fedora_version" ||
+    if ! podman image exists "localhost/$image_name:$fedora_version"; then
+        echo "{{ style('warning') }}Container Does Not Exist{{ NORMAL }}"
+        echo "{{ style('warning') }}Will Run:{{ NORMAL }} {{ style('command') }}just build $fedora_version $image_name{{ NORMAL }}"
+        seconds=5
+        while [ $seconds -gt 0 ]; do
+            printf "\rTime remaining: {{ style('error') }}%d{{ NORMAL }} seconds to cancel" $seconds
+            sleep 1
+            (( seconds-- ))
+        done
+        printf "\n{{ style('warning') }}Running:{{ NORMAL }} just build %s %s" "$fedora_version" "$image_name"
         just build "$fedora_version" "$image_name"
-    podman run -it --rm "localhost/$image_name:$fedora_version" bash
+    fi
+    echo "{{ style('warning') }}Running:{{ NORMAL }} {{ style('command') }}just build $fedora_version $image_name{{ NORMAL }}"
+    sleep 1
+    podman run -it --rm "localhost/$image_name:$fedora_version" bash || exit 0
 
 # Build a Container
 [group('Container')]
@@ -194,15 +206,15 @@ image-name-check $fedora_version=default_version $image_name=default_image:
     if [[ -z "$fedora_version" ]]; then
         exit 1
     fi
-    if [[ "$image_name" =~ lazurite|vauxite && "$fedora_version" -gt "41" ]]; then
+    if [[ "$image_name" =~ lazurite|vauxite && "$fedora_version" -ge "42" ]]; then
         echo "()"
         echo "{{ style('error') }}Invalid Image Name. Lazurite and Vauxite no longer supported >= F42{{ NORMAL }}" >&2
         exit 1
-    elif [[ "$image_name" =~ sericea|onyx && "$fedora_version" -gt "41" ]]; then
+    elif [[ "$image_name" =~ sericea|onyx && "$fedora_version" -ge "42" ]]; then
         echo "()"
         echo "{{ style('error') }}Invalid Image Name. Sericea and Onyx names are -atomic names on >= F42{{ NORMAL }}" >&2
         exit 1
-    elif [[ "$image_name" =~ atomic && "$fedora_version" -lt "42" ]]; then
+    elif [[ "$image_name" =~ atomic && "$fedora_version" -le "41" ]]; then
         echo "()"
         echo "{{ style('error') }}Invalid Image Name. -atomic names only used on >= F42{{ NORMAL }}" >&2
         exit 1
@@ -326,4 +338,23 @@ verify-container $container="" $registry="ghcr.io/ublue-os" $key="":
     if ! cosign verify --key "$key" "$registry/$container" >/dev/null; then
         echo "{{ style('error') }}NOTICE: Verification failed. Please ensure your public key is correct.{{ NORMAL }}"
         exit 1
+    fi
+
+# Removes all Tags of an image from container storage.
+[group('Utility')]
+clean $image_name $registry="localhost":
+    #!/usr/bin/bash
+    set -eoux pipefail
+    if [[ "$registry" == "localhost" ]]; then
+        declare -A images={{ images }}
+        image_name="${image_name%-main}"
+        if [[ -z "${images[$image_name]:-}" ]]; then
+            echo "{{ style('error') }}Invalid Image name...{{ NORMAL }}" >&2
+            exit 1
+        fi
+            image_name="$image_name-main"
+    fi
+    declare -a CLEAN="($(podman image list $registry/$image_name --noheading --format 'table {{{{ .ID }}' | uniq))"
+    if [[ -n "${CLEAN[@]:-}" ]]; then
+        podman rmi -f "${CLEAN[@]}"
     fi
