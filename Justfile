@@ -40,6 +40,9 @@ run-container $fedora_version=default_version $image_name=default_image:
     set -eoux pipefail
 
     declare -a _images="$(just image-name-check $fedora_version $image_name)"
+    if [[ -z ${_images[0]:-} ]]; then
+       exit 1
+    fi
     image_name="${_images[0]}"
     fedora_version="${_images[2]}"
 
@@ -54,6 +57,9 @@ build-container $fedora_version=default_version $image_name=default_image $githu
     set -eoux pipefail
 
     declare -a _images="$(just image-name-check $fedora_version $image_name)"
+    if [[ -z ${_images[0]:-} ]]; then
+       exit 1
+    fi
     image_name="${_images[0]}"
     source_image_name="${_images[1]}"
     fedora_version="${_images[2]}"
@@ -108,6 +114,9 @@ gen-tags $fedora_version=default_version $image_name=default_image:
     set -eoux pipefail
 
     declare -a _images="$(just image-name-check $fedora_version $image_name)"
+    if [[ -z ${_images[0]:-} ]]; then
+       exit 1
+    fi
     image_name="${_images[0]}"
     fedora_version="${_images[2]}"
 
@@ -161,7 +170,7 @@ gen-tags $fedora_version=default_version $image_name=default_image:
 [group('Utility')]
 image-name-check $fedora_version=default_version $image_name=default_image:
     #!/usr/bin/bash
-    set -eoux pipefail
+    set -eou pipefail
     declare -A images={{ images }}
     if [[ "$image_name" =~ -main$ ]]; then
         image_name="${image_name%-main}"
@@ -169,17 +178,24 @@ image-name-check $fedora_version=default_version $image_name=default_image:
     source_image_name="${images[$image_name]:-}"
     if [[ -z "$source_image_name" ]]; then
         echo "()"
+        echo "Invalid Image Name" >&2
         exit 1
     fi
     fedora_version="$(just fedora-version-check $fedora_version)"
+    if [[ -z "$fedora_version" ]]; then
+        exit 1
+    fi
     if [[ "$image_name" =~ lazurite|vauxite && "$fedora_version" -gt "41" ]]; then
         echo "()"
+        echo "{{ style('error') }}Invalid Image Name. Lazurite and Vauxite no longer supported >= F42{{ NORMAL }}" >&2
         exit 1
-    elif [[ "$image_name" =~ sericea|vauxite && "$fedora_version" -gt "41" ]]; then
+    elif [[ "$image_name" =~ sericea|onyx && "$fedora_version" -gt "41" ]]; then
         echo "()"
+        echo "{{ style('error') }}Invalid Image Name. Sericea and Onyx names are -atomic names on >= F42{{ NORMAL }}" >&2
         exit 1
     elif [[ "$image_name" =~ atomic && "$fedora_version" -lt "42" ]]; then
         echo "()"
+        echo "{{ style('error') }}Invalid Image Name. -atomic names only used on >= F42{{ NORMAL }}" >&2
         exit 1
     elif [[ "$fedora_version" -eq "40" ]]; then
         echo "($image_name-main $image_name $fedora_version)"
@@ -191,10 +207,11 @@ image-name-check $fedora_version=default_version $image_name=default_image:
 [group('Utility')]
 fedora-version-check $fedora_version=default_version:
     #!/usr/bin/bash
-    set -eoux pipefail
+    set -eou pipefail
     declare -A fedora_versions={{ fedora_versions }}
     if [[ -z "${fedora_versions[$fedora_version]:-}" ]]; then
-        echo "Not a supported version"
+        echo ''
+        echo "{{ style('error') }}Not a supported version{{ NORMAL }}" >&2
         exit 1
     fi
     echo "${fedora_versions[$fedora_version]}"
@@ -205,6 +222,9 @@ secureboot $fedora_version=default_version $image_name=default_image:
     #!/usr/bin/env bash
     set -eoux pipefail
     declare -a _images="$(just image-name-check $fedora_version $image_name)"
+    if [[ -z ${_images[0]:-} ]]; then
+       exit 1
+    fi
     image_name="${_images[0]}"
     fedora_version="${_images[2]}"
     # Get the vmlinuz to check
