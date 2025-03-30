@@ -1,13 +1,14 @@
 export gts := "40"
 export latest := "41"
 export beta := "42"
+export default_version := latest
 export default_image := "silverblue"
 export source_org := "fedora-ostree-desktops"
 export org := "ublue-os"
 export repo := "main"
 export IMAGE_REGISTRY := "ghcr.io/" + org
 images := '(
-    ["base-atomic"]="base"
+    ["base"]="base-atomic"
     ["silverblue"]="silverblue"
     ["kinoite"]="kinoite"
     ["sway-atomic"]="sway-atomic"
@@ -34,11 +35,11 @@ alias build := build-container
 
 # Run a Container
 [group('Container')]
-run-container $fedora_version=latest $image_name=default_image:
+run-container $fedora_version=default_version $image_name=default_image:
     #!/usr/bin/bash
     set -eoux pipefail
 
-    declare -a _images="$(just image-name-check $image_name)"
+    declare -a _images="$(just image-name-check $fedora_version $image_name)"
     image_name="${_images[0]}"
     fedora_version="$(just fedora-version-check $fedora_version)"
 
@@ -48,17 +49,17 @@ run-container $fedora_version=latest $image_name=default_image:
 
 # Build a Container
 [group('Container')]
-build-container $fedora_version=latest $image_name=default_image $github="":
+build-container $fedora_version=default_version $image_name=default_image $github="":
     #!/usr/bin/bash
     set -eoux pipefail
 
-    declare -a _images="$(just image-name-check $image_name)"
+    declare -a _images="$(just image-name-check $fedora_version $image_name)"
     image_name="${_images[0]}"
     source_image_name="${_images[1]}"
     fedora_version="$(just fedora-version-check $fedora_version)"
 
     # Tags
-    declare -A gen_tags="($(just gen-tags $image_name {{ fedora_version }}))"
+    declare -A gen_tags="($(just gen-tags $fedora_version $image_name))"
     if [[ -z "$github" || ! "$github" =~ pull_request ]]; then
         declare -a tags="(${gen_tags["BUILD_TAGS"]})"
         TIMESTAMP="${gen_tags["TIMESTAMP"]}"
@@ -102,11 +103,11 @@ build-container $fedora_version=latest $image_name=default_image $github="":
 
 # Generate Tags
 [group('Utility')]
-gen-tags $image_name=default_image $fedora_version=latest:
+gen-tags $fedora_version=default_version $image_name=default_image:
     #!/usr/bin/bash
     set -eoux pipefail
 
-    declare -a _images="$(just image-name-check $image_name)"
+    declare -a _images="$(just image-name-check $fedora_version $image_name)"
     image_name="${_images[0]}"
     fedora_version="$(just fedora-version-check $fedora_version)"
 
@@ -158,31 +159,37 @@ gen-tags $image_name=default_image $fedora_version=latest:
 
 # Check Valid Image Name
 [group('Utility')]
-image-name-check $image_name=default_image:
+image-name-check $fedora_version=default_version $image_name=default_image:
     #!/usr/bin/bash
     set -eoux pipefail
     declare -A images={{ images }}
     if [[ "$image_name" =~ -main$ ]]; then
         image_name="${image_name%-main}"
     fi
-    source_image_name="${images[$image_name]}"
+    source_image_name="${images[$image_name]:-}"
     if [[ -z "$source_image_name" ]]; then
-        echo "Unknown Image..."
+        echo "()"
         exit 1
     fi
+    fedora_version="$(just fedora-version-check $fedora_version)"
     if [[ "$image_name" =~ lazurite|vauxite && "$fedora_version" -gt "41" ]]; then
-        echo "No longer supported by ublue-os..."
+        echo "()"
+        exit 1
     elif [[ "$image_name" =~ sericea|vauxite && "$fedora_version" -gt "41" ]]; then
-        echo "Universal Blue matches upstream naming convention. Use $source_image_name instead."
+        echo "()"
         exit 1
     elif [[ "$image_name" =~ atomic && "$fedora_version" -lt "42" ]]; then
-        echo "Please use the old naming convention for images older than F42"
+        echo "()"
+        exit 1
+    elif [[ "$fedora_version" -eq "40" ]]; then
+        echo "($image_name-main $image_name)"
+    else
+        echo "($image_name-main $source_image_name)"
     fi
-    echo "($image_name-main $source_image_name)"
 
 # Check Valid Fedora Version
 [group('Utility')]
-fedora-version-check $fedora_version=latest:
+fedora-version-check $fedora_version=default_version:
     #!/usr/bin/bash
     set -eoux pipefail
     declare -A fedora_versions={{ fedora_versions }}
@@ -194,10 +201,10 @@ fedora-version-check $fedora_version=latest:
 
 # Check Secureboot
 [group('Utility')]
-secureboot $fedora_version=latest $image_name=default_image:
+secureboot $fedora_version=default_version $image_name=default_image:
     #!/usr/bin/env bash
     set -eoux pipefail
-    declare -a _images="$(just image-name-check $image_name)"
+    declare -a _images="$(just image-name-check $fedora_version $image_name)"
     image_name="${_images[0]}"
     fedora_version="$(just fedora-version-check $fedora_version)"
     # Get the vmlinuz to check
