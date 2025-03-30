@@ -75,6 +75,9 @@ OVERRIDES=(
 
 if [[ "$FEDORA_MAJOR_VERSION" -lt "42" ]]; then
     OVERRIDES+=(
+        "intel-gmmlib"
+        "intel-vpl-gpu-rt"
+        "intel-mediasdk"
         "libva-intel-media-driver"
         "mesa-dri-drivers"
         "mesa-filesystem"

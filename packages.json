@@ -39,6 +39,7 @@
                 "traceroute",
                 "wireguard-tools",
                 "wl-clipboard",
+                "xorg-x11-xauth",
                 "yubikey-manager",
                 "zstd"
             ],
