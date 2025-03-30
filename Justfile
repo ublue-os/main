@@ -57,19 +57,33 @@ build-container $fedora_version=latest $image_name=default_image $github="":
     source_image_name="${_images[1]}"
     fedora_version="$(just fedora-version-check $fedora_version)"
 
-    SOURCE_IMAGE_VERSION="$(skopeo inspect docker://quay.io/${source_org}/${source_image_name}:${fedora_version} | jq -r '.Labels["org.opencontainers.image.version"]')"
-    if [[ -z "$SOURCE_IMAGE_VERSION" ]]; then
-        echo "Inspected Image version is empty/null"
+    # Tags
+    declare -A gen_tags="($(just gen-tags $image_name {{ fedora_version }}))"
+    if [[ -z "$github" || ! "$github" =~ pull_request ]]; then
+        declare -a tags="(${gen_tags["BUILD_TAGS"]})"
+        TIMESTAMP="${gen_tags["TIMESTAMP"]}"
+    else
+        declare -a tags="(${gen_tags["COMMIT_TAGS"]})"
+        TIMESTAMP="${gen_tags["TIMESTAMP"]}"
     fi
+    TAGS=()
+    for tag in "${tags[@]}"; do
+        TAGS+=("--tag" "localhost/${image_name}:$tag")
+    done
+
+    # Labels
+    VERSION="$fedora_version.$TIMESTAMP"
     KERNEL_VERSION="$(skopeo inspect docker://$IMAGE_REGISTRY/akmods:main-$fedora_version | jq -r '.Labels["ostree.linux"]')"
     LABELS=(
         "--label" "org.opencontainers.image.title=${image_name}"
-        "--label" "org.opencontainers.image.version=${SOURCE_IMAGE_VERSION}"
+        "--label" "org.opencontainers.image.version=${VERSION}"
         "--label" "org.opencontainers.image.description=A base Universal Blue {{ image_name }} image with batteries included"
         "--label" "ostree.linux=${KERNEL_VERSION}"
         "--label" "io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${org}/${repo}/main/README.md"
         "--label" "io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/120078124?s=200&v=4"
     )
+
+    # Build Arguments
     BUILD_ARGS=(
         "--build-arg" "IMAGE_NAME=$image_name"
         "--build-arg" "SOURCE_ORG=$source_org"
@@ -78,28 +92,37 @@ build-container $fedora_version=latest $image_name=default_image $github="":
         "--build-arg" "KERNEL_VERSION=$KERNEL_VERSION"
         "--build-arg" "IMAGE_REGISTRY=$IMAGE_REGISTRY"
     )
-    declare -A gen_tags="($(just gen-tags {{ fedora_version }}))"
-    if [[ -z "$github" || ! "$github" =~ pull_request ]]; then
-        declare -a tags="(${gen_tags["BUILD_TAGS"]})"
-    else
-        declare -a tags="(${gen_tags["COMMIT_TAGS"]})"
-    fi
-    TAGS=()
-    for tag in "${tags[@]}"; do
-        TAGS+=("--tag" "localhost/${image_name}:$tag")
-    done
+
+    # Pull Images with retry
+    podman pull --retry=3 "$IMAGE_REGISTRY/akmods:main-$fedora_version"
+    podman pull --retry=3 "quay.io/$source_org/$source_image_name:$fedora_version"
+
+    # Build Image
     buildah build -f Containerfile "${BUILD_ARGS[@]}" "${LABELS[@]}" "${TAGS[@]}"
-    just secureboot {{ fedora_version }} {{ image_name }}
 
 # Generate Tags
 [group('Utility')]
-gen-tags $fedora_version=latest:
+gen-tags $image_name=default_image $fedora_version=latest:
     #!/usr/bin/bash
     set -eoux pipefail
 
+    declare -a _images="$(just image-name-check $image_name)"
+    image_name="${_images[0]}"
     fedora_version="$(just fedora-version-check $fedora_version)"
 
     TIMESTAMP="$(date +%Y%m%d)"
+    LIST_TAGS="$(skopeo list-tags docker://${IMAGE_REGISTRY}/$image_name)"
+    if [[ $(jq "any(.Tags[]; contains(\"$fedora_version-$TIMESTAMP\"))" <<< "$LIST_TAGS") == "true" ]]; then
+        POINT="1"
+        while $(jq -e "any(.Tags[]; contains(\"$fedora_version-$TIMESTAMP.$POINT\"))" <<< "$LIST_TAGS")
+        do
+            (( POINT++ ))
+        done
+    fi
+
+    if [[ -n "${POINT:-}" ]]; then
+        TIMESTAMP="$TIMESTAMP.$POINT"
+    fi
 
     if [[ "$fedora_version" -eq "{{ gts }}" ]]; then
         IS_LATEST_VERSION=false
@@ -130,6 +153,7 @@ gen-tags $fedora_version=latest:
     declare -A output
     output["BUILD_TAGS"]="${BUILD_TAGS[*]}"
     output["COMMIT_TAGS"]="${COMMIT_TAGS[*]}"
+    output["TIMESTAMP"]="$TIMESTAMP"
     echo "${output[@]@K}"
 
 # Check Valid Image Name
