@@ -1,12 +1,26 @@
+# Tags
+
 export gts := "40"
 export latest := "41"
 export beta := "42"
+
+# Defaults
+
 export default_version := latest
 export default_image := "silverblue"
-export source_org := "fedora-ostree-desktops"
+
+# Reused Values
+
 export org := "ublue-os"
 export repo := "main"
 export IMAGE_REGISTRY := "ghcr.io/" + org
+
+# Upstream
+
+export source_org := "fedora-ostree-desktops"
+
+# Image Names
+
 images := '(
     ["base"]="base-atomic"
     ["silverblue"]="silverblue"
@@ -18,6 +32,9 @@ images := '(
     ["lazurite"]="lxqt-atomic"
     ["vauxite"]="xfce-atomic"
 )'
+
+# Fedora Versions
+
 fedora_versions := '(
     ["gts"]="' + gts + '"
     ["' + gts + '"]="' + gts + '"
@@ -26,15 +43,23 @@ fedora_versions := '(
     ["beta"]="' + beta + '"
     ["' + beta + '"]="' + beta + '"
 )'
+
+# Sudo
+
 export SUDO_DISPLAY := if `if [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]; then echo true; fi` == "true" { "true" } else { "false" }
 export SUDOIF := if `id -u` == "0" { "" } else if SUDO_DISPLAY == "true" { "sudo --askpass" } else { "sudo" }
+
+# Make things quieter by default
+
 export SET_X := if `id -u` == "0" { "1" } else { env('SET_X', '') }
 
-_default:
-    @just --list
+# Aliases
 
 alias run := run-container
 alias build := build-container
+
+_default:
+    @just --list
 
 # Run a Container
 [group('Container')]
@@ -61,7 +86,7 @@ run-container $fedora_version=default_version $image_name=default_image:
         printf "\n{{ style('warning') }}Running:{{ NORMAL }} just build %s %s" "$fedora_version" "$image_name"
         just build "$fedora_version" "$image_name"
     fi
-    echo "{{ style('warning') }}Running:{{ NORMAL }} {{ style('command') }}just build $fedora_version $image_name{{ NORMAL }}"
+    echo "{{ style('warning') }}Running:{{ NORMAL }} {{ style('command') }}just run -it --rm localhost/$image_name:$fedora_version bash {{ NORMAL }}"
     sleep 1
     podman run -it --rm "localhost/$image_name:$fedora_version" bash || exit 0
 
@@ -69,7 +94,7 @@ run-container $fedora_version=default_version $image_name=default_image:
 [group('Container')]
 build-container $fedora_version=default_version $image_name=default_image $github="":
     #!/usr/bin/bash
-    set -eoux pipefail
+    set ${SET_X:+-x} -eou pipefail
 
     declare -a _images="$(just image-name-check $fedora_version $image_name)"
     if [[ -z ${_images[0]:-} ]]; then
@@ -89,11 +114,10 @@ build-container $fedora_version=default_version $image_name=default_image $githu
     declare -A gen_tags="($(just gen-tags $fedora_version $image_name))"
     if [[ -z "$github" || ! "$github" =~ pull_request ]]; then
         declare -a tags="(${gen_tags["BUILD_TAGS"]})"
-        TIMESTAMP="${gen_tags["TIMESTAMP"]}"
     else
         declare -a tags="(${gen_tags["COMMIT_TAGS"]})"
-        TIMESTAMP="${gen_tags["TIMESTAMP"]}"
     fi
+    TIMESTAMP="${gen_tags["TIMESTAMP"]}"
     TAGS=()
     for tag in "${tags[@]}"; do
         TAGS+=("--tag" "localhost/${image_name}:$tag")
@@ -134,6 +158,7 @@ gen-tags $fedora_version=default_version $image_name=default_image:
     #!/usr/bin/bash
     set ${SET_X:+-x} -eou pipefail
 
+    # Image Name Check
     declare -a _images="$(just image-name-check $fedora_version $image_name)"
     if [[ -z ${_images[0]:-} ]]; then
        exit 1
@@ -141,8 +166,12 @@ gen-tags $fedora_version=default_version $image_name=default_image:
     image_name="${_images[0]}"
     fedora_version="${_images[2]}"
 
+    # Generate Timestamp with incrementing version point
     TIMESTAMP="$(date +%Y%m%d)"
-    LIST_TAGS="$(skopeo list-tags docker://${IMAGE_REGISTRY}/$image_name)"
+    LIST_TAGS=""
+    while [[ -z "$LIST_TAGS" ]]; do
+        LIST_TAGS="$(skopeo list-tags docker://${IMAGE_REGISTRY}/$image_name)"
+    done
     if [[ $(jq "any(.Tags[]; contains(\"$fedora_version-$TIMESTAMP\"))" <<< "$LIST_TAGS") == "true" ]]; then
         POINT="1"
         while $(jq -e "any(.Tags[]; contains(\"$fedora_version-$TIMESTAMP.$POINT\"))" <<< "$LIST_TAGS")
@@ -155,32 +184,35 @@ gen-tags $fedora_version=default_version $image_name=default_image:
         TIMESTAMP="$TIMESTAMP.$POINT"
     fi
 
+    # Add a sha tag for tracking builds during a pull request
+    SHA_SHORT="$(git rev-parse --short HEAD)"
+
+    # Define Versions
     if [[ "$fedora_version" -eq "{{ gts }}" ]]; then
-        IS_LATEST_VERSION=false
-        IS_STABLE_VERSION=true
-        IS_GTS_VERSION=true
-        IS_BETA_VERSION=false
+        # IS_LATEST_VERSION=false
+        # IS_STABLE_VERSION=true
+        # IS_GTS_VERSION=true
+        # IS_BETA_VERSION=false
+        COMMIT_TAGS=("$SHA_SHORT-gts")
         BUILD_TAGS=("gts")
     elif [[ "$fedora_version" -eq "{{ latest }}" ]]; then
-        IS_LATEST_VERSION=true
-        IS_STABLE_VERSION=true
-        IS_GTS_VERSION=false
-        IS_BETA_VERSION=false
+        # IS_LATEST_VERSION=true
+        # IS_STABLE_VERSION=true
+        # IS_GTS_VERSION=false
+        # IS_BETA_VERSION=false
+        COMMIT_TAGS+=("$SHA_SHORT-latest")
         BUILD_TAGS=("latest")
     elif [[ "$fedora_version" -eq "{{ beta }}" ]]; then
-        IS_LATEST_VERSION=false
-        IS_STABLE_VERSION=false
-        IS_GTS_VERSION=false
-        IS_BETA_VERSION=true
+        # IS_LATEST_VERSION=false
+        # IS_STABLE_VERSION=false
+        # IS_GTS_VERSION=false
+        # IS_BETA_VERSION=true
+        COMMIT_TAGS+=("$SHA_SHORT-beta")
         BUILD_TAGS=("beta")
     fi
 
-    # Add a sha tag for tracking builds during a pull request
-    SHA_SHORT="$(git rev-parse --short HEAD)"
-    COMMIT_TAGS=("$SHA_SHORT-$fedora_version")
-
-    BUILD_TAGS+=("$fedora_version")
-    BUILD_TAGS+=("$fedora_version-$TIMESTAMP")
+    COMMIT_TAGS+=("$SHA_SHORT-$fedora_version")
+    BUILD_TAGS+=("$fedora_version" "$fedora_version-$TIMESTAMP")
     declare -A output
     output["BUILD_TAGS"]="${BUILD_TAGS[*]}"
     output["COMMIT_TAGS"]="${COMMIT_TAGS[*]}"
@@ -252,11 +284,11 @@ secureboot $fedora_version=default_version $image_name=default_image:
     kernel_release=$(podman inspect "$image_name":"$fedora_version" | jq -r '.[].Config.Labels["ostree.linux"]')
     TMP=$(podman create "$image_name":"$fedora_version" bash)
     podman cp "$TMP":/usr/lib/modules/"$kernel_release"/vmlinuz /tmp/vmlinuz
-    podman rm "$TMP"
+    podman rm -f "$TMP"
 
     # Get the Public Certificates
-    curl --retry 3 -Lo /tmp/kernel-sign.der https://github.com/ublue-os/kernel-cache/raw/main/certs/public_key.der
-    curl --retry 3 -Lo /tmp/akmods.der https://github.com/ublue-os/kernel-cache/raw/main/certs/public_key_2.der
+    curl --retry 3 -Lo /tmp/kernel-sign.der https://github.com/ublue-os/akmods/raw/main/certs/public_key.der
+    curl --retry 3 -Lo /tmp/akmods.der https://github.com/ublue-os/akmods/raw/main/certs/public_key_2.der
     openssl x509 -in /tmp/kernel-sign.der -out /tmp/kernel-sign.crt
     openssl x509 -in /tmp/akmods.der -out /tmp/akmods.crt
 
@@ -265,14 +297,16 @@ secureboot $fedora_version=default_version $image_name=default_image:
     if [[ -z "${CMD:-}" ]]; then
         temp_name="sbverify-${RANDOM}"
         podman run -dt \
+            --pull=newer \
             --entrypoint /bin/sh \
             --volume /tmp/vmlinuz:/tmp/vmlinuz:z \
             --volume /tmp/kernel-sign.crt:/tmp/kernel-sign.crt:z \
             --volume /tmp/akmods.crt:/tmp/akmods.crt:z \
-            --name ${temp_name} \
+            --name $temp_name \
             alpine:edge
         podman exec "$temp_name" apk add sbsigntool
         CMD="podman exec $temp_name /usr/bin/sbverify"
+        trap "podman rm -f $temp_name; exit 1" SIGINT
     fi
 
     # Confirm that Signatures Are Good
@@ -311,16 +345,9 @@ fix:
 
 # Verify Container with Cosign
 [group('Utility')]
-verify-container $container="" $registry="ghcr.io/ublue-os" $key="":
+verify-container $container="" $registry=IMAGE_REGISTRY $key="": install-cosign
     #!/usr/bin/env bash
     set ${SET_X:+-x} -eou pipefail
-    # Get Cosign if Needed
-    if [[ ! $(command -v cosign) ]]; then
-        COSIGN_CONTAINER_ID=$({{ SUDOIF }} podman create cgr.dev/chainguard/cosign:latest bash)
-        {{ SUDOIF }} podman cp "${COSIGN_CONTAINER_ID}":/usr/bin/cosign /usr/local/bin/cosign
-        {{ SUDOIF }} podman rm -f "${COSIGN_CONTAINER_ID}"
-    fi
-
     # Verify Cosign Image Signatures if needed
     if [[ -n "${COSIGN_CONTAINER_ID:-}" ]]; then
         if ! cosign verify --certificate-oidc-issuer=https://token.actions.githubusercontent.com --certificate-identity=https://github.com/chainguard-images/images/.github/workflows/release.yaml@refs/heads/main cgr.dev/chainguard/cosign >/dev/null; then
@@ -358,3 +385,121 @@ clean $image_name $registry="localhost":
     if [[ -n "${CLEAN[@]:-}" ]]; then
         podman rmi -f "${CLEAN[@]}"
     fi
+
+# Get Cosign if Needed
+install-cosign:
+    #!/usr/bin/bash
+    set ${SET_X:+-x} -eou pipefail
+    if [[ ! $(command -v cosign) ]]; then
+        COSIGN_CONTAINER_ID=$({{ SUDOIF }} podman create --pull=newer cgr.dev/chainguard/cosign:latest bash)
+        {{ SUDOIF }} podman cp "${COSIGN_CONTAINER_ID}":/usr/bin/cosign /usr/local/bin/cosign
+        {{ SUDOIF }} podman rm -f "${COSIGN_CONTAINER_ID}"
+    fi
+
+# Get Digest
+
+# Login to GHCR
+[group('CI')]
+login-to-ghcr $user $token:
+    @echo "$token" | podman login ghcr.io -u "$user" --password-stdin
+
+# Push Images to Registry
+[group('CI')]
+push-to-registry $fedora_version $image_name $dryrun="true" $destination=IMAGE_REGISTRY:
+    #!/usr/bin/bash
+    set ${SET_X:+-x} -eou pipefail
+    declare -a TAGS="($(podman image list localhost/$image_name:$fedora_version --noheading --format 'table {{{{ .Tag }}'))"
+    if [[ "$dryrun" == "false" ]]; then
+        for tag in "${TAGS[@]}"; do
+            skopeo copy --retry-times=3 "containers-storage:localhost/$image_name" "docker://$destination/$image_name:$tag" >&2
+        done
+    fi
+    digest="$(skopeo inspect docker://$destination/$image_name:$fedora_version --format '{{{{ .Digest }}')"
+    echo "$digest"
+
+# Sign Images with Cosign
+[group('CI')]
+cosign-sign $fedora_version $image_name $destination=IMAGE_REGISTRY: install-cosign
+    #!/usr/bin/bash
+    set ${SET_X:+-x} -eou pipefail
+    declare -a _images="$(just image-name-check $fedora_version $image_name)"
+    if [[ -z ${_images[0]:-} ]]; then
+       exit 1
+    fi
+    image_name="${_images[0]}"
+    cosign sign -y --key env://COSIGN_PRIVATE_KEY "$destination/$image_name:$digest"
+
+# Generate SBOM
+[group('CI')]
+gen-sbom $fedora_version $image_name:
+    #!/usr/bin/bash
+    set ${SET_X:+-x} -eou pipefail
+
+    # Image Name and Version
+    declare -a _images="$(just image-name-check $fedora_version $image_name)"
+    if [[ -z ${_images[0]:-} ]]; then
+       exit 1
+    fi
+    image_name="${_images[0]}"
+    fedora_version="${_images[2]}"
+
+    # Get SYFT if needed
+    SYFT_ID=""
+    if [[ ! $(command -v syft) ]]; then
+        SYFT_ID="$({{ SUDOIF }} podman create --pull=newer docker.io/anchore/syft:latest)"
+        {{ SUDOIF }} podman cp "$SYFT_ID":/syft /usr/local/bin/syft
+        {{ SUDOIF }} podman rm -f "$SYFT_ID" > /dev/null
+        trap '{{ SUDOIF }} rm -f /usr/local/bin/syft; exit 1' SIGINT
+    fi
+
+    # Enable Podman Socket if needed
+    if [[ "$EUID" -eq "0" ]] && ! systemctl is-active -q podman.socket; then
+        systemctl start podman.socket
+        started_podman="true"
+    elif ! systemctl is-active -q --user podman.socket; then
+        systemctl start --user podman.socket
+        started_podman="true"
+    fi
+
+    # Make SBOM
+    OUTPUT_PATH="$(mktemp -d)/sbom.json"
+    SYFT_PARALLELISM="$(( $(nproc) * 2 ))"
+    syft "$image_name:$fedora_version" -o spdx-json="$OUTPUT_PATH" >&2
+
+    # Cleanup
+    if [[ "$EUID" -eq "0" && "${started_podman:-}" == "true" ]]; then
+        systemctl stop podman.socket
+    elif [[ "${started_podman:-}" == "true" ]]; then
+        systemctl stop --user podman.socket
+    fi
+    if [[ -n "$SYFT_ID" ]]; then
+        {{ SUDOIF }} rm -f /usr/local/bin/syft
+    fi
+
+    # Output Path
+    echo "$OUTPUT_PATH"
+
+# Add SBOM attestation
+[group('CI')]
+sbom-attest $fedora_version $image_name $destination=IMAGE_REGISTRY: install-cosign
+    #!/usr/bin/bash
+    set ${SET_X:+-x} -eou pipefail
+
+    # Image Name and Version
+    declare -a _images="$(just image-name-check $fedora_version $image_name)"
+    if [[ -z ${_images[0]:-} ]]; then
+       exit 1
+    fi
+    image_name="${_images[0]}"
+    fedora_version="${_images[2]}"
+
+    sbom="$(just gen-sbom $fedora_version $image_name)"
+    digest="$(podman inspect localhost/$image_name:$fedora_version --format '{{{{ .Digest }}')"
+
+    # Attest with SBOM
+    cd "$(dirname $sbom)" && \
+    cosign attest -y \
+       --predicate ./sbom.json \
+       --type spdxjson \
+       --key env://COSIGN_PRIVATE_KEY \
+       "$destination/$image_name:$digest"
