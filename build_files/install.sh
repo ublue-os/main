@@ -42,6 +42,8 @@ if ! grep -q fedora-multimedia <(dnf5 repolist); then
 fi
 # Set higher priority
 dnf5 config-manager setopt fedora-multimedia.priority=90
+# Fix: negativo17 missing libopenjph
+dnf5 config-manager setopt fedora-multimedia.excludepkgs='*openjph*'
 
 # Replace podman provided policy.json with ublue-os one.
 mv /usr/etc/containers/policy.json /etc/containers/policy.json
