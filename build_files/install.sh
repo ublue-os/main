@@ -75,19 +75,14 @@ OVERRIDES=(
     "intel-vpl-gpu-rt"
     "intel-mediasdk"
     "libva-intel-media-driver"
+    "mesa-dri-drivers"
+    "mesa-filesystem"
+    "mesa-libEGL"
+    "mesa-libGL"
+    "mesa-libgbm"
+    "mesa-va-drivers"
+    "mesa-vulkan-drivers"
 )
-
-if [[ "$FEDORA_MAJOR_VERSION" -lt "42" ]]; then
-    OVERRIDES+=(
-        "mesa-dri-drivers"
-        "mesa-filesystem"
-        "mesa-libEGL"
-        "mesa-libGL"
-        "mesa-libgbm"
-        "mesa-va-drivers"
-        "mesa-vulkan-drivers"
-    )
-fi
 
 if [[ "$FEDORA_MAJOR_VERSION" -lt "41" ]]; then
     OVERRIDES+=(
