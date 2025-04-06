@@ -7,6 +7,9 @@ if [[ "$IMAGE_NAME" == "base" ]]; then
     systemctl enable getty@tty1
 fi
 
+# Workaround: Rename just's CN readme to README.zh-cn.md 
+mv '/usr/share/doc/just/README.中文.md' '/usr/share/doc/just/README.zh-cn.md'
+
 # Remove dnf5 versionlocks
 dnf5 versionlock clear
 
