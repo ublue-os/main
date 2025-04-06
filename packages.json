@@ -113,7 +113,16 @@
     },
     "42": {
         "include": {
-            "all": [],
+            "all": [
+                "fdk-aac",
+                "ffmpeg",
+                "ffmpeg-libs",
+                "intel-vaapi-driver",
+                "libavcodec",
+                "libheif",
+                "mesa-libxatracker",
+                "pipewire-libs-extra"
+            ],
             "sway-atomic": ["clipman", "gvfs-mtp", "thunar-volman", "tumbler"]
         },
         "exclude": {
