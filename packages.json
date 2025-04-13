@@ -48,6 +48,7 @@
                 "vim",
                 "wireguard-tools",
                 "wl-clipboard",
+                "xhost",
                 "xorg-x11-xauth",
                 "yubikey-manager",
                 "zstd"
