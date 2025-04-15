@@ -94,10 +94,6 @@ fi
 dnf5 distro-sync -y --repo='fedora-multimedia' "${OVERRIDES[@]}"
 dnf5 versionlock add "${OVERRIDES[@]}"
 
-# Not available on F42 yet
-# fdk-aac, ffmpeg, libavcodec, libheif
-# and mesa-libxatracker in packages.json
-
 # Disable DKMS support in gnome-software
 if [[ "$FEDORA_MAJOR_VERSION" -ge "41" && "$IMAGE_NAME" == "silverblue" ]]; then
     dnf5 remove -y \
