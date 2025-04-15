@@ -55,7 +55,7 @@ jobs:
           TIMESTAMP="$(date +%Y%m%d)"
           VARIANT="${{ inputs.fedora_version }}"
 
-          elif [[ "${{ inputs.fedora_version }}" -eq "40" ]]; then
+          if [[ "${{ inputs.fedora_version }}" -eq "40" ]]; then
             IS_LATEST_VERSION=false
             IS_STABLE_VERSION=true
             IS_GTS_VERSION=false
