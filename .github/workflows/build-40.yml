@@ -1,0 +1,32 @@
+name: ublue main 40
+
+on:
+  pull_request:
+  merge_group:
+  schedule:
+    - cron: '5 3 * * *'  # 3am-ish UTC everyday (timed against official fedora container pushes)
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: build
+    uses: ./.github/workflows/reusable-build.yml
+    secrets: inherit
+    strategy:
+      fail-fast: false
+      matrix:
+        image_name:
+          - base
+          - silverblue
+          - kinoite
+          - sericea
+          - onyx
+          - lazurite
+          - vauxite
+    with:
+      image_name: ${{ matrix.image_name }}
+      fedora_version: 40
