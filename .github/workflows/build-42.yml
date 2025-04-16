@@ -25,6 +25,7 @@ jobs:
           - kinoite
           - sway-atomic
           - budgie-atomic
+          - cosmic-atomic
         include:
           - image_name: base
             source_image_name: base-atomic
