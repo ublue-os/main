@@ -20,13 +20,8 @@ jobs:
       fail-fast: false
       matrix:
         image_name:
-          - base
           - silverblue
           - kinoite
-          - sericea
-          - onyx
-          - lazurite
-          - vauxite
     with:
       image_name: ${{ matrix.image_name }}
       fedora_version: 40
