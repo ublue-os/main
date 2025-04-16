@@ -2,6 +2,7 @@
 
 [![build-40](https://github.com/ublue-os/main/actions/workflows/build-40.yml/badge.svg)](https://github.com/ublue-os/main/actions/workflows/build-40.yml)
 [![build-41](https://github.com/ublue-os/main/actions/workflows/build-41.yml/badge.svg)](https://github.com/ublue-os/main/actions/workflows/build-41.yml)
+[![build-42](https://github.com/ublue-os/main/actions/workflows/build-42.yml/badge.svg)](https://github.com/ublue-os/main/actions/workflows/build-42.yml)
 
 A common main image for all other uBlue images, with minimal (but important) adjustments to Fedora. <3
 
