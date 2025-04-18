@@ -1,0 +1,71 @@
+images:
+  - name: akmods-40
+    image: ghcr.io/ublue-os/akmods
+    tag: main-40
+    digest: sha256:1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+  - name: silverblue-40
+    image: quay.io/fedora-ostree-desktops/silverblue
+    tag: 40
+    digest: sha256:abc
+  - name: kinoite-40
+    image: quay.io/fedora-ostree-desktops/kinoite
+    tag: 40
+    digest: sha256:def
+
+  - name: akmods-41
+    image: ghcr.io/ublue-os/akmods
+    tag: main-41
+    digest: sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890
+  - name: base-41
+    image: quay.io/fedora-ostree-desktops/base
+    tag: 41
+    digest: sha256:ghi
+  - name: silverblue-41
+    image: quay.io/fedora-ostree-desktops/silverblue
+    tag: 41
+    digest: sha256:jkl
+  - name: kinoite-41
+    image: quay.io/fedora-ostree-desktops/kinoite
+    tag: 41
+    digest: sha256:mno
+  - name: sericea
+    image: quay.io/fedora-ostree-desktops/sericea
+    tag: 41
+    digest: sha256:pqr
+  - name: onyx
+    image: quay.io/fedora-ostree-desktops/onyx
+    tag: 41
+    digest: sha256:stu
+  - name: lazurite
+    image: quay.io/fedora-ostree-desktops/lazurite
+    tag: 41
+    digest: sha256:vwx
+  - name: vauxite
+    image: quay.io/fedora-ostree-desktops/vauxite
+    tag: 41
+    digest: sha256:yza
+
+  - name: akmods-42
+    image: ghcr.io/ublue-os/akmods
+    tag: main-42
+    digest: sha256:fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321
+  - name: base-42
+    image: quay.io/fedora-ostree-desktops/base
+    tag: 42
+    digest: sha256:123
+  - name: silverblue-42
+    image: quay.io/fedora-ostree-desktops/silverblue
+    tag: 42
+    digest: sha256:456
+  - name: kinoite-42
+    image: quay.io/fedora-ostree-desktops/kinoite
+    tag: 42
+    digest: sha256:789
+  - name: sway-atomic-42
+    image: quay.io/fedora-ostree-desktops/sericea
+    tag: 42
+    digest: sha256:abc
+  - name: budgie-atomic-42
+    image: quay.io/fedora-ostree-desktops/onyx
+    tag: 42
+    digest: sha256:def
