@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:best-practices",
+    "config:best-practices"
   ],
 
   "rebaseWhen": "never",
@@ -15,11 +15,11 @@
       "enabled": false,
       "matchUpdateTypes": ["digest", "pinDigest", "pin"],
       "matchDepTypes": ["container"],
-      "matchFileNames": [".github/workflows/**.yaml", ".github/workflows/**.yml"],
+      "matchFileNames": [".github/workflows/**.yaml", ".github/workflows/**.yml"]
     },
     {
       "matchPackageNames": ["quay.io/fedora-ostree-desktops/*"],
-      "groupName": "base images",
+      "groupName": "base images"
     }
   ]
 }
