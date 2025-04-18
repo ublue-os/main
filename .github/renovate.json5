@@ -17,5 +17,9 @@
       "matchDepTypes": ["container"],
       "matchFileNames": [".github/workflows/**.yaml", ".github/workflows/**.yml"],
     },
+    {
+      "matchPackageNames": ["quay.io/fedora-ostree-desktops/*"],
+      "groupName": "base images",
+    }
   ]
 }
