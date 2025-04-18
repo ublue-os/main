@@ -28,19 +28,19 @@ images:
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 41
     digest: sha256:ffbb0eb93eb88496e1e27415311aab30d22902557caa9c49127e2da471e12d0a
-  - name: sway-atomic
+  - name: sway-atomic-41
     image: quay.io/fedora-ostree-desktops/sway-atomic
     tag: 41
     digest: sha256:dbf3f4926df8835ee5a11c665539331c7be05ffb0b70e6825db1a380b4ad6fa1
-  - name: budgie-atomic
+  - name: budgie-atomic-41
     image: quay.io/fedora-ostree-desktops/budgie-atomic
     tag: 41
     digest: sha256:c02f30faec7070ea746ea08b105573383d632e57d1099215652af517078b4048
-  - name: lxqt-atomic
+  - name: lxqt-atomic-41
     image: quay.io/fedora-ostree-desktops/lxqt-atomic
     tag: 41
     digest: sha256:b538c99a1eb275f1fcb8f1176277e1cf3a139a66a4cc5e1718cb4263eb98f5e2
-  - name: xfce-atomic
+  - name: xfce-atomic-41
     image: quay.io/fedora-ostree-desktops/xfce-atomic
     tag: 41
     digest: sha256:77a8cd1845b6172e7283a94df94b4dbca85040935933ba7bb6c2586caa7d37aa
