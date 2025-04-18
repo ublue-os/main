@@ -129,7 +129,7 @@ jobs:
       - name: Query Image Digest
         id: query-digest
         env:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          SOURCE_IMAGE: ${{ env.SOURCE_IMAGE }}
           VERSION: ${{ inputs.fedora_version }}
           IMAGE_VERSIONS_FILE: ./image-versions.yaml
         run: |
@@ -141,7 +141,7 @@ jobs:
             exit 1
           fi
 
-          BASE_IMAGE_DIGEST=$(yq -r ".images[] | select(.name == \"${IMAGE_NAME}-${VERSION}\") | .digest" "$IMAGE_VERSIONS_FILE")
+          BASE_IMAGE_DIGEST=$(yq -r ".images[] | select(.name == \"${SOURCE_IMAGE}-${VERSION}\") | .digest" "$IMAGE_VERSIONS_FILE")
           if [ -z "$BASE_IMAGE_DIGEST" ]; then
             echo "BASE_IMAGE_DIGEST not found in image-versions.yaml"
             exit 1

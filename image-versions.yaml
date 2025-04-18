@@ -49,8 +49,8 @@ images:
     image: ghcr.io/ublue-os/akmods
     tag: main-42
     digest: sha256:fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321
-  - name: base-42
-    image: quay.io/fedora-ostree-desktops/base
+  - name: base-atomic-42
+    image: quay.io/fedora-ostree-desktops/base-atomic
     tag: 42
     digest: sha256:123
   - name: silverblue-42
