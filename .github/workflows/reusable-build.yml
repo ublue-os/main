@@ -133,6 +133,8 @@ jobs:
           VERSION: ${{ inputs.fedora_version }}
           IMAGE_VERSIONS_FILE: ./image-versions.yaml
         run: |
+          set -x
+
           AKMODS_DIGEST=$(yq -r '.images[] | select(.name == "akmods-${VERSION}") | .digest' $IMAGE_VERSIONS_FILE)
           if [ -z "$AKMODS_DIGEST" ]; then
             echo "AKMODS_DIGEST not found in image-versions.yaml"

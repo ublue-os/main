@@ -62,10 +62,14 @@ images:
     tag: 42
     digest: sha256:789
   - name: sway-atomic-42
-    image: quay.io/fedora-ostree-desktops/sericea
+    image: quay.io/fedora-ostree-desktops/sway-atomic
     tag: 42
     digest: sha256:abc
   - name: budgie-atomic-42
-    image: quay.io/fedora-ostree-desktops/onyx
+    image: quay.io/fedora-ostree-desktops/budgie-atomic
     tag: 42
     digest: sha256:def
+  - name: cosmic-atomic-42
+    image: quay.io/fedora-ostree-desktops/cosmic-atomic
+    tag: 42
+    digest: sha256:ghi
