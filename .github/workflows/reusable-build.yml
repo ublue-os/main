@@ -135,13 +135,13 @@ jobs:
         run: |
           set -x
 
-          AKMODS_DIGEST=$(yq -r '.images[] | select(.name == "akmods-${VERSION}") | .digest' $IMAGE_VERSIONS_FILE)
+          AKMODS_DIGEST=$(yq -r ".images[] | select(.name == \"akmods-${VERSION}\") | .digest" "$IMAGE_VERSIONS_FILE")
           if [ -z "$AKMODS_DIGEST" ]; then
             echo "AKMODS_DIGEST not found in image-versions.yaml"
             exit 1
           fi
 
-          BASE_IMAGE_DIGEST=$(yq -r '.images[] | select(.name == "${IMAGE_NAME}-${VERSION}") | .digest' $IMAGE_VERSIONS_FILE)
+          BASE_IMAGE_DIGEST=$(yq -r ".images[] | select(.name == \"${IMAGE_NAME}-${VERSION}\") | .digest" "$IMAGE_VERSIONS_FILE")
           if [ -z "$BASE_IMAGE_DIGEST" ]; then
             echo "BASE_IMAGE_DIGEST not found in image-versions.yaml"
             exit 1
