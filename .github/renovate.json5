@@ -19,7 +19,20 @@
     },
     {
       "matchPackageNames": ["quay.io/fedora-ostree-desktops/*"],
-      "groupName": "base images"
+      "groupName": "base images",
+      "matchUpdateTypes": [
+        "digest"
+      ],
+      "autoMerge": true
+    },
+    {
+      "matchPackageNames": ["quay.io/fedora-ostree-desktops/*"],
+      "matchUpdateTypes": [
+        "major",
+        "minor",
+        "patch"
+      ],
+      "enabled": false
     }
   ]
 }
