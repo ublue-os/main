@@ -126,6 +126,29 @@ jobs:
 
           echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
 
+      - name: Query Image Digest
+        id: query-digest
+        env:
+          SOURCE_IMAGE: ${{ env.SOURCE_IMAGE }}
+          VERSION: ${{ inputs.fedora_version }}
+          IMAGE_VERSIONS_FILE: ./image-versions.yaml
+        run: |
+          set -x
+
+          AKMODS_DIGEST=$(yq -r ".images[] | select(.name == \"akmods-${VERSION}\") | .digest" "$IMAGE_VERSIONS_FILE")
+          if [ -z "$AKMODS_DIGEST" ]; then
+            echo "AKMODS_DIGEST not found in image-versions.yaml"
+            exit 1
+          fi
+
+          BASE_IMAGE_DIGEST=$(yq -r ".images[] | select(.name == \"${SOURCE_IMAGE}-${VERSION}\") | .digest" "$IMAGE_VERSIONS_FILE")
+          if [ -z "$BASE_IMAGE_DIGEST" ]; then
+            echo "BASE_IMAGE_DIGEST not found in image-versions.yaml"
+            exit 1
+          fi
+          echo "AKMODS_DIGEST=${AKMODS_DIGEST}" >> $GITHUB_OUTPUT
+          echo "BASE_IMAGE_DIGEST=${BASE_IMAGE_DIGEST}" >> $GITHUB_OUTPUT
+
       - name: Get current version
         id: labels
         uses: Wandalen/wretry.action@v3.8.0
@@ -151,8 +174,8 @@ jobs:
           command: |
             # pull the base image used for FROM in containerfile so
             # we can retry on that unfortunately common failure case
-            podman pull quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ inputs.fedora_version }}
-            podman pull ${{ env.IMAGE_REGISTRY }}/akmods:main-${{ inputs.fedora_version }}
+            podman pull quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ inputs.fedora_version }}@${{ steps.query-digest.outputs.BASE_IMAGE_DIGEST }}
+            podman pull ${{ env.IMAGE_REGISTRY }}/akmods:main-${{ inputs.fedora_version }}@${{ steps.query-digest.outputs.AKMODS_DIGEST }}
 
       # Generate image metadata
       - name: Image Metadata
@@ -186,6 +209,8 @@ jobs:
             FEDORA_MAJOR_VERSION=${{ inputs.fedora_version }}
             KERNEL_VERSION=${{ env.KERNEL_VERSION }}
             IMAGE_REGISTRY=${{ env.IMAGE_REGISTRY }}
+            BASE_IMAGE_DIGEST=${{ steps.query-digest.outputs.BASE_IMAGE_DIGEST }}
+            AKMODS_DIGEST=${{ steps.query-digest.outputs.AKMODS_DIGEST }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
 
