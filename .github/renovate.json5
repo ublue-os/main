@@ -23,7 +23,7 @@
       "matchUpdateTypes": [
         "digest"
       ],
-      "autoMerge": true
+      "automerge": true
     },
     {
       "matchPackageNames": ["quay.io/fedora-ostree-desktops/*"],
