@@ -84,18 +84,11 @@ OVERRIDES=(
     "mesa-vulkan-drivers"
 )
 
-if [[ "$FEDORA_MAJOR_VERSION" -lt "41" ]]; then
-    OVERRIDES+=(
-        "libvdpau"
-        "mesa-libglapi"
-    )
-fi
-
 dnf5 distro-sync -y --repo='fedora-multimedia' "${OVERRIDES[@]}"
 dnf5 versionlock add "${OVERRIDES[@]}"
 
 # Disable DKMS support in gnome-software
-if [[ "$FEDORA_MAJOR_VERSION" -ge "41" && "$IMAGE_NAME" == "silverblue" ]]; then
+if [[ "$IMAGE_NAME" == "silverblue" ]]; then
     dnf5 remove -y \
         gnome-software-rpm-ostree
     dnf5 swap -y \
