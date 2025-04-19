@@ -26,7 +26,18 @@
       "automerge": true
     },
     {
-      "matchPackageNames": ["quay.io/fedora-ostree-desktops/*"],
+      "matchPackageNames": ["ghcr.io/ublue-os/akmods"],
+      "groupName": "akmods",
+      "matchUpdateTypes": [
+        "digest"
+      ],
+      "automerge": true
+    },
+    {
+      "matchPackageNames": [
+        "quay.io/fedora-ostree-desktops/*",
+        "ghcr.io/ublue-os/akmods"
+      ],
       "matchUpdateTypes": [
         "major",
         "minor",
