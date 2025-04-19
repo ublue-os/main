@@ -1,17 +1,4 @@
 images:
-  - name: akmods-40
-    image: ghcr.io/ublue-os/akmods
-    tag: main-40
-    digest: sha256:5f9ba0dc82bd00887a4296a8b01f7fcc0e6dc1142d380ffe579f40118e7ee63c
-  - name: silverblue-40
-    image: quay.io/fedora-ostree-desktops/silverblue
-    tag: 40
-    digest: sha256:5b334673d098b9fe7df1e00ef62c5ca91c18273acd4c2fd3468d10e416498281
-  - name: kinoite-40
-    image: quay.io/fedora-ostree-desktops/kinoite
-    tag: 40
-    digest: sha256:66766b7859ebad12de52725d2b146441c2b4b06356c7dbe9a932611ba244162d
-
   - name: akmods-41
     image: ghcr.io/ublue-os/akmods
     tag: main-41

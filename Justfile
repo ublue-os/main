@@ -1,7 +1,7 @@
 export project_root := `git rev-parse --show-toplevel`
 export git_branch := ` git branch --show-current`
-export gts := "39"
-export latest := "40"
+export gts := "41"
+export latest := "42"
 export default_image := "silverblue"
 
 alias run := run-container

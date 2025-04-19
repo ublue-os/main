@@ -7,6 +7,9 @@
                 "apr",
                 "apr-util",
                 "distrobox",
+                "fdk-aac",
+                "ffmpeg",
+                "ffmpeg-libs",
                 "ffmpegthumbnailer",
                 "flatpak-spawn",
                 "fuse",
@@ -18,15 +21,19 @@
                 "google-noto-sans-sundanese-fonts",
                 "heif-pixbuf-loader",
                 "htop",
+                "intel-vaapi-driver",
                 "just",
+                "libavcodec",
                 "libcamera",
                 "libcamera-tools",
                 "libcamera-gstreamer",
                 "libcamera-ipa",
                 "libfdk-aac",
+                "libheif",
                 "libratbag-ratbagd",
                 "libva-utils",
                 "lshw",
+                "mesa-libxatracker",
                 "net-tools",
                 "nvme-cli",
                 "nvtop",
@@ -36,6 +43,7 @@
                 "pam-u2f",
                 "pam_yubico",
                 "pamu2fcfg",
+                "pipewire-libs-extra",
                 "pipewire-plugin-libcamera",
                 "powerstat",
                 "smartmontools",
@@ -64,6 +72,12 @@
                 "kio-admin",
                 "ksshaskpass",
                 "qt6-qtimageformats"
+            ],
+            "sway-atomic": [
+                "clipman",
+                "gvfs-mtp",
+                "thunar-volman",
+                "tumbler"
             ]
         },
         "exclude": {
@@ -75,36 +89,9 @@
             "kinoite": ["ffmpegthumbnailer", "plasma-discover-rpm-ostree"]
         }
     },
-    "40": {
-        "include": {
-            "all": [
-                "fdk-aac",
-                "ffmpeg",
-                "ffmpeg-libs",
-                "intel-vaapi-driver",
-                "libavcodec",
-                "libheif",
-                "mesa-libxatracker",
-                "pipewire-libs-extra"
-            ],
-            "sericea": ["clipman", "gvfs-mtp", "thunar-volman", "tumbler"]
-        },
-        "exclude": {
-            "all": []
-        }
-    },
     "41": {
         "include": {
-            "all": [
-                "fdk-aac",
-                "ffmpeg",
-                "ffmpeg-libs",
-                "intel-vaapi-driver",
-                "libavcodec",
-                "libheif",
-                "mesa-libxatracker",
-                "pipewire-libs-extra"
-            ],
+            "all": [],
             "sericea": ["clipman", "gvfs-mtp", "thunar-volman", "tumbler"]
         },
         "exclude": {
@@ -113,17 +100,8 @@
     },
     "42": {
         "include": {
-            "all": [
-                "fdk-aac",
-                "ffmpeg",
-                "ffmpeg-libs",
-                "intel-vaapi-driver",
-                "libavcodec",
-                "libheif",
-                "mesa-libxatracker",
-                "pipewire-libs-extra"
-            ],
-            "sway-atomic": ["clipman", "gvfs-mtp", "thunar-volman", "tumbler"]
+            "all": [],
+            "sway-atomic": []
         },
         "exclude": {
             "all": []
