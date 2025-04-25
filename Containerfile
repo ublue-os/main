@@ -20,6 +20,7 @@ FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}${BASE_IMAGE_DIGEST:+@${BASE_IMAGE_DIG
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-42}"
 ARG KERNEL_VERSION="${KERNEL_VERSION:-6.14.0-0.rc3.29.fc42.x86_64}"
+ARG BUILD_NVIDIA="${BUILD_NVIDIA:-N}"
 
 RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     --mount=type=bind,from=ctx,src=/,dst=/ctx \
@@ -28,4 +29,7 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     rm -f /usr/bin/chsh && \
     rm -f /usr/bin/lchsh && \
     /ctx/install.sh && \
+    if [ "${BUILD_NVIDIA}" == "Y" ]; then \
+        /ctx/nvidia-install.sh && \
+    ; fi && \
     /ctx/post-install.sh
