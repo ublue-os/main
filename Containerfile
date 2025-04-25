@@ -29,11 +29,12 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     --mount=type=bind,from=ctx,src=/,dst=/ctx \
     --mount=type=bind,from=akmods,src=/rpms/ublue-os,dst=/tmp/akmods-rpms \
     --mount=type=bind,from=akmods,src=/kernel-rpms,dst=/tmp/kernel-rpms \
-    --mount=type=bind,from=akmods_nvidia,src=/rpms,dst=/tmp/akmods-rpms \
+    --mount=type=bind,from=akmods_nvidia,src=/rpms,dst=/tmp/akmods-nv-rpms \
     rm -f /usr/bin/chsh && \
     rm -f /usr/bin/lchsh && \
     /ctx/install.sh && \
     if [ "${BUILD_NVIDIA}" == "Y" ]; then \
+        rsync -av /tmp/akmods-nv-rpms/ /tmp/akmods-rpms/ && \
         find /tmp/akmods-rpms && \
         /ctx/nvidia-install.sh \
     ; fi && \
