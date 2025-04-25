@@ -34,6 +34,7 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     rm -f /usr/bin/lchsh && \
     /ctx/install.sh && \
     if [ "${BUILD_NVIDIA}" == "Y" ]; then \
+        find /tmp/akmods-rpms && \
         /ctx/nvidia-install.sh \
     ; fi && \
     /ctx/post-install.sh
