@@ -15,6 +15,8 @@ COPY packages.json /
 
 FROM ${IMAGE_REGISTRY}/akmods:main-${FEDORA_MAJOR_VERSION}${AKMODS_DIGEST:+@${AKMODS_DIGEST}} AS akmods
 
+FROM ${IMAGE_REGISTRY}/akmods-nvidia-open-${FEDORA_MAJOR_VERSION}${AKMODS_DIGEST:+@${AKMODS_DIGEST}} AS akmods_nvidia
+
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}${BASE_IMAGE_DIGEST:+@${BASE_IMAGE_DIGEST}}
 
 ARG IMAGE_NAME="${IMAGE_NAME:-silverblue}"
@@ -26,6 +28,7 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     --mount=type=bind,from=ctx,src=/,dst=/ctx \
     --mount=type=bind,from=akmods,src=/rpms/ublue-os,dst=/tmp/akmods-rpms \
     --mount=type=bind,from=akmods,src=/kernel-rpms,dst=/tmp/kernel-rpms \
+    --mount=type=bind,from=akmods_nvidia,src=/rpms,dst=/tmp/akmods-rpms \
     rm -f /usr/bin/chsh && \
     rm -f /usr/bin/lchsh && \
     /ctx/install.sh && \

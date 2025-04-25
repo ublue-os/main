@@ -34,9 +34,18 @@
       "automerge": true
     },
     {
+      "matchPackageNames": ["ghcr.io/ublue-os/akmods-nvidia-open"],
+      "groupName": "akmods-nvidia-open",
+      "matchUpdateTypes": [
+        "digest"
+      ],
+      "automerge": true
+    },
+    {
       "matchPackageNames": [
         "quay.io/fedora-ostree-desktops/*",
         "ghcr.io/ublue-os/akmods"
+        "ghcr.io/ublue-os/akmods-nvidia-open"
       ],
       "matchUpdateTypes": [
         "major",

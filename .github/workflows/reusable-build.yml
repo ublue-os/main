@@ -141,12 +141,19 @@ jobs:
             exit 1
           fi
 
+          AKMODS_NVIDIA_DIGEST=$(yq -r ".images[] | select(.name == \"akmods-nvidia-open-${VERSION}\") | .digest" "$IMAGE_VERSIONS_FILE")
+          if [ -z "$AKMODS_NVIDIA_DIGEST" ]; then
+            echo "AKMODS_NVIDIA_DIGEST not found in image-versions.yaml"
+            exit 1
+          fi
+
           BASE_IMAGE_DIGEST=$(yq -r ".images[] | select(.name == \"${SOURCE_IMAGE}-${VERSION}\") | .digest" "$IMAGE_VERSIONS_FILE")
           if [ -z "$BASE_IMAGE_DIGEST" ]; then
             echo "BASE_IMAGE_DIGEST not found in image-versions.yaml"
             exit 1
           fi
           echo "AKMODS_DIGEST=${AKMODS_DIGEST}" >> $GITHUB_OUTPUT
+          echo "AKMODS_NVIDIA_DIGEST=${AKMODS_NVIDIA_DIGEST}" >> $GITHUB_OUTPUT
           echo "BASE_IMAGE_DIGEST=${BASE_IMAGE_DIGEST}" >> $GITHUB_OUTPUT
 
       - name: Get current version
