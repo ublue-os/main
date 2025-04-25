@@ -152,12 +152,12 @@ jobs:
           attempt_delay: 15000
           command: |
             set -eo pipefail
-            ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ inputs.fedora_version }}@${{ steps.query-digest.outputs.BASE_IMAGE_DIGEST }} | jq -r '.Labels["org.opencontainers.image.version"]')
+            ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}@${{ steps.query-digest.outputs.BASE_IMAGE_DIGEST }} | jq -r '.Labels["org.opencontainers.image.version"]')
             if [ -z "$ver" ] || [ "null" = "$ver" ]; then
               echo "inspected image version must not be empty or null"
               exit 1
             fi
-            linux=$(skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/akmods:main-${{ inputs.fedora_version }}@${{ steps.query-digest.outputs.AKMODS_DIGEST }} | jq -r '.Labels["ostree.linux"]')
+            linux=$(skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/akmods@${{ steps.query-digest.outputs.AKMODS_DIGEST }} | jq -r '.Labels["ostree.linux"]')
             echo "KERNEL_VERSION=$linux" >> $GITHUB_ENV
             echo "SOURCE_IMAGE_VERSION=$ver" >> $GITHUB_ENV
 
