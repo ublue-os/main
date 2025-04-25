@@ -3,6 +3,9 @@
 set -ouex pipefail
 
 RELEASE="$(rpm -E %fedora)"
+AKMODNV_PATH=${AKMODNV_PATH:-/tmp/akmods-rpms}
+
+find ${AKMODNV_PATH}/
 
 if [[ ! $(command -v dnf5) ]]; then
     echo "Requires dnf5... Exiting"
@@ -15,7 +18,7 @@ sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion*.repo
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
 
 ## nvidia install steps
-dnf5 install -y /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm
+dnf5 install -y ${AKMODNV_PATH}/ublue-os/ublue-os-nvidia-addons-*.rpm
 
 # Install MULTILIB packages from negativo17-multimedia prior to disabling repo
 
@@ -58,7 +61,7 @@ else
     curl -Lo /etc/yum.repos.d/_copr_ublue-os-staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
 fi
 
-source /tmp/akmods-rpms/kmods/nvidia-vars
+source ${AKMODNV_PATH}/kmods/nvidia-vars
 
 if [[ "${IMAGE_NAME}" == "kinoite" ]]; then
     VARIANT_PKGS="supergfxctl-plasmoid supergfxctl"
@@ -78,7 +81,7 @@ dnf5 install -y \
     nvidia-driver-libs.i686 \
     nvidia-settings \
     nvidia-container-toolkit ${VARIANT_PKGS} \
-    /tmp/akmods-rpms/kmods/kmod-nvidia-"${KERNEL_VERSION}"-"${NVIDIA_AKMOD_VERSION}".fc"${RELEASE}".rpm
+    ${AKMODNV_PATH}/kmods/kmod-nvidia-"${KERNEL_VERSION}"-"${NVIDIA_AKMOD_VERSION}".fc"${RELEASE}".rpm
 
 ## nvidia post-install steps
 # disable repos provided by ublue-os-nvidia-addons
