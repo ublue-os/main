@@ -81,7 +81,7 @@ dnf5 install -y \
     nvidia-driver-cuda-libs.i686 \
     nvidia-driver-libs.i686 \
     nvidia-settings \
-    nvidia-container-toolkit "${VARIANT_PKGS}" \
+    nvidia-container-toolkit ${VARIANT_PKGS} \
     "${AKMODNV_PATH}"/kmods/kmod-nvidia-"${KERNEL_VERSION}"-"${NVIDIA_AKMOD_VERSION}".fc"${RELEASE}".rpm
 
 ## nvidia post-install steps
