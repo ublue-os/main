@@ -27,6 +27,9 @@ jobs:
           - onyx
           - lazurite
           - vauxite
+        image_variety:
+          - main
+          - nvidia
         include:
           - image_name: base
             source_image_name: base-atomic

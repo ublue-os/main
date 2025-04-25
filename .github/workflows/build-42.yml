@@ -19,9 +19,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build_nvidia:
-          - false
-          - true
         image_name:
           - base
           - silverblue
@@ -29,6 +26,9 @@ jobs:
           #- sway-atomic
           #- budgie-atomic
           #- cosmic-atomic
+        image_variety:
+          - main
+          - nvidia
         include:
           - image_name: base
             source_image_name: base-atomic
