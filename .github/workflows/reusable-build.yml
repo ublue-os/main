@@ -15,6 +15,11 @@ on:
         required: false
         type: string
         default: ""
+      build_nvidia:
+        description: Set true if desiring to build nvidia-enabled image.
+        required: false
+        type: boolean
+        default: false
 env:
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
@@ -44,7 +49,7 @@ jobs:
           fi
 
           echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV
-          echo "IMAGE_NAME=$IMAGE_NAME-main" >> $GITHUB_ENV
+          echo "IMAGE_NAME=$IMAGE_NAME${{ inputs.build_nvidia && '-nvidia' || '-main' }}" >> $GITHUB_ENV
           echo "SOURCE_IMAGE=$SOURCE_IMAGE" >> $GITHUB_ENV
 
       - name: Generate tags
@@ -206,7 +211,7 @@ jobs:
             IMAGE_REGISTRY=${{ env.IMAGE_REGISTRY }}
             BASE_IMAGE_DIGEST=${{ steps.query-digest.outputs.BASE_IMAGE_DIGEST }}
             AKMODS_DIGEST=${{ steps.query-digest.outputs.AKMODS_DIGEST }}
-            BUILD_NVIDIA=N
+            BUILD_NVIDIA={{ inputs.build_nvidia && 'Y' || 'N' }}"
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
 

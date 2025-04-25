@@ -19,6 +19,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        build_nvidia:
+          - false
+          - true
         image_name:
           - base
           - silverblue
