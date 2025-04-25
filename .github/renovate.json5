@@ -4,8 +4,6 @@
     "config:best-practices"
   ],
 
-  "rebaseWhen": "never",
-
   "packageRules": [
     {
       "automerge": true,
