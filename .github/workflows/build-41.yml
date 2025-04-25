@@ -27,7 +27,7 @@ jobs:
           - onyx
           - lazurite
           - vauxite
-        image_variety:
+        image_variant:
           - main
           - nvidia
         include:

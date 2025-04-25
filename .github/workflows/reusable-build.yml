@@ -211,7 +211,7 @@ jobs:
             IMAGE_REGISTRY=${{ env.IMAGE_REGISTRY }}
             BASE_IMAGE_DIGEST=${{ steps.query-digest.outputs.BASE_IMAGE_DIGEST }}
             AKMODS_DIGEST=${{ steps.query-digest.outputs.AKMODS_DIGEST }}
-            BUILD_NVIDIA=${{ inputs.image_variety == 'nvidia' && 'Y' || 'N' }}
+            BUILD_NVIDIA=${{ inputs.image_variant == 'nvidia' && 'Y' || 'N' }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
 
