@@ -34,5 +34,6 @@ jobs:
             source_image_name: base-atomic
     with:
       image_name: ${{ matrix.image_name }}
+      image_variant: ${{ matrix.image_variant }}
       source_image_name: ${{ matrix.source_image_name }}
       fedora_version: 42
