@@ -4,8 +4,6 @@
     "config:best-practices"
   ],
 
-  "rebaseWhen": "never",
-
   "packageRules": [
     {
       "automerge": true,
@@ -18,16 +16,12 @@
       "matchFileNames": [".github/workflows/**.yaml", ".github/workflows/**.yml"]
     },
     {
-      "matchPackageNames": ["quay.io/fedora-ostree-desktops/*"],
-      "groupName": "base images",
-      "matchUpdateTypes": [
-        "digest"
+      "matchPackageNames": [
+        "quay.io/fedora-ostree-desktops/*",
+        "ghcr.io/ublue-os/akmods",
+        "ghcr.io/ublue-os/akmods-nvidia-open"
       ],
-      "automerge": true
-    },
-    {
-      "matchPackageNames": ["ghcr.io/ublue-os/akmods"],
-      "groupName": "akmods",
+      "groupName": "images",
       "matchUpdateTypes": [
         "digest"
       ],
@@ -44,7 +38,7 @@
     {
       "matchPackageNames": [
         "quay.io/fedora-ostree-desktops/*",
-        "ghcr.io/ublue-os/akmods"
+        "ghcr.io/ublue-os/akmods",
         "ghcr.io/ublue-os/akmods-nvidia-open"
       ],
       "matchUpdateTypes": [
