@@ -4,7 +4,7 @@ set unstable := true
 
 gts := "41"
 latest := "42"
-beta := "42"
+beta := "43"
 
 # Defaults
 
@@ -16,14 +16,15 @@ default_variant := "main"
 
 org := "ublue-os"
 repo := "main"
-IMAGE_REGISTRY := "ghcr.io"/org
+IMAGE_REGISTRY := "ghcr.io" / org
 
 # Upstream
 
 source_org := "fedora-ostree-desktops"
-source_registry := "quay.io"/source_org
+source_registry := "quay.io" / source_org
 
 # Image File
+
 image-file := justfile_dir() / "image-versions.yaml"
 
 # Image Names
@@ -52,6 +53,7 @@ fedora_versions := '(
 )'
 
 # Variants
+
 variants := '(
     ["main"]="main"
     ["nvidia"]="nvidia"
@@ -61,6 +63,7 @@ variants := '(
 
 SUDO_DISPLAY := `echo "${DISPLAY:-}" || echo "${WAYLAND_DISPLAY:-}"`
 SUDOIF := if `id -u` == "0" { "" } else if SUDO_DISPLAY != "" { which("sudo") + " --askpass" } else { which("sudo") }
+just := just_executable()
 
 # Make things quieter by default
 
@@ -73,14 +76,25 @@ alias build := build-container
 
 # Utility
 
+[private]
 default-inputs := '
     : ${fedora_version:=' + default_version + '}
     : ${image_name:=' + default_image + '}
-    : ${variant:='+ default_variant +'}
+    : ${variant:=' + default_variant + '}
+'
+[private]
+get-names := '
+    declare -a _images="$(' + just + ' image-name-check $image_name $fedora_version $variant)"
+    if [[ -z ${_images[0]:-} ]]; then
+       exit 1
+    fi
+    image_name="${_images[0]}"
+    source_image_name="${_images[1]}"
+    fedora_version="${_images[2]}"
 '
 
 _default:
-    @just --list
+    @{{ just }} --list
 
 # Run a Container
 [group('Container')]
@@ -89,27 +103,21 @@ run-container $image_name="" $fedora_version="" $variant="":
     set -eou pipefail
 
     {{ default-inputs }}
-
-    declare -a _images="$(just image-name-check $image_name $fedora_version $variant)"
-    if [[ -z ${_images[0]:-} ]]; then
-       exit 1
-    fi
-    image_name="${_images[0]}"
-    fedora_version="${_images[2]}"
+    {{ get-names }}
 
     if ! podman image exists "localhost/$image_name:$fedora_version"; then
         echo "{{ style('warning') }}Container Does Not Exist{{ NORMAL }}"
-        echo "{{ style('warning') }}Will Run:{{ NORMAL }} {{ style('command') }}just build $fedora_version $image_name{{ NORMAL }}"
+        echo "{{ style('warning') }}Will Run:{{ NORMAL }} {{ style('command') }}{{ just }} build $fedora_version $image_name{{ NORMAL }}"
         seconds=5
         while [ $seconds -gt 0 ]; do
             printf "\rTime remaining: {{ style('error') }}%d{{ NORMAL }} seconds to cancel" $seconds
             sleep 1
             (( seconds-- ))
         done
-        printf "\n{{ style('warning') }}Running:{{ NORMAL }} just build %s %s" "$fedora_version" "$image_name"
-        just build "$fedora_version" "$image_name"
+        printf "\n{{ style('warning') }}Running:{{ NORMAL }} {{ just }} build %s %s" "$fedora_version" "$image_name"
+        {{ just }} build "$fedora_version" "$image_name"
     fi
-    echo "{{ style('warning') }}Running:{{ NORMAL }} {{ style('command') }}just run -it --rm localhost/$image_name:$fedora_version bash {{ NORMAL }}"
+    echo "{{ style('warning') }}Running:{{ NORMAL }} {{ style('command') }}{{ just }} run -it --rm localhost/$image_name:$fedora_version bash {{ NORMAL }}"
     sleep 1
     podman run -it --rm "localhost/$image_name:$fedora_version" bash || exit 0
 
@@ -120,28 +128,21 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
     set ${SET_X:+-x} -eou pipefail
 
     {{ default-inputs }}
-
-    declare -a _images="$(just image-name-check $image_name $fedora_version $variant)"
-    if [[ -z ${_images[0]:-} ]]; then
-       exit 1
-    fi
-    image_name="${_images[0]}"
-    source_image_name="${_images[1]}"
-    fedora_version="${_images[2]}"
+    {{ get-names }}
 
     AKMODS_DIGEST="$(yq -r ".images[] | select(.name == \"akmods-${fedora_version}\") | .digest" {{ image-file }})"
     AKMODS_NVIDIA_DIGEST="$(yq -r ".images[] | select(.name == \"akmods-nvidia-open-${fedora_version}\") | .digest" {{ image-file }})"
     BASE_IMAGE_DIGEST="$(yq -r ".images[] | select(.name == \"${source_image_name}-${fedora_version}\") | .digest" {{ image-file }})"
 
     # Verify Source Containers
-    just verify-container "akmods@$AKMODS_DIGEST"
-    just verify-container "akmods-nvidia-open@$AKMODS_NVIDIA_DIGEST"
+    {{ just }} verify-container "akmods@$AKMODS_DIGEST"
+    {{ just }} verify-container "akmods-nvidia-open@$AKMODS_NVIDIA_DIGEST"
     if [[ "$fedora_version" -ge "41" ]]; then
-        just verify-container "$source_image_name@$BASE_IMAGE_DIGEST" "{{ source_registry }}" "https://gitlab.com/fedora/ostree/ci-test/-/raw/f$fedora_version/quay.io-fedora-ostree-desktops.pub?ref_type=heads"
+        {{ just }} verify-container "$source_image_name@$BASE_IMAGE_DIGEST" "{{ source_registry }}" "https://gitlab.com/fedora/ostree/ci-test/-/raw/f$fedora_version/quay.io-fedora-ostree-desktops.pub?ref_type=heads"
     fi
 
     # Tags
-    declare -A gen_tags="($(just gen-tags $image_name $fedora_version $variant))"
+    declare -A gen_tags="($({{ just }} gen-tags $image_name $fedora_version $variant))"
     if [[ -z "$github" || ! "$github" =~ pull_request ]]; then
         declare -a tags="(${gen_tags["BUILD_TAGS"]})"
     else
@@ -199,24 +200,16 @@ gen-tags $image_name="" $fedora_version="" $variant="":
     set ${SET_X:+-x} -eou pipefail
 
     {{ default-inputs }}
-
-    # Image Name Check
-    declare -a _images="$(just image-name-check $image_name $fedora_version $variant)"
-    if [[ -z ${_images[0]:-} ]]; then
-       exit 1
-    fi
-    image_name="${_images[0]}"
-    fedora_version="${_images[2]}"
+    {{ get-names }}
 
     # Generate Timestamp with incrementing version point
     TIMESTAMP="$(date +%Y%m%d)"
-    LIST_TAGS=""
-    while [[ -z "$LIST_TAGS" ]]; do
+    while [[ -z "{LIST_TAGS:-}" ]]; do
         LIST_TAGS="$(skopeo list-tags docker://{{ IMAGE_REGISTRY }}/$image_name)"
     done
-    if [[ $(jq "any(.Tags[]; contains(\"$fedora_version-$TIMESTAMP\"))" <<< "$LIST_TAGS") == "true" ]]; then
+    if [[ $(echo "$LIST_TAGS" | jq "any(.Tags[]; contains(\"$fedora_version-$TIMESTAMP\"))") == "true" ]]; then
         POINT="1"
-        while $(jq -e "any(.Tags[]; contains(\"$fedora_version-$TIMESTAMP.$POINT\"))" <<< "$LIST_TAGS")
+        while $(echo "$LIST_TAGS" | jq -e "any(.Tags[]; contains(\"$fedora_version-$TIMESTAMP.$POINT\"))")
         do
             (( POINT++ ))
         done
@@ -232,19 +225,13 @@ gen-tags $image_name="" $fedora_version="" $variant="":
     # Define Versions
     if [[ "$fedora_version" -eq "{{ gts }}" ]]; then
         COMMIT_TAGS=("$SHA_SHORT-gts")
-        BUILD_TAGS=("gts")
+        BUILD_TAGS=("gts" "gts-$TIMESTAMP")
     elif [[ "$fedora_version" -eq "{{ latest }}" ]]; then
         COMMIT_TAGS+=("$SHA_SHORT-latest")
-        BUILD_TAGS=("latest")
+        BUILD_TAGS=("latest" "latest-$TIMESTAMP")
     elif [[ "$fedora_version" -eq "{{ beta }}" ]]; then
         COMMIT_TAGS+=("$SHA_SHORT-beta")
-        BUILD_TAGS=("beta")
-    fi
-
-    # Get Fedora CoreOS Version
-    stable_version="$(skopeo inspect docker://quay.io/fedora/fedora-coreos:stable | jq -r '.Labels["ostree.linux"]' | grep -oP 'fc\K[0-9]+')"
-    if [[ "$fedora_version" -eq "$stable_version" ]]; then
-        BUILD_TAGS+=("stable")
+        BUILD_TAGS=("beta beta-$TIMESTAMP")
     fi
 
     COMMIT_TAGS+=("$SHA_SHORT-$fedora_version")
@@ -275,12 +262,12 @@ image-name-check $image_name $fedora_version $variant:
         exit 1
     fi
 
-    fedora_version="$(just fedora-version-check $fedora_version)"
+    fedora_version="$({{ just }} fedora-version-check $fedora_version)"
     if [[ -z "$fedora_version" ]]; then
         exit 1
     fi
 
-    variant="$(just fedora-variant-check $variant)"
+    variant="$({{ just }} fedora-variant-check $variant)"
     if [[ -z "$variant" ]]; then
         exit 1
     fi
@@ -334,12 +321,7 @@ fedora-variant-check $variant:
 secureboot $image_name $fedora_version $variant:
     #!/usr/bin/env bash
     set ${SET_X:+-x} -eou pipefail
-    declare -a _images="$(just image-name-check $image_name $fedora_version $variant)"
-    if [[ -z ${_images[0]:-} ]]; then
-       exit 1
-    fi
-    image_name="${_images[0]}"
-    fedora_version="${_images[2]}"
+    {{ get-names }}
     # Get the vmlinuz to check
     kernel_release=$(podman inspect "$image_name":"$fedora_version" | jq -r '.[].Config.Labels["ostree.linux"]')
     TMP=$(podman create "$image_name":"$fedora_version" bash)
@@ -387,10 +369,10 @@ check:
     #!/usr/bin/env bash
     find . -type f -name "*.just" | while read -r file; do
         echo "Checking syntax: $file"
-        just --unstable --fmt --check -f $file
+        {{ just }} --unstable --fmt --check -f $file
     done
     echo "Checking syntax: Justfile"
-    just --unstable --fmt --check -f Justfile
+    {{ just }} --unstable --fmt --check -f Justfile
 
 # Fix Just Syntax
 [group('Just')]
@@ -398,10 +380,10 @@ fix:
     #!/usr/bin/env bash
     find . -type f -name "*.just" | while read -r file; do
         echo "Checking syntax: $file"
-        just --unstable --fmt -f $file
+        {{ just }} --unstable --fmt -f $file
     done
     echo "Checking syntax: Justfile"
-    just --unstable --fmt -f Justfile || { exit 1; }
+    {{ just }} --unstable --fmt -f Justfile || { exit 1; }
 
 # Verify Container with Cosign
 [group('Utility')]
@@ -486,11 +468,7 @@ push-to-registry $fedora_version $image_name $destination="":
 cosign-sign $fedora_version $image_name $variant $destination: install-cosign
     #!/usr/bin/bash
     set ${SET_X:+-x} -eou pipefail
-    declare -a _images="$(just image-name-check $fedora_version $image_name $variant)"
-    if [[ -z ${_images[0]:-} ]]; then
-       exit 1
-    fi
-    image_name="${_images[0]}"
+    {{ get-names }}
     if [ -z "$destination" ]; then
         destination={{ IMAGE_REGISTRY }}
     fi
@@ -502,13 +480,7 @@ gen-sbom $fedora_version $image_name $variant:
     #!/usr/bin/bash
     set ${SET_X:+-x} -eou pipefail
 
-    # Image Name and Version
-    declare -a _images="$(just image-name-check $variant $fedora_version $image_name)"
-    if [[ -z ${_images[0]:-} ]]; then
-       exit 1
-    fi
-    image_name="${_images[0]}"
-    fedora_version="${_images[2]}"
+    {{ get-names }}
 
     # Get SYFT if needed
     SYFT_ID=""
@@ -554,15 +526,15 @@ sbom-attest $fedora_version $image_name $variant $destination: install-cosign
     set ${SET_X:+-x} -eou pipefail
 
     # Image Name and Version
-    declare -a _images="$(just image-name-check $fedora_version $image_name $variant)"
+    declare -a _images="$({{ just }} image-name-check $fedora_version $image_name $variant)"
     if [[ -z ${_images[0]:-} ]]; then
        exit 1
     fi
     image_name="${_images[0]}"
     fedora_version="${_images[2]}"
 
-    sbom="$(just gen-sbom $fedora_version $image_name)"
-    digest="$(podman inspect localhost/$image_name:$fedora_version --format '{{{{ .Digest }}')"
+    sbom="$({{ just }} gen-sbom $fedora_version $image_name)"
+    digest="$(podman inspect localhost/$image_name:$fedora_version --format '{{ ' {{ .Digest }} ' }}')"
 
     if [[ -z "{{ destination }}" ]]; then
         destination="{{ IMAGE_REGISTRY }}"
@@ -574,4 +546,4 @@ sbom-attest $fedora_version $image_name $variant $destination: install-cosign
        --predicate ./sbom.json \
        --type spdxjson \
        --key env://COSIGN_PRIVATE_KEY \
-       "$destination/$image_name:$digest"
+       "$destination/$image_name@$digest"
