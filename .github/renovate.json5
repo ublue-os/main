@@ -1,0 +1,44 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices"
+  ],
+
+  "packageRules": [
+    {
+      "automerge": true,
+      "matchUpdateTypes": ["pin", "pinDigest"]
+    },
+    {
+      "enabled": false,
+      "matchUpdateTypes": ["digest", "pinDigest", "pin"],
+      "matchDepTypes": ["container"],
+      "matchFileNames": [".github/workflows/**.yaml", ".github/workflows/**.yml"]
+    },
+    {
+      "matchPackageNames": [
+        "quay.io/fedora-ostree-desktops/*",
+        "ghcr.io/ublue-os/akmods",
+        "ghcr.io/ublue-os/akmods-nvidia-open"
+      ],
+      "groupName": "images",
+      "matchUpdateTypes": [
+        "digest"
+      ],
+      "automerge": true
+    },
+    {
+      "matchPackageNames": [
+        "quay.io/fedora-ostree-desktops/*",
+        "ghcr.io/ublue-os/akmods",
+        "ghcr.io/ublue-os/akmods-nvidia-open"
+      ],
+      "matchUpdateTypes": [
+        "major",
+        "minor",
+        "patch"
+      ],
+      "enabled": false
+    }
+  ]
+}

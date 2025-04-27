@@ -51,9 +51,5 @@ chmod -R 1777 /var/tmp
 /ctx/check-build.sh
 
 # bootc/ostree checks
-if [[ "$(rpm -E %fedora)" -eq 40 ]]; then
-    bootc container lint || true
-else
-    bootc container lint
-fi
+bootc container lint
 ostree container commit

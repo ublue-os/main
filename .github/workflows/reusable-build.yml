@@ -10,6 +10,11 @@ on:
         description: The name of the image to build.  E.G. base, silverblue
         required: true
         type: string
+      image_variant:
+        description: The variant of image to build.  E.G. main, nvidia
+        required: false
+        type: string
+        default: "main"
       source_image_name:
         description: The name of the image to use as a source.  E.G. sway-atomic
         required: false
@@ -29,7 +34,7 @@ jobs:
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
       - name: Matrix Variables
         shell: bash
@@ -44,7 +49,7 @@ jobs:
           fi
 
           echo "SOURCE_ORG=fedora-ostree-desktops" >> $GITHUB_ENV
-          echo "IMAGE_NAME=$IMAGE_NAME-main" >> $GITHUB_ENV
+          echo "IMAGE_NAME=$IMAGE_NAME-${{ inputs.image_variant }}" >> $GITHUB_ENV
           echo "SOURCE_IMAGE=$SOURCE_IMAGE" >> $GITHUB_ENV
 
       - name: Generate tags
@@ -55,21 +60,16 @@ jobs:
           TIMESTAMP="$(date +%Y%m%d)"
           VARIANT="${{ inputs.fedora_version }}"
 
-          if [[ "${{ inputs.fedora_version }}" -eq "40" ]]; then
+          if [[ "${{ inputs.fedora_version }}" -eq "41" ]]; then
             IS_LATEST_VERSION=false
             IS_STABLE_VERSION=true
             IS_GTS_VERSION=true
             IS_BETA_VERSION=false
-          elif [[ "${{ inputs.fedora_version }}" -eq "41" ]]; then
+          elif [[ "${{ inputs.fedora_version }}" -eq "42" ]]; then
             IS_LATEST_VERSION=true
             IS_STABLE_VERSION=true
             IS_GTS_VERSION=false
             IS_BETA_VERSION=false
-          elif [[ "${{ inputs.fedora_version }}" -eq "42" ]]; then
-            IS_LATEST_VERSION=true
-            IS_STABLE_VERSION=false
-            IS_GTS_VERSION=false
-            IS_BETA_VERSION=true
           fi
 
           COMMIT_TAGS=()
@@ -126,37 +126,67 @@ jobs:
 
           echo "alias_tags=${alias_tags[*]}" >> $GITHUB_OUTPUT
 
+      - name: Query Image Digest
+        id: query-digest
+        env:
+          SOURCE_IMAGE: ${{ env.SOURCE_IMAGE }}
+          VERSION: ${{ inputs.fedora_version }}
+          IMAGE_VERSIONS_FILE: ./image-versions.yaml
+        run: |
+          set -x
+
+          AKMODS_DIGEST=$(yq -r ".images[] | select(.name == \"akmods-${VERSION}\") | .digest" "$IMAGE_VERSIONS_FILE")
+          if [ -z "$AKMODS_DIGEST" ]; then
+            echo "AKMODS_DIGEST not found in image-versions.yaml"
+            exit 1
+          fi
+
+          AKMODS_NVIDIA_DIGEST=$(yq -r ".images[] | select(.name == \"akmods-nvidia-open-${VERSION}\") | .digest" "$IMAGE_VERSIONS_FILE")
+          if [ -z "$AKMODS_NVIDIA_DIGEST" ]; then
+            echo "AKMODS_NVIDIA_DIGEST not found in image-versions.yaml"
+            exit 1
+          fi
+
+          BASE_IMAGE_DIGEST=$(yq -r ".images[] | select(.name == \"${SOURCE_IMAGE}-${VERSION}\") | .digest" "$IMAGE_VERSIONS_FILE")
+          if [ -z "$BASE_IMAGE_DIGEST" ]; then
+            echo "BASE_IMAGE_DIGEST not found in image-versions.yaml"
+            exit 1
+          fi
+          echo "AKMODS_DIGEST=${AKMODS_DIGEST}" >> $GITHUB_OUTPUT
+          echo "AKMODS_NVIDIA_DIGEST=${AKMODS_NVIDIA_DIGEST}" >> $GITHUB_OUTPUT
+          echo "BASE_IMAGE_DIGEST=${BASE_IMAGE_DIGEST}" >> $GITHUB_OUTPUT
+
       - name: Get current version
         id: labels
-        uses: Wandalen/wretry.action@v3.8.0
+        uses: Wandalen/wretry.action@e68c23e6309f2871ca8ae4763e7629b9c258e1ea # v3.8.0
         with:
           attempt_limit: 3
           attempt_delay: 15000
           command: |
             set -eo pipefail
-            ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ inputs.fedora_version }} | jq -r '.Labels["org.opencontainers.image.version"]')
+            ver=$(skopeo inspect docker://quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}@${{ steps.query-digest.outputs.BASE_IMAGE_DIGEST }} | jq -r '.Labels["org.opencontainers.image.version"]')
             if [ -z "$ver" ] || [ "null" = "$ver" ]; then
               echo "inspected image version must not be empty or null"
               exit 1
             fi
-            linux=$(skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/akmods:main-${{ inputs.fedora_version }} | jq -r '.Labels["ostree.linux"]')
+            linux=$(skopeo inspect docker://${{ env.IMAGE_REGISTRY }}/akmods@${{ steps.query-digest.outputs.AKMODS_DIGEST }} | jq -r '.Labels["ostree.linux"]')
             echo "KERNEL_VERSION=$linux" >> $GITHUB_ENV
             echo "SOURCE_IMAGE_VERSION=$ver" >> $GITHUB_ENV
 
       - name: Pull Images
-        uses: Wandalen/wretry.action@v3.8.0
+        uses: Wandalen/wretry.action@e68c23e6309f2871ca8ae4763e7629b9c258e1ea # v3.8.0
         with:
           attempt_limit: 3
           attempt_delay: 15000
           command: |
             # pull the base image used for FROM in containerfile so
             # we can retry on that unfortunately common failure case
-            podman pull quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ inputs.fedora_version }}
-            podman pull ${{ env.IMAGE_REGISTRY }}/akmods:main-${{ inputs.fedora_version }}
+            podman pull quay.io/${{ env.SOURCE_ORG }}/${{ env.SOURCE_IMAGE }}:${{ inputs.fedora_version }}@${{ steps.query-digest.outputs.BASE_IMAGE_DIGEST }}
+            podman pull ${{ env.IMAGE_REGISTRY }}/akmods:main-${{ inputs.fedora_version }}@${{ steps.query-digest.outputs.AKMODS_DIGEST }}
 
       # Generate image metadata
       - name: Image Metadata
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
         id: meta
         with:
           images: |
@@ -172,7 +202,7 @@ jobs:
       # Build image using Buildah action
       - name: Build Image
         id: build_image
-        uses: redhat-actions/buildah-build@v2
+        uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2
         with:
           containerfiles: |
             ./Containerfile
@@ -186,6 +216,9 @@ jobs:
             FEDORA_MAJOR_VERSION=${{ inputs.fedora_version }}
             KERNEL_VERSION=${{ env.KERNEL_VERSION }}
             IMAGE_REGISTRY=${{ env.IMAGE_REGISTRY }}
+            BASE_IMAGE_DIGEST=${{ steps.query-digest.outputs.BASE_IMAGE_DIGEST }}
+            AKMODS_DIGEST=${{ steps.query-digest.outputs.AKMODS_DIGEST }}
+            BUILD_NVIDIA=${{ inputs.image_variant == 'nvidia' && 'Y' || 'N' }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
 
@@ -212,12 +245,12 @@ jobs:
       # https://github.com/macbre/push-to-ghcr/issues/12
       - name: Lowercase Registry
         id: registry_case
-        uses: ASzc/change-string-case-action@v6
+        uses: ASzc/change-string-case-action@d0603cd0a7dd490be678164909f65c7737470a7f # v6
         with:
           string: ${{ env.IMAGE_REGISTRY }}
 
       - name: Push To GHCR
-        uses: Wandalen/wretry.action@v3.8.0
+        uses: Wandalen/wretry.action@e68c23e6309f2871ca8ae4763e7629b9c258e1ea # v3.8.0
         id: push
         if: github.event_name != 'pull_request'
         env:
@@ -237,7 +270,7 @@ jobs:
               --disable-content-trust
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
         if: github.event_name != 'pull_request'
         with:
           registry: ghcr.io
@@ -245,7 +278,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # Sign container
-      - uses: sigstore/cosign-installer@v3.8.1
+      - uses: sigstore/cosign-installer@3454372f43399081ed03b604cb2d021dabca52bb # v3.8.2
         if: github.event_name != 'pull_request'
 
       - name: Sign container image
