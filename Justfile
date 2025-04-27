@@ -84,13 +84,13 @@ _default:
 
 # Run a Container
 [group('Container')]
-run-container $fedora_version="" $image_name="" $variant="":
+run-container $image_name="" $fedora_version="" $variant="":
     #!/usr/bin/bash
     set -eou pipefail
 
     {{ default-inputs }}
 
-    declare -a _images="$(just image-name-check $fedora_version $image_name $variant)"
+    declare -a _images="$(just image-name-check $image_name $fedora_version $variant)"
     if [[ -z ${_images[0]:-} ]]; then
        exit 1
     fi
@@ -115,13 +115,13 @@ run-container $fedora_version="" $image_name="" $variant="":
 
 # Build a Container
 [group('Container')]
-build-container $fedora_version="" $image_name="" $variant="" $github="":
+build-container $image_name="" $fedora_version="" $variant="" $github="":
     #!/usr/bin/bash
     set ${SET_X:+-x} -eou pipefail
 
     {{ default-inputs }}
 
-    declare -a _images="$(just image-name-check $fedora_version $image_name $variant)"
+    declare -a _images="$(just image-name-check $image_name $fedora_version $variant)"
     if [[ -z ${_images[0]:-} ]]; then
        exit 1
     fi
@@ -129,14 +129,19 @@ build-container $fedora_version="" $image_name="" $variant="" $github="":
     source_image_name="${_images[1]}"
     fedora_version="${_images[2]}"
 
+    AKMODS_DIGEST="$(yq -r ".images[] | select(.name == \"akmods-${fedora_version}\") | .digest" {{ image-file }})"
+    AKMODS_NVIDIA_DIGEST="$(yq -r ".images[] | select(.name == \"akmods-nvidia-open-${fedora_version}\") | .digest" {{ image-file }})"
+    BASE_IMAGE_DIGEST="$(yq -r ".images[] | select(.name == \"${source_image_name}-${fedora_version}\") | .digest" {{ image-file }})"
+
     # Verify Source Containers
-    just verify-container "akmods:main-$fedora_version"
+    just verify-container "akmods@$AKMODS_DIGEST"
+    just verify-container "akmods-nvidia@AKMODS_NVIDIA_DIGEST"
     if [[ "$fedora_version" -ge "41" ]]; then
-        just verify-container "$source_image_name:$fedora_version" "{{ source_registry }}" "https://gitlab.com/fedora/ostree/ci-test/-/raw/f$fedora_version/quay.io-fedora-ostree-desktops.pub?ref_type=heads"
+        just verify-container "$source_image_name@$BASE_IMAGE_DIGEST" "{{ source_registry }}" "https://gitlab.com/fedora/ostree/ci-test/-/raw/f$fedora_version/quay.io-fedora-ostree-desktops.pub?ref_type=heads"
     fi
 
     # Tags
-    declare -A gen_tags="($(just gen-tags $fedora_version $image_name))"
+    declare -A gen_tags="($(just gen-tags $image_name $fedora_version $variant))"
     if [[ -z "$github" || ! "$github" =~ pull_request ]]; then
         declare -a tags="(${gen_tags["BUILD_TAGS"]})"
     else
@@ -165,10 +170,6 @@ build-container $fedora_version="" $image_name="" $variant="" $github="":
         BUILD_NVIDIA="Y"
     fi
 
-    AKMODS_DIGEST="$(yq -r ".images[] | select(.name == \"akmods-${fedora_version}\") | .digest" {{ image-file }})"
-    AKMODS_NVIDIA_DIGEST="$(yq -r ".images[] | select(.name == \"akmods-nvidia-open-${fedora_version}\") | .digest" {{ image-file }})"
-    BASE_IMAGE_DIGEST="$(yq -r ".images[] | select(.name == \"${source_image_name}-${fedora_version}\") | .digest" {{ image-file }})"
-
     # Build Arguments
     BUILD_ARGS=(
         "--build-arg" "IMAGE_NAME=$image_name"
@@ -193,14 +194,14 @@ build-container $fedora_version="" $image_name="" $variant="" $github="":
 
 # Generate Tags
 [group('Utility')]
-gen-tags $fedora_version="" $image_name="" $variant="":
+gen-tags $image_name="" $fedora_version="" $variant="":
     #!/usr/bin/bash
     set ${SET_X:+-x} -eou pipefail
 
     {{ default-inputs }}
 
     # Image Name Check
-    declare -a _images="$(just image-name-check $fedora_version $image_name $variant)"
+    declare -a _images="$(just image-name-check $image_name $fedora_version $variant)"
     if [[ -z ${_images[0]:-} ]]; then
        exit 1
     fi
@@ -256,7 +257,7 @@ gen-tags $fedora_version="" $image_name="" $variant="":
 
 # Check Valid Image Name
 [group('Utility')]
-image-name-check $fedora_version $image_name $variant:
+image-name-check $image_name $fedora_version $variant:
     #!/usr/bin/bash
     set ${SET_X:+-x} -eou pipefail
     declare -A images={{ images }}
@@ -330,10 +331,10 @@ fedora-variant-check $variant:
 
 # Check Secureboot
 [group('Utility')]
-secureboot $fedora_version $image_name $variant:
+secureboot $image_name $fedora_version $variant:
     #!/usr/bin/env bash
     set ${SET_X:+-x} -eou pipefail
-    declare -a _images="$(just image-name-check $fedora_version $image_name $variant)"
+    declare -a _images="$(just image-name-check $image_name $fedora_version $variant)"
     if [[ -z ${_images[0]:-} ]]; then
        exit 1
     fi
