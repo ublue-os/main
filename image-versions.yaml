@@ -34,7 +34,7 @@ images:
   - name: xfce-atomic-41
     image: quay.io/fedora-ostree-desktops/xfce-atomic
     tag: 41
-    digest: sha256:18328ff9833f849c3832b006f11d2e5c18812651c23afaf62c59e6e57429a695
+    digest: sha256:0fbb1b5b688a5c715587637ed869e2ff59f964353e0c3a44e4c95495ebc1a539
 
   - name: akmods-42
     image: ghcr.io/ublue-os/akmods
