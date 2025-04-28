@@ -68,7 +68,7 @@ variants := '(
 # Sudo
 
 [private]
-SUDO_DISPLAY := `echo "${DISPLAY:-}" || echo "${WAYLAND_DISPLAY:-}"`
+SUDO_DISPLAY := env("DISPLAY","") || env("WAYLAND_DISPLAY","")
 [private]
 SUDOIF := if `id -u` == "0" { "" } else if SUDO_DISPLAY != "" { which("sudo") + " --askpass" } else { which("sudo") }
 [private]
@@ -115,20 +115,22 @@ run-container $image_name="" $fedora_version="" $variant="":
     {{ default-inputs }}
     {{ get-names }}
 
+    cmd="{{ just }} build ${image_name%-*} $fedora_version $variant"
+
     if ! podman image exists "localhost/$image_name:$fedora_version"; then
-        echo "{{ style('warning') }}Container Does Not Exist{{ NORMAL }}"
-        echo "{{ style('warning') }}Will Run:{{ NORMAL }} {{ style('command') }}{{ just }} build $fedora_version $image_name{{ NORMAL }}"
+        echo "{{ style('warning') }}Warning{{ NORMAL }}:Container Does Not Exist..." >&2
+        echo "{{ style('warning') }}Will Run:{{ NORMAL }} {{ style('command') }}$cmd{{ NORMAL }}" >&2
         seconds=5
         while [ $seconds -gt 0 ]; do
-            printf "\rTime remaining: {{ style('error') }}%d{{ NORMAL }} seconds to cancel" $seconds
+            printf "\rTime remaining: {{ style('error') }}%d{{ NORMAL }} seconds to cancel" $seconds >&2
             sleep 1
             (( seconds-- ))
         done
-        printf "\n{{ style('warning') }}Running:{{ NORMAL }} {{ just }} build %s %s" "$fedora_version" "$image_name"
-        {{ just }} build "$fedora_version" "$image_name"
+        echo "" >&2
+        echo "{{ style('warning') }}Running{{ NORMAL }}: {{ style('command') }}$cmd{{ NORMAL }}" >&2
+        $cmd
     fi
     echo "{{ style('warning') }}Running:{{ NORMAL }} {{ style('command') }}{{ just }} run -it --rm localhost/$image_name:$fedora_version bash {{ NORMAL }}"
-    sleep 1
     podman run -it --rm "localhost/$image_name:$fedora_version" bash || exit 0
 
 # Build a Container
@@ -259,43 +261,31 @@ image-name-check $image_name $fedora_version $variant:
     set ${SET_X:+-x} -eou pipefail
     declare -A images={{ images }}
 
-    if [[ "$image_name" =~ -main$ ]]; then
-        image_name="${image_name%-main}"
-    elif [[ "$image_name" =~ -nvidia$ ]]; then
-        image_name="${image_name%-nvidia}"
+    if [[ "$image_name" =~ -main$|-nvidia$ ]]; then
+        image_name="${image_name%-*}"
     fi
 
     source_image_name="${images[$image_name]:-}"
     if [[ -z "$source_image_name" ]]; then
-        echo "()"
-        echo "Invalid Image Name" >&2
+        echo '{{ style('error') }}Invalid Image Name{{ NORMAL }}' >&2
         exit 1
     fi
 
-    fedora_version="$({{ just }} fedora-version-check $fedora_version)"
-    if [[ -z "$fedora_version" ]]; then
-        exit 1
-    fi
+    fedora_version="$({{ just }} fedora-version-check $fedora_version || exit 1)"
+    variant="$({{ just }} fedora-variant-check $variant || exit 1)"
 
-    variant="$({{ just }} fedora-variant-check $variant)"
-    if [[ -z "$variant" ]]; then
-        exit 1
-    fi
-
-    if [[ "$image_name" =~ lazurite|vauxite && "$fedora_version" -ge "42" ]]; then
-        echo "()"
-        echo "{{ style('error') }}Invalid Image Name. Lazurite and Vauxite no longer supported >= F42{{ NORMAL }}" >&2
+    # TODO: Remove this block when 42 becomes GTS
+    if [[ "$fedora_version" -eq "40" ]]; then
+        echo "($image_name-$variant $image_name $fedora_version)"
+    elif [[ "$image_name" =~ lazurite|vauxite && "$fedora_version" -ge "42" ]]; then
+        echo '{{ style('error') }}Invalid Image Name{{ NORMAL }}: Lazurite and Vauxite no longer supported >= F42' >&2
         exit 1
     elif [[ "$image_name" =~ sericea|onyx && "$fedora_version" -ge "42" ]]; then
-        echo "()"
-        echo "{{ style('error') }}Invalid Image Name. Sericea and Onyx names are -atomic names on >= F42{{ NORMAL }}" >&2
+        echo '{{ style('error') }}Invalid Image Name{{ NORMAL }}: Sericea and Onyx names are `-atomic` names on >= F42' >&2
         exit 1
     elif [[ "$image_name" =~ atomic && "$fedora_version" -le "41" ]]; then
-        echo "()"
-        echo "{{ style('error') }}Invalid Image Name. -atomic names only used on >= F42{{ NORMAL }}" >&2
+        echo '{{ style('error') }}Invalid Image Name{{ NORMAL }}: {{ style('command') }}`-atomic` names only used on >= F42{{ NORMAL }}' >&2
         exit 1
-    elif [[ "$fedora_version" -eq "40" ]]; then
-        echo "($image_name-$variant $image_name $fedora_version)"
     else
         echo "($image_name-$variant $source_image_name $fedora_version)"
     fi
@@ -307,7 +297,6 @@ fedora-version-check $fedora_version:
     set ${SET_X:+-x} -eou pipefail
     declare -A fedora_versions={{ fedora_versions }}
     if [[ -z "${fedora_versions[$fedora_version]:-}" ]]; then
-        echo ''
         echo "{{ style('error') }}Not a supported version{{ NORMAL }}" >&2
         exit 1
     fi
@@ -320,8 +309,7 @@ fedora-variant-check $variant:
     set ${SET_X:+-x} -eou pipefail
     declare -A variants={{ variants }}
     if [[ -z "${variants[$variant]:-}" ]]; then
-        echo ''
-        echo "{{ style('error') }}Not a supported version{{ NORMAL }}" >&2
+        echo "{{ style('error') }}Not a supported variant{{ NORMAL }}" >&2
         exit 1
     fi
     echo "${variants[$variant]}"
@@ -365,7 +353,7 @@ secureboot $image_name $fedora_version $variant:
     $CMD --list /tmp/vmlinuz
     returncode=0
     if ! $CMD --cert /tmp/kernel-sign.crt /tmp/vmlinuz || ! $CMD --cert /tmp/akmods.crt /tmp/vmlinuz; then
-        echo "Secureboot Signature Failed...."
+        echo '{{ style('error') }}Secureboot Signature Failed...{{ NORMAL }}' >&2
         returncode=1
     fi
     if [[ -n "${temp_name:-}" ]]; then
@@ -378,10 +366,10 @@ secureboot $image_name $fedora_version $variant:
 check:
     #!/usr/bin/env bash
     find . -type f -name "*.just" | while read -r file; do
-        echo "Checking syntax: $file"
+        echo "Checking syntax: $file" >&2
         {{ just }} --unstable --fmt --check -f $file
     done
-    echo "Checking syntax: Justfile"
+    echo "Checking syntax: Justfile" >&2
     {{ just }} --unstable --fmt --check -f Justfile
 
 # Fix Just Syntax
@@ -389,10 +377,10 @@ check:
 fix:
     #!/usr/bin/env bash
     find . -type f -name "*.just" | while read -r file; do
-        echo "Checking syntax: $file"
+        echo "Checking syntax: $file" >&2
         {{ just }} --unstable --fmt -f $file
     done
-    echo "Checking syntax: Justfile"
+    echo "Checking syntax: Justfile" >&2
     {{ just }} --unstable --fmt -f Justfile || { exit 1; }
 
 # Verify Container with Cosign
@@ -409,7 +397,7 @@ verify-container $container="" $registry="" $key="": install-cosign
 
     # Verify Container using cosign public key
     if ! cosign verify --key "$key" "$registry/$container" >/dev/null; then
-        echo "{{ style('error') }}NOTICE: Verification failed. Please ensure your public key is correct.{{ NORMAL }}"
+        echo '{{ style('error') }}NOTICE: Verification failed. Please ensure your public key is correct.{{ NORMAL }}' >&2
         exit 1
     fi
 
@@ -425,7 +413,7 @@ clean $image_name $registry="":
         declare -A images={{ images }}
         image_name="${image_name%-main}"
         if [[ -z "${images[$image_name]:-}" ]]; then
-            echo "{{ style('error') }}Invalid Image name...{{ NORMAL }}" >&2
+            echo '{{ style('error') }}Invalid Image name...{{ NORMAL }}' >&2
             exit 1
         fi
             image_name="$image_name-main"
