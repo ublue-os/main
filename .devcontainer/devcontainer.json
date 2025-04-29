@@ -1,0 +1,43 @@
+// For format details, see https://aka.ms/devcontainer.json.
+{
+	"$schema": "https://raw.githubusercontent.com/devcontainers/spec/refs/heads/main/schemas/devContainer.schema.json",
+	"name": "m2os-devcontainer",
+	"build": {
+		"dockerfile": "Containerfile",
+		"args": {
+			"USERNAME": "${localEnv:USERNAME}"
+		}
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"installZsh": false,
+			"installOhMyZsh": false,
+			"installOhMyZshConfig": false,
+			"username": "${localEnv:USERNAME}"
+		},
+		// Podman
+		"./local-features/podman": "",
+		// Tools
+		"./local-features/tools": ""
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"eamodio.gitlens",
+				"hangxingliu.vscode-systemd-support",
+				"mads-hartmann.bash-ide-vscode",
+				"ms-azuretools.vscode-docker",
+				"nefrob.vscode-just-syntax",
+				"timonwong.shellcheck"
+			]
+		}
+	},
+	"runArgs": [
+		// Only Needed for Podman in VSCode (DevPod autohandles)
+		// "--userns=keep-id",
+		"--name",
+		"devcontainer-${containerWorkspaceFolderBasename}"
+	],
+	"remoteUser": "${localEnv:USERNAME}",
+	"containerUser": "${localEnv:USERNAME}"
+}

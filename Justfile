@@ -65,7 +65,7 @@ variants := '(
     ["nvidia"]="nvidia"
 )'
 
-# Sudo
+# Sudo/Podman/Just
 
 [private]
 SUDO_DISPLAY := env("DISPLAY","") || env("WAYLAND_DISPLAY","")
@@ -73,6 +73,8 @@ SUDO_DISPLAY := env("DISPLAY","") || env("WAYLAND_DISPLAY","")
 SUDOIF := if `id -u` == "0" { "" } else if SUDO_DISPLAY != "" { which("sudo") + " --askpass" } else { which("sudo") }
 [private]
 just := just_executable()
+[private]
+PODMAN := which("podman") || require("podman-remote")
 
 # Make things quieter by default
 
@@ -102,6 +104,23 @@ image_name="${_images[0]}"
 source_image_name="${_images[1]}"
 fedora_version="${_images[2]}"
 '
+[private]
+build-missing := '
+cmd="' + just + ' build ${image_name%-*} $fedora_version $variant"
+if ! ' + PODMAN + ' image exists "localhost/$image_name:$fedora_version"; then
+    echo "' + style('warning') + 'Warning' + NORMAL +': Container Does Not Exist..." >&2
+    echo "' + style('warning') + 'Will Run' + NORMAL +': ' + style('command') + '$cmd' + NORMAL +'" >&2
+    seconds=5
+    while [ $seconds -gt 0 ]; do
+        printf "\rTime remaining: ' + style('error') + '%d' + NORMAL + ' seconds to cancel" $seconds >&2
+        sleep 1
+        (( seconds-- ))
+    done
+    echo "" >&2
+    echo "'+ style('warning') +'Running'+ NORMAL+ ': '+ style('command') +'$cmd'+ NORMAL+ '" >&2
+    $cmd
+fi
+'
 
 _default:
     @{{ just }} --list
@@ -114,24 +133,10 @@ run-container $image_name="" $fedora_version="" $variant="":
 
     {{ default-inputs }}
     {{ get-names }}
+    {{ build-missing }}
 
-    cmd="{{ just }} build ${image_name%-*} $fedora_version $variant"
-
-    if ! podman image exists "localhost/$image_name:$fedora_version"; then
-        echo "{{ style('warning') }}Warning{{ NORMAL }}:Container Does Not Exist..." >&2
-        echo "{{ style('warning') }}Will Run:{{ NORMAL }} {{ style('command') }}$cmd{{ NORMAL }}" >&2
-        seconds=5
-        while [ $seconds -gt 0 ]; do
-            printf "\rTime remaining: {{ style('error') }}%d{{ NORMAL }} seconds to cancel" $seconds >&2
-            sleep 1
-            (( seconds-- ))
-        done
-        echo "" >&2
-        echo "{{ style('warning') }}Running{{ NORMAL }}: {{ style('command') }}$cmd{{ NORMAL }}" >&2
-        $cmd
-    fi
     echo "{{ style('warning') }}Running:{{ NORMAL }} {{ style('command') }}{{ just }} run -it --rm localhost/$image_name:$fedora_version bash {{ NORMAL }}"
-    podman run -it --rm "localhost/$image_name:$fedora_version" bash || exit 0
+    {{ PODMAN }} run -it --rm "localhost/$image_name:$fedora_version" bash || exit 0
 
 # Build a Container
 [group('Container')]
@@ -172,7 +177,7 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
     LABELS=(
         "--label" "org.opencontainers.image.title=${image_name}"
         "--label" "org.opencontainers.image.version=${VERSION}"
-        "--label" "org.opencontainers.image.description=A base Universal Blue {{ image_name }} image with batteries included"
+        "--label" "org.opencontainers.image.description=A base Universal Blue ${image_name%-*} image with batteries included"
         "--label" "ostree.linux=${KERNEL_VERSION}"
         "--label" "io.artifacthub.package.readme-url=https://raw.githubusercontent.com/{{ org }}/{{ repo }}/main/README.md"
         "--label" "io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/120078124?s=200&v=4"
@@ -198,9 +203,9 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
     )
 
     # Pull Images with retry
-    podman pull --retry=3 "{{ IMAGE_REGISTRY }}/akmods:main-$fedora_version@$AKMODS_DIGEST"
-    podman pull --retry=3 "{{ IMAGE_REGISTRY }}/akmods-nvidia-open:main-$fedora_version@$AKMODS_NVIDIA_DIGEST"
-    podman pull --retry=3 "{{ source_registry }}/$source_image_name:$fedora_version@$BASE_IMAGE_DIGEST"
+    {{ PODMAN }} pull --retry=3 "{{ IMAGE_REGISTRY }}/akmods:main-$fedora_version@$AKMODS_DIGEST"
+    {{ PODMAN }} pull --retry=3 "{{ IMAGE_REGISTRY }}/akmods-nvidia-open:main-$fedora_version@$AKMODS_NVIDIA_DIGEST"
+    {{ PODMAN }} pull --retry=3 "{{ source_registry }}/$source_image_name:$fedora_version@$BASE_IMAGE_DIGEST"
 
     # Build Image
     buildah build -f Containerfile "${BUILD_ARGS[@]}" "${LABELS[@]}" "${TAGS[@]}"
@@ -319,12 +324,15 @@ fedora-variant-check $variant:
 secureboot $image_name $fedora_version $variant:
     #!/usr/bin/env bash
     set ${SET_X:+-x} -eou pipefail
+
     {{ get-names }}
+    {{ build-missing }}
+
     # Get the vmlinuz to check
-    kernel_release=$(podman inspect "$image_name":"$fedora_version" | jq -r '.[].Config.Labels["ostree.linux"]')
-    TMP=$(podman create "$image_name":"$fedora_version" bash)
-    podman cp "$TMP":/usr/lib/modules/"$kernel_release"/vmlinuz /tmp/vmlinuz
-    podman rm -f "$TMP"
+    kernel_release=$({{ PODMAN }} inspect "$image_name":"$fedora_version" | jq -r '.[].Config.Labels["ostree.linux"]')
+    TMP=$({{ PODMAN }} create "$image_name":"$fedora_version" bash)
+    {{ PODMAN }} cp "$TMP":/usr/lib/modules/"$kernel_release"/vmlinuz /tmp/vmlinuz
+    {{ PODMAN }} rm -f "$TMP"
 
     # Get the Public Certificates
     curl --retry 3 -Lo /tmp/kernel-sign.der https://github.com/ublue-os/akmods/raw/main/certs/public_key.der
@@ -336,7 +344,7 @@ secureboot $image_name $fedora_version $variant:
     CMD="$(command -v sbverify)"
     if [[ -z "${CMD:-}" ]]; then
         temp_name="sbverify-${RANDOM}"
-        podman run -dt \
+        {{ PODMAN }} run -dt \
             --pull=newer \
             --entrypoint /bin/sh \
             --volume /tmp/vmlinuz:/tmp/vmlinuz:z \
@@ -344,9 +352,9 @@ secureboot $image_name $fedora_version $variant:
             --volume /tmp/akmods.crt:/tmp/akmods.crt:z \
             --name $temp_name \
             alpine:edge
-        podman exec "$temp_name" apk add sbsigntool
-        CMD="podman exec $temp_name /usr/bin/sbverify"
-        trap "podman rm -f $temp_name; exit 1" SIGINT
+        {{ PODMAN }} exec "$temp_name" apk add sbsigntool
+        CMD="{{ PODMAN }} exec $temp_name /usr/bin/sbverify"
+        trap "{{ PODMAN }} rm -f $temp_name; exit 1" SIGINT
     fi
 
     # Confirm that Signatures Are Good
@@ -357,7 +365,7 @@ secureboot $image_name $fedora_version $variant:
         returncode=1
     fi
     if [[ -n "${temp_name:-}" ]]; then
-        podman rm -f "$temp_name"
+        {{ PODMAN }} rm -f "$temp_name"
     fi
     exit "$returncode"
 
@@ -388,10 +396,10 @@ fix:
 verify-container $container="" $registry="" $key="": install-cosign
     #!/usr/bin/env bash
     set ${SET_X:+-x} -eou pipefail
-    : "${registry:={{ IMAGE_REGISTRY }}}"
 
-    # Public Key for Container Verification
-    if [[ -z "${key:-}" && "$registry" == "ghcr.io/ublue-os" ]]; then
+    # ublue-os Public Key for Container Verification default
+    if [[ -z "${registry:-}" && -z "${key:-}"  ]]; then
+        registry={{ IMAGE_REGISTRY }}
         key="https://raw.githubusercontent.com/ublue-os/main/main/cosign.pub"
     fi
 
@@ -418,9 +426,9 @@ clean $image_name $registry="":
         fi
             image_name="$image_name-main"
     fi
-    declare -a CLEAN="($(podman image list $registry/$image_name --noheading --format 'table {{{{ .ID }}' | uniq))"
+    declare -a CLEAN="($({{ PODMAN }} image list $registry/$image_name --noheading --format 'table {{{{ .ID }}' | uniq))"
     if [[ -n "${CLEAN[@]:-}" ]]; then
-        podman rmi -f "${CLEAN[@]}"
+        {{ PODMAN }} rmi -f "${CLEAN[@]}"
     fi
 
 # Get Cosign if Needed
@@ -428,15 +436,15 @@ install-cosign:
     #!/usr/bin/bash
     set ${SET_X:+-x} -eou pipefail
     if ! command -v cosign >/dev/null; then
-        COSIGN_CONTAINER_ID=$({{ SUDOIF }} podman create --pull=newer cgr.dev/chainguard/cosign:latest bash)
-        {{ SUDOIF }} podman cp "${COSIGN_CONTAINER_ID}":/usr/bin/cosign /usr/local/bin/cosign
+        COSIGN_CONTAINER_ID=$({{ SUDOIF }} {{ PODMAN }} create --pull=newer cgr.dev/chainguard/cosign:latest bash)
+        {{ SUDOIF }} {{ PODMAN }} cp "${COSIGN_CONTAINER_ID}":/usr/bin/cosign /usr/local/bin/cosign
 
         if ! cosign verify --certificate-oidc-issuer=https://token.actions.githubusercontent.com --certificate-identity=https://github.com/chainguard-images/images/.github/workflows/release.yaml@refs/heads/main cgr.dev/chainguard/cosign >/dev/null; then
             echo "{{ style('error') }}NOTICE: Failed to verify cosign image signatures.{{ NORMAL }}" >&2
             exit 1
         fi
 
-        {{ SUDOIF }} podman rm -f "${COSIGN_CONTAINER_ID}"
+        {{ SUDOIF }} {{ PODMAN }} rm -f "${COSIGN_CONTAINER_ID}"
     fi
 
 # Get Digest
@@ -444,31 +452,38 @@ install-cosign:
 # Login to GHCR
 [group('CI')]
 @login-to-ghcr $user $token:
-    echo "$token" | podman login ghcr.io -u "$user" --password-stdin
+    echo "$token" | {{ PODMAN }} login ghcr.io -u "$user" --password-stdin
     echo "$token" | docker login ghcr.io -u "$user" --password-stdin
 
 # Push Images to Registry
 [group('CI')]
-push-to-registry $image_name $fedora_version $variant $destination="":
+push-to-registry $image_name $fedora_version $variant $destination="" $transport="":
     #!/usr/bin/bash
     set ${SET_X:+-x} -eou pipefail
+
     {{ get-names }}
+    {{ build-missing }}
+
     : "${destination:={{ IMAGE_REGISTRY }}}"
-    declare -a TAGS="($(podman image list localhost/$image_name:$fedora_version --noheading --format 'table {{{{ .Tag }}'))"
+    : "${transport:="docker://"}"
+
+    declare -a TAGS="($({{ PODMAN }} image list localhost/$image_name:$fedora_version --noheading --format 'table {{{{ .Tag }}'))"
     for tag in "${TAGS[@]}"; do
-        skopeo copy --retry-times=3 "containers-storage:localhost/$image_name:$fedora_version" "docker://$destination/$image_name:$tag" >&2
+        skopeo copy --retry-times=3 "containers-storage:localhost/$image_name:$fedora_version" "$transport$destination/$image_name:$tag" >&2
     done
-    digest="$(skopeo inspect docker://$destination/$image_name:$fedora_version --format '{{{{ .Digest }}')"
-    echo "$digest"
 
 # Sign Images with Cosign
 [group('CI')]
 cosign-sign $image_name $fedora_version $variant $destination="": install-cosign
     #!/usr/bin/bash
     set ${SET_X:+-x} -eou pipefail
+
     {{ get-names }}
+    {{ build-missing }}
+
+    digest="$({{ PODMAN }} inspect localhost/$image_name:$fedora_version --format '{{ ' {{ .Digest }} ' }}')"
     : "${destination:={{ IMAGE_REGISTRY }}}"
-    cosign sign -y --key env://COSIGN_PRIVATE_KEY "$destination/$image_name:$digest"
+    cosign sign -y --key env://COSIGN_PRIVATE_KEY "$destination/$image_name@$digest"
 
 # Generate SBOM
 [group('CI')]
@@ -477,14 +492,15 @@ gen-sbom $image_name $fedora_version $variant:
     set ${SET_X:+-x} -eou pipefail
 
     {{ get-names }}
+    {{ build-missing }}
 
     # Get SYFT if needed
     SYFT_ID=""
     if ! command -v syft >/dev/null; then
-        {{ SUDOIF }} podman pull docker.io/anchore/syft:latest
-        SYFT_ID="$({{ SUDOIF }} podman create docker.io/anchore/syft:latest)"
-        {{ SUDOIF }} podman cp "$SYFT_ID":/syft /usr/local/bin/syft
-        {{ SUDOIF }} podman rm -f "$SYFT_ID" > /dev/null
+        {{ SUDOIF }} {{ PODMAN }} pull docker.io/anchore/syft:latest
+        SYFT_ID="$({{ SUDOIF }} {{ PODMAN }} create docker.io/anchore/syft:latest)"
+        {{ SUDOIF }} {{ PODMAN }} cp "$SYFT_ID":/syft /usr/local/bin/syft
+        {{ SUDOIF }} {{ PODMAN }} rm -f "$SYFT_ID" > /dev/null
     fi
 
     # Enable Podman Socket if needed
@@ -513,16 +529,16 @@ gen-sbom $image_name $fedora_version $variant:
 
 # Add SBOM attestation
 [group('CI')]
-sbom-attest $fedora_version $image_name $variant $destination="": install-cosign
+sbom-attest $fedora_version $image_name $variant $destination="" $sbom="" $digest="": install-cosign
     #!/usr/bin/bash
     set ${SET_X:+-x} -eou pipefail
 
     {{ get-names }}
+    {{ build-missing }}
+
     : "${destination:={{ IMAGE_REGISTRY }}}"
-
-    sbom="$({{ just }} gen-sbom $fedora_version $image_name)"
-    digest="$(podman inspect localhost/$image_name:$fedora_version --format '{{ ' {{ .Digest }} ' }}')"
-
+    : "${sbom:=$({{ just }} gen-sbom $fedora_version $image_name)}"
+    : "${digest:=$({{ PODMAN }} inspect localhost/$image_name:$fedora_version --format '{{ ' {{ .Digest }} ' }}')}"
 
     # Attest with SBOM
     cd "$(dirname $sbom)" && \
