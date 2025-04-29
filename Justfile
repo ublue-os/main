@@ -241,12 +241,13 @@ gen-tags $image_name="" $fedora_version="" $variant="":
 
     # Generate Timestamp with incrementing version point
     TIMESTAMP="$(date +%Y%m%d)"
-    while [[ -z "${LIST_TAGS:-}" ]]; do
-        LIST_TAGS="$(skopeo list-tags docker://{{ IMAGE_REGISTRY }}/$image_name)"
+    LIST_TAGS="$(mktemp)"
+    while [[ ! -s "$LIST_TAGS" ]]; do
+        skopeo list-tags docker://{{ IMAGE_REGISTRY }}/$image_name > "$LIST_TAGS"
     done
-    if [[ $(echo "$LIST_TAGS" | jq "any(.Tags[]; contains(\"$fedora_version-$TIMESTAMP\"))") == "true" ]]; then
+    if [[ $(cat "$LIST_TAGS" | jq "any(.Tags[]; contains(\"$fedora_version-$TIMESTAMP\"))") == "true" ]]; then
         POINT="1"
-        while $(echo "$LIST_TAGS" | jq -e "any(.Tags[]; contains(\"$fedora_version-$TIMESTAMP.$POINT\"))")
+        while $(cat "$LIST_TAGS" | jq -e "any(.Tags[]; contains(\"$fedora_version-$TIMESTAMP.$POINT\"))")
         do
             (( POINT++ ))
         done
@@ -432,21 +433,13 @@ verify-container $container="" $registry="" $key="": install-cosign
 
 # Removes all Tags of an image from container storage.
 [group('Utility')]
-clean $image_name $registry="":
+clean $image_name $fedora_version $variant $registry="":
     #!/usr/bin/bash
     set -eoux pipefail
 
     : "${registry:=localhost}"
+    {{ get-names }}
 
-    if [[ "$registry" == "localhost" ]]; then
-        declare -A images={{ images }}
-        image_name="${image_name%-main}"
-        if [[ -z "${images[$image_name]:-}" ]]; then
-            echo '{{ style('error') }}Invalid Image name...{{ NORMAL }}' >&2
-            exit 1
-        fi
-            image_name="$image_name-main"
-    fi
     declare -a CLEAN="($({{ PODMAN }} image list $registry/$image_name --noheading --format 'table {{{{ .ID }}' | uniq))"
     if [[ -n "${CLEAN[@]:-}" ]]; then
         {{ PODMAN }} rmi -f "${CLEAN[@]}"
