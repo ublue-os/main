@@ -69,7 +69,7 @@ variants := '(
 # Sudo/Podman/Just
 
 [private]
-SUDO_DISPLAY := env("DISPLAY","") || env("WAYLAND_DISPLAY","")
+SUDO_DISPLAY := env("DISPLAY", "") || env("WAYLAND_DISPLAY", "")
 [private]
 SUDOIF := if `id -u` == "0" { "" } else if SUDO_DISPLAY != "" { which("sudo") + " --askpass" } else { which("sudo") }
 [private]
@@ -96,7 +96,7 @@ default-inputs := '
 : ${variant:=' + default_variant + '}
 '
 [private]
-get-names := '
+get-names := '''
 declare -a _images="$(' + just + ' image-name-check $image_name $fedora_version $variant)"
 if [[ -z ${_images[0]:-} ]]; then
     exit 1
@@ -104,9 +104,9 @@ fi
 image_name="${_images[0]}"
 source_image_name="${_images[1]}"
 fedora_version="${_images[2]}"
-'
+'''
 [private]
-build-missing := '
+build-missing := '''
 cmd="' + just + ' build ${image_name%-*} $fedora_version $variant"
 if ! ' + PODMAN + ' image exists "localhost/$image_name:$fedora_version"; then
     echo "' + style('warning') + 'Warning' + NORMAL +': Container Does Not Exist..." >&2
@@ -121,7 +121,18 @@ if ! ' + PODMAN + ' image exists "localhost/$image_name:$fedora_version"; then
     echo "'+ style('warning') +'Running'+ NORMAL+ ': '+ style('command') +'$cmd'+ NORMAL+ '" >&2
     $cmd
 fi
-'
+'''
+[private]
+pull-retry := '''
+function pull-retry() {
+    local target="$1"
+    local retries=3
+    while [ $retries -gt 0 ]; do
+        ' + PODMAN + ' pull $target && break
+        (( retries-- ))
+    done
+}
+'''
 
 _default:
     @{{ just }} --list
@@ -147,6 +158,7 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
 
     {{ default-inputs }}
     {{ get-names }}
+    {{ pull-retry }}
 
     AKMODS_DIGEST="$(yq -r ".images[] | select(.name == \"akmods-${fedora_version}\") | .digest" {{ image-file }})"
     AKMODS_NVIDIA_DIGEST="$(yq -r ".images[] | select(.name == \"akmods-nvidia-open-${fedora_version}\") | .digest" {{ image-file }})"
@@ -204,12 +216,12 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
     )
 
     # Pull Images with retry
-    {{ PODMAN }} pull "{{ IMAGE_REGISTRY }}/akmods:main-$fedora_version@$AKMODS_DIGEST"
-    {{ PODMAN }} pull "{{ IMAGE_REGISTRY }}/akmods-nvidia-open:main-$fedora_version@$AKMODS_NVIDIA_DIGEST"
-    {{ PODMAN }} pull "{{ source_registry }}/$source_image_name:$fedora_version@$BASE_IMAGE_DIGEST"
+    pull-retry "{{ IMAGE_REGISTRY }}/akmods:main-$fedora_version@$AKMODS_DIGEST"
+    pull-retry "{{ IMAGE_REGISTRY }}/akmods-nvidia-open:main-$fedora_version@$AKMODS_NVIDIA_DIGEST"
+    pull-retry "{{ source_registry }}/$source_image_name:$fedora_version@$BASE_IMAGE_DIGEST"
 
     # Build Image
-    buildah build -f Containerfile "${BUILD_ARGS[@]}" "${LABELS[@]}" "${TAGS[@]}"
+    {{ PODMAN }} build -f Containerfile "${BUILD_ARGS[@]}" "${LABELS[@]}" "${TAGS[@]}"
 
 # Generate Tags
 [group('Utility')]
@@ -434,16 +446,23 @@ clean $image_name $registry="":
 install-cosign:
     #!/usr/bin/bash
     set ${SET_X:+-x} -eou pipefail
+
+    {{ pull-retry }}
+
     if ! command -v cosign >/dev/null; then
-        COSIGN_CONTAINER_ID=$({{ SUDOIF }} {{ PODMAN }} create cgr.dev/chainguard/cosign:latest bash)
-        {{ SUDOIF }} {{ PODMAN }} cp "${COSIGN_CONTAINER_ID}":/usr/bin/cosign /usr/local/bin/cosign
+        pull-retry "cgr.dev/chainguard/cosign:latest"
+        COSIGN_CONTAINER_ID=$({{ PODMAN }} create cgr.dev/chainguard/cosign:latest bash)
+        {{ PODMAN }} cp "${COSIGN_CONTAINER_ID}":/usr/bin/cosign /tmp/cosign.install
+        {{ SUDOIF }} cp /tmp/cosign.install /usr/local/bin/cosign
+        {{ SUDOIF }} rm -f /tmp/cosign.install
+        {{ PODMAN }} rm -f "${COSIGN_CONTAINER_ID}"
+        {{ PODMAN }} rmi "cgr.dev/chainguard/cosign:latest"
 
         if ! cosign verify --certificate-oidc-issuer=https://token.actions.githubusercontent.com --certificate-identity=https://github.com/chainguard-images/images/.github/workflows/release.yaml@refs/heads/main cgr.dev/chainguard/cosign >/dev/null; then
             echo "{{ style('error') }}NOTICE: Failed to verify cosign image signatures.{{ NORMAL }}" >&2
             exit 1
         fi
 
-        {{ SUDOIF }} {{ PODMAN }} rm -f "${COSIGN_CONTAINER_ID}"
     fi
 
 # Get Digest
@@ -492,14 +511,18 @@ gen-sbom $image_name $fedora_version $variant:
 
     {{ get-names }}
     {{ build-missing }}
+    {{ pull-retry }}
 
     # Get SYFT if needed
     SYFT_ID=""
     if ! command -v syft >/dev/null; then
-        {{ SUDOIF }} {{ PODMAN }} pull docker.io/anchore/syft:latest
-        SYFT_ID="$({{ SUDOIF }} {{ PODMAN }} create docker.io/anchore/syft:latest)"
-        {{ SUDOIF }} {{ PODMAN }} cp "$SYFT_ID":/syft /usr/local/bin/syft
-        {{ SUDOIF }} {{ PODMAN }} rm -f "$SYFT_ID" > /dev/null
+        pull-retry "docker.io/anchore/syft:latest"
+        SYFT_ID="$({{ PODMAN }} create docker.io/anchore/syft:latest)"
+        {{ PODMAN }} cp "$SYFT_ID":/syft /tmp/syft.install
+        {{ SUDOIF }} cp /tmp/syft.install /usr/local/bin/syft
+        {{ SUDOIF }} rm -f /tmp/syft.install
+        {{ PODMAN }} rm -f "$SYFT_ID" > /dev/null
+        {{ PODMAN }} rmi "docker.io/anchore/syft:latest"
     fi
 
     # Enable Podman Socket if needed
