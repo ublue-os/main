@@ -223,6 +223,13 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
     # Build Image
     {{ PODMAN }} build -f Containerfile "${BUILD_ARGS[@]}" "${LABELS[@]}" "${TAGS[@]}"
 
+    # CI Cleanup
+    if [[ -n "${CI:-}" ]]; then
+        {{ PODMAN }} rmi -f "{{ IMAGE_REGISTRY }}/akmods:main-$fedora_version@$AKMODS_DIGEST"
+        {{ PODMAN }} rmi -f "{{ IMAGE_REGISTRY }}/akmods-nvidia-open:main-$fedora_version@$AKMODS_NVIDIA_DIGEST"
+        {{ PODMAN }} rmi -f "{{ source_registry }}/$source_image_name:$fedora_version@$BASE_IMAGE_DIGEST"
+    fi
+
 # Generate Tags
 [group('Utility')]
 gen-tags $image_name="" $fedora_version="" $variant="":
@@ -377,6 +384,9 @@ secureboot $image_name $fedora_version $variant:
     fi
     if [[ -n "${temp_name:-}" ]]; then
         {{ PODMAN }} rm -f "$temp_name"
+        if [[ -n "${CI:-}" ]]; then
+            {{ PODMAN }} rmi -f alpine:edge
+        fi
     fi
     exit "$returncode"
 

@@ -106,15 +106,10 @@ jobs:
           sudo swapoff /mnt/swapfile
           sudo rm -f /mnt/swapfile
           SWAP_FILE="/mnt/swapfile"
-          SWAP_FILE_2="/swapfile"
           sudo fallocate -l 70G "$SWAP_FILE"
-          sudo fallocate -l 16G "$SWAP_FILE_2"
           sudo chmod 600 "$SWAP_FILE"
-          sudo chmod 600 "$SWAP_FILE_2"
           sudo mkswap "$SWAP_FILE"
-          sudo mkswap "$SWAP_FILE_2"
           sudo swapon "$SWAP_FILE"
-          sudo swapon "$SWAP_FILE_2"
           echo "=== FREE SPACE ==="
           df -h
           echo "=== MEMORY AND SWAP ==="
