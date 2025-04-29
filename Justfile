@@ -96,7 +96,7 @@ default-inputs := '
 : ${variant:=' + default_variant + '}
 '
 [private]
-get-names := '''
+get-names := '
 declare -a _images="$(' + just + ' image-name-check $image_name $fedora_version $variant)"
 if [[ -z ${_images[0]:-} ]]; then
     exit 1
@@ -104,9 +104,9 @@ fi
 image_name="${_images[0]}"
 source_image_name="${_images[1]}"
 fedora_version="${_images[2]}"
-'''
+'
 [private]
-build-missing := '''
+build-missing := '
 cmd="' + just + ' build ${image_name%-*} $fedora_version $variant"
 if ! ' + PODMAN + ' image exists "localhost/$image_name:$fedora_version"; then
     echo "' + style('warning') + 'Warning' + NORMAL +': Container Does Not Exist..." >&2
@@ -121,9 +121,9 @@ if ! ' + PODMAN + ' image exists "localhost/$image_name:$fedora_version"; then
     echo "'+ style('warning') +'Running'+ NORMAL+ ': '+ style('command') +'$cmd'+ NORMAL+ '" >&2
     $cmd
 fi
-'''
+'
 [private]
-pull-retry := '''
+pull-retry := '
 function pull-retry() {
     local target="$1"
     local retries=3
@@ -132,7 +132,7 @@ function pull-retry() {
         (( retries-- ))
     done
 }
-'''
+'
 
 _default:
     @{{ just }} --list
