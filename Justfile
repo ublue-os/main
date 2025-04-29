@@ -514,7 +514,7 @@ gen-sbom $image_name $fedora_version $variant:
     # Make SBOM
     OUTPUT_PATH="$(mktemp -d)/sbom.json"
     SYFT_PARALLELISM="$(( $(nproc) * 2 ))"
-    syft "$image_name:$fedora_version" -o spdx-json="$OUTPUT_PATH" >&2
+    syft "localhost/$image_name:$fedora_version" -o spdx-json="$OUTPUT_PATH" >&2
 
     # Cleanup
     if [[ "$EUID" -eq "0" && "${started_podman:-}" == "true" ]]; then
