@@ -203,9 +203,9 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
     )
 
     # Pull Images with retry
-    {{ PODMAN }} pull --retry=3 "{{ IMAGE_REGISTRY }}/akmods:main-$fedora_version@$AKMODS_DIGEST"
-    {{ PODMAN }} pull --retry=3 "{{ IMAGE_REGISTRY }}/akmods-nvidia-open:main-$fedora_version@$AKMODS_NVIDIA_DIGEST"
-    {{ PODMAN }} pull --retry=3 "{{ source_registry }}/$source_image_name:$fedora_version@$BASE_IMAGE_DIGEST"
+    {{ PODMAN }} pull "{{ IMAGE_REGISTRY }}/akmods:main-$fedora_version@$AKMODS_DIGEST"
+    {{ PODMAN }} pull "{{ IMAGE_REGISTRY }}/akmods-nvidia-open:main-$fedora_version@$AKMODS_NVIDIA_DIGEST"
+    {{ PODMAN }} pull "{{ source_registry }}/$source_image_name:$fedora_version@$BASE_IMAGE_DIGEST"
 
     # Build Image
     buildah build -f Containerfile "${BUILD_ARGS[@]}" "${LABELS[@]}" "${TAGS[@]}"
@@ -345,7 +345,6 @@ secureboot $image_name $fedora_version $variant:
     if [[ -z "${CMD:-}" ]]; then
         temp_name="sbverify-${RANDOM}"
         {{ PODMAN }} run -dt \
-            --pull=newer \
             --entrypoint /bin/sh \
             --volume /tmp/vmlinuz:/tmp/vmlinuz:z \
             --volume /tmp/kernel-sign.crt:/tmp/kernel-sign.crt:z \
@@ -436,7 +435,7 @@ install-cosign:
     #!/usr/bin/bash
     set ${SET_X:+-x} -eou pipefail
     if ! command -v cosign >/dev/null; then
-        COSIGN_CONTAINER_ID=$({{ SUDOIF }} {{ PODMAN }} create --pull=newer cgr.dev/chainguard/cosign:latest bash)
+        COSIGN_CONTAINER_ID=$({{ SUDOIF }} {{ PODMAN }} create cgr.dev/chainguard/cosign:latest bash)
         {{ SUDOIF }} {{ PODMAN }} cp "${COSIGN_CONTAINER_ID}":/usr/bin/cosign /usr/local/bin/cosign
 
         if ! cosign verify --certificate-oidc-issuer=https://token.actions.githubusercontent.com --certificate-identity=https://github.com/chainguard-images/images/.github/workflows/release.yaml@refs/heads/main cgr.dev/chainguard/cosign >/dev/null; then
