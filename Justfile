@@ -241,14 +241,12 @@ gen-tags $image_name="" $fedora_version="" $variant="":
 
     # Generate Timestamp with incrementing version point
     TIMESTAMP="$(date +%Y%m%d)"
-    LIST_TAGS="$(mktemp)"
-    trap 'rm -f "$LIST_TAGS"' EXIT
-    while [[ -s "$LIST_TAGS" ]]; do
-        skopeo list-tags docker://{{ IMAGE_REGISTRY }}/$image_name > "$LIST_TAGS"
+    while [[ -z "${LIST_TAGS:-}" ]]; do
+        LIST_TAGS="$(skopeo list-tags docker://{{ IMAGE_REGISTRY }}/$image_name)"
     done
-    if [[ $(cat "$LIST_TAGS" | jq "any(.Tags[]; contains(\"$fedora_version-$TIMESTAMP\"))") == "true" ]]; then
+    if [[ $(echo "$LIST_TAGS" | jq "any(.Tags[]; contains(\"$fedora_version-$TIMESTAMP\"))") == "true" ]]; then
         POINT="1"
-        while $(jq -e "any(.Tags[]; contains(\"$fedora_version-$TIMESTAMP.$POINT\"))" < "$LIST_TAGS")
+        while $(echo "$LIST_TAGS" | jq -e "any(.Tags[]; contains(\"$fedora_version-$TIMESTAMP.$POINT\"))")
         do
             (( POINT++ ))
         done
