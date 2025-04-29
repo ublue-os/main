@@ -39,6 +39,7 @@ images := '(
     ["kinoite"]="kinoite"
     ["sway-atomic"]="sway-atomic"
     ["budgie-atomic"]="budgie-atomic"
+    ["cosmic-atomic"]="cosmic-atomic"
     ["sericea"]="sway-atomic"
     ["onyx"]="budgie-atomic"
     ["lazurite"]="lxqt-atomic"
@@ -163,7 +164,7 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
     if [[ -z "$github" || ! "$github" =~ pull_request ]]; then
         declare -a tags="(${gen_tags["BUILD_TAGS"]})"
     else
-        declare -a tags="(${gen_tags["COMMIT_TAGS"]})"
+        declare -a tags="(${gen_tags["COMMIT_TAGS"]} ${gen_tags["BUILD_TAGS"]})"
     fi
     TIMESTAMP="${gen_tags["TIMESTAMP"]}"
     TAGS=()
@@ -326,7 +327,6 @@ secureboot $image_name $fedora_version $variant:
     set ${SET_X:+-x} -eou pipefail
 
     {{ get-names }}
-    {{ build-missing }}
 
     # Get the vmlinuz to check
     kernel_release=$({{ PODMAN }} inspect "$image_name":"$fedora_version" | jq -r '.[].Config.Labels["ostree.linux"]')
