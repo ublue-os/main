@@ -161,11 +161,11 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
 
     # Tags
     declare -A gen_tags="($({{ just }} gen-tags $image_name $fedora_version $variant))"
-    declare -a tags
-    if [[ "$github" =~ pull_request ]]; then
-        tags+=(${gen_tags["COMMIT_TAGS"]})
+    if [[ "${github:-}" =~ pull_request ]]; then
+        tags=(${gen_tags["COMMIT_TAGS"]})
+    else
+        tags=(${gen_tags["BUILD_TAGS"]})
     fi
-    tags+=(${gen_tags["BUILD_TAGS"]})
     TIMESTAMP="${gen_tags["TIMESTAMP"]}"
     TAGS=()
     for tag in "${tags[@]}"; do
@@ -245,14 +245,14 @@ gen-tags $image_name="" $fedora_version="" $variant="":
         COMMIT_TAGS=("$SHA_SHORT-gts")
         BUILD_TAGS=("gts" "gts-$TIMESTAMP")
     elif [[ "$fedora_version" -eq "{{ latest }}" ]]; then
-        COMMIT_TAGS+=("$SHA_SHORT-latest")
+        COMMIT_TAGS=("$SHA_SHORT-latest")
         BUILD_TAGS=("latest" "latest-$TIMESTAMP")
     elif [[ "$fedora_version" -eq "{{ beta }}" ]]; then
-        COMMIT_TAGS+=("$SHA_SHORT-beta")
+        COMMIT_TAGS=("$SHA_SHORT-beta")
         BUILD_TAGS=("beta beta-$TIMESTAMP")
     fi
 
-    COMMIT_TAGS+=("$SHA_SHORT-$fedora_version")
+    COMMIT_TAGS+=("$SHA_SHORT-$fedora_version" "$fedora_version")
     BUILD_TAGS+=("$fedora_version" "$fedora_version-$TIMESTAMP")
     declare -A output
     output["BUILD_TAGS"]="${BUILD_TAGS[*]}"

@@ -123,6 +123,7 @@ jobs:
 
       - name: Generate SBOM
         id: sbom
+        if: false
         shell: bash
         run: |
           systemctl enable --now --user podman.socket
