@@ -161,11 +161,11 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
 
     # Tags
     declare -A gen_tags="($({{ just }} gen-tags $image_name $fedora_version $variant))"
-    if [[ -z "$github" || ! "$github" =~ pull_request ]]; then
-        declare -a tags="(${gen_tags["BUILD_TAGS"]})"
-    else
-        declare -a tags="(${gen_tags["COMMIT_TAGS"]} ${gen_tags["BUILD_TAGS"]})"
+    declare -a tags
+    if [[ "$github" =~ pull_request ]]; then
+        tags+=(${gen_tags["COMMIT_TAGS"]})
     fi
+    tags+=(${gen_tags["BUILD_TAGS"]})
     TIMESTAMP="${gen_tags["TIMESTAMP"]}"
     TAGS=()
     for tag in "${tags[@]}"; do

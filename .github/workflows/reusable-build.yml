@@ -125,7 +125,7 @@ jobs:
         id: sbom
         shell: bash
         run: |
-          systemctl enable --now podman.socket
+          systemctl enable --now --user podman.socket
 
           sbom=$(just gen-sbom \
               "${{ inputs.image_name }}" \
