@@ -29,8 +29,8 @@ jobs:
       packages: write
       id-token: write
     steps:
-      # Checkout push-to-registry action GitHub repository
-      - name: Checkout Push to Registry action
+        # Checkout Git Repository
+      - name: Checkout
         # yamllint disable-line rule:line-length rule:comments
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
