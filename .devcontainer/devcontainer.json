@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json.
 {
 	"$schema": "https://raw.githubusercontent.com/devcontainers/spec/refs/heads/main/schemas/devContainer.schema.json",
-	"name": "m2os-devcontainer",
+	"name": "ublue-main-devcontainer",
 	"build": {
 		"dockerfile": "Containerfile",
 		"args": {
@@ -33,7 +33,11 @@
 		}
 	},
 	"runArgs": [
-		// Only Needed for Podman in VSCode (DevPod autohandles)
+		// If using rootless podman as your devcontainer provider
+		// Uncomment --userns=keep-id so that the unprivileged user has your UID
+		// DevPod appears to automatically handle this for you but is necessary
+		// for VSCode and the reference implementation. This option is not compatible
+		// with docker-cli.
 		// "--userns=keep-id",
 		"--name",
 		"devcontainer-${containerWorkspaceFolderBasename}"
