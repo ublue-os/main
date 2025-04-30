@@ -127,10 +127,16 @@ pull-retry := '
 function pull-retry() {
     local target="$1"
     local retries=3
+    trap "exit 1" SIGINT
     while [ $retries -gt 0 ]; do
         ' + PODMAN + ' pull $target && break
         (( retries-- ))
     done
+    if ! (( retries )); then
+        echo "' + style('error') +' Unable to pull ${target/@*/}...' + NORMAL +'" >&2
+        exit 1
+    fi
+    trap - SIGINT
 }
 '
 
