@@ -5,7 +5,7 @@
 	"build": {
 		"dockerfile": "Containerfile",
 		"args": {
-			"USERNAME": "${localEnv:USERNAME}"
+			"USERNAME": "ublue"
 		}
 	},
 	"features": {
@@ -13,7 +13,7 @@
 			"installZsh": false,
 			"installOhMyZsh": false,
 			"installOhMyZshConfig": false,
-			"username": "${localEnv:USERNAME}"
+			"username": "ublue"
 		},
 		// Podman
 		"./local-features/podman": "",
@@ -42,6 +42,6 @@
 		"--name",
 		"devcontainer-${containerWorkspaceFolderBasename}"
 	],
-	"remoteUser": "${localEnv:USERNAME}",
-	"containerUser": "${localEnv:USERNAME}"
+	"remoteUser": "ublue",
+	"containerUser": "ublue"
 }
