@@ -36,4 +36,5 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     if [ "${BUILD_NVIDIA}" == "Y" ]; then \
         AKMODNV_PATH=/tmp/akmods-nv-rpms /ctx/nvidia-install.sh \
     ; fi && \
+    /ctx/initramfs.sh && \
     /ctx/post-install.sh

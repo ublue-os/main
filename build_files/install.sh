@@ -64,10 +64,6 @@ KERNEL_RPMS=(
 dnf5 -y install "${KERNEL_RPMS[@]}"
 dnf5 versionlock add kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
 
-# Ensure Initramfs is generated (Likely unneeded)
-/usr/bin/dracut --no-hostonly --kver "${KERNEL_VERSION}" --reproducible -v --add ostree -f "/lib/modules/${KERNEL_VERSION}/initramfs.img"
-chmod 0600 "/lib/modules/${KERNEL_VERSION}/initramfs.img"
-
 # use override to replace mesa and others with less crippled versions
 OVERRIDES=(
     "libva"
