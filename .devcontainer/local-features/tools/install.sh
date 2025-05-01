@@ -13,6 +13,7 @@ dnf5 install -y \
     grub2-tools-extra \
     just \
     npm \
+    openssl \
     ripgrep \
     sbsigntools \
     shfmt \
