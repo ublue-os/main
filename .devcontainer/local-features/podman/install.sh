@@ -146,8 +146,14 @@ if [ "$(id -u)" -ne 0 ]; then
         sudo chmod 777 /run/user || true
         mkdir -p "/run/user/$USERNAME"
     fi
-    (podman system service -t0 unix:///run/user/$USERNAME/podman.sock 2> /dev/null &) || true
     sudo ln -sf /run/user/$USERNAME/podman.sock /var/run/docker.sock
+fi
+EOF
+
+tee -a /etc/profile.d/podman-socket.sh > /dev/null <<EOF
+#!/bin/sh
+if [ "$USERNAME" = "\$(whoami)" ] && [ ! -e /run/user/$USERNAME/podman.sock ]; then
+    podman system service -t0 unix:///run/user/$USERNAME/podman.sock 2> /dev/null &
 fi
 EOF
 
