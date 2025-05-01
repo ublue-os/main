@@ -46,6 +46,7 @@ echo "$USERNAME:50000:10000" >/etc/subgid
 chmod u+s /usr/bin/new{u,g}idmap
 
 mkdir -p "/home/$USERNAME/.local/share/containers/"
+chown "$USERNAME:$USERNAME" -R "/home/$USERNAME/"
 
 mkdir -p /usr/local/share
 tee /usr/local/share/podman-in-podman-init.sh >/dev/null <<'EOF'
@@ -126,29 +127,28 @@ fi
 
 # Work for Podman in Docker
 sudo_if mount --make-rshared / || true
+
+# Don't Block
+exec "\$@"
 EOF
 
-tee -a /usr/local/share/podman-in-podman-init.sh >/dev/null <<'EOF'
+tee -a /etc/bashrc >/dev/null <<'EOF'
 # Bind Mount Volume to User. Podman Unshare works.
 
-if ! mountpoint -q "/home/$USERNAME/.local/share/containers"; then
-    sudo_if mount --bind /srv/containers "/home/$USERNAME/.local/share/containers"
+if [ "$(id -u)" -ne 0 ]; then
+    if [ ! -O "/srv/containers" ]; then
+        sudo chown "$USERNAME:$USERNAME" /srv/containers || true
+    fi
+    if ! mountpoint -q "/home/$USERNAME/.local/share/containers"; then
+        sudo mount --bind /srv/containers "/home/$USERNAME/.local/share/containers" || true
+    fi
+    if [ ! -w "/run/user" ]; then
+        sudo chmod 777 /run/user || true
+        mkdir -p "/run/user/$USERNAME"
+    fi
+    (podman system service -t0 unix:///run/user/$USERNAME/podman.sock 2> /dev/null &) || true
+    sudo ln -sf /run/user/$USERNAME/podman.sock /var/run/docker.sock
 fi
-
-if [[ ! -O "/srv/containers" ]]; then
-    sudo_if chown "$USERNAME:$USERNAME" /srv/containers
-fi
-
-# Make XDG_RUNTIME_DIR
-if [ "$(id -u)" -ne 0 ] && [ ! -d "/run/user/$(id -u)/podman" ]; then
-    sudo_if mkdir -p "/run/user/$(id -u)/podman"
-    sudo_if chown "$(id -u):$(id -u)" -R "/run/user/$(id -u)"
-fi
-
-podman system service --time=0 unix:///run/user/"$(id -u)"/podman/podman.sock &
-sudo_if ln -sf /run/user/"$(id -u)"/podman/podman.sock /var/run/docker.sock
-
-exec "$@"
 EOF
 
 chmod +x /usr/local/share/podman-in-podman-init.sh

@@ -10,10 +10,13 @@
 	},
 	"features": {
 		"ghcr.io/devcontainers/features/common-utils:2": {
+			"username": "ublue",
+			// Change these to your UID/GID if your user is not 1000
+			"userUid": "1000",
+			"userGid": "1000",
 			"installZsh": false,
 			"installOhMyZsh": false,
-			"installOhMyZshConfig": false,
-			"username": "ublue"
+			"installOhMyZshConfig": false
 		},
 		// Podman
 		"./local-features/podman": "",
