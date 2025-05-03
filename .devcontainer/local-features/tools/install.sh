@@ -11,7 +11,6 @@ dnf5 install -y \
     grub2-efi \
     grub2-tools \
     grub2-tools-extra \
-    just \
     npm \
     openssl \
     ripgrep \
@@ -43,6 +42,11 @@ npm install -g \
     yaml-language-server
 
 # TODO: Handle arm64
+# just
+while [[ -z "${JUST:-}" || "${JUST:-}" == "null" ]]; do
+    JUST="$(curl -Ls https://api.github.com/repos/casey/just/releases/latest | jq -r '.assets[] | select(.name | test(".*x86_64-unknown-linux-musl.*gz")).browser_download_url')" || (true && sleep 30)
+done
+curl --retry 3 -L# "$JUST" | tar -xz -C /usr/local/bin/
 # eza
 while [[ -z "${EZA:-}" || "${EZA:-}" == "null" ]]; do
     EZA="$(curl -Ls https://api.github.com/repos/eza-community/eza/releases/latest | jq -r '.assets[] | select(.name | test(".*x86_64-unknown-linux-gnu.*gz")).browser_download_url')" || (true && sleep 5)
