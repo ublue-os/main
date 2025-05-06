@@ -1,0 +1,33 @@
+name: ublue latest
+
+on:
+  pull_request:
+  merge_group:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: build
+    uses: ./.github/workflows/reusable-build.yml
+    secrets: inherit
+    strategy:
+      fail-fast: false
+      matrix:
+        image_name:
+          - base
+          - silverblue
+          - kinoite
+          - sway-atomic
+          - budgie-atomic
+          - cosmic-atomic
+        image_variant:
+          - main
+          - nvidia
+    with:
+      image_name: ${{ matrix.image_name }}
+      image_variant: ${{ matrix.image_variant }}
+      image_version: latest

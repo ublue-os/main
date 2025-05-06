@@ -1,4 +1,4 @@
-name: ublue main 41
+name: ublue gts
 
 on:
   pull_request:
@@ -17,6 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # TODO: Change to new names when GTS = F42
         image_name:
           - base
           - silverblue
@@ -28,19 +29,7 @@ jobs:
         image_variant:
           - main
           - nvidia
-        include:
-          - image_name: base
-            source_image_name: base-atomic
-          - image_name: onyx
-            source_image_name: budgie-atomic
-          - image_name: sericea
-            source_image_name: sway-atomic
-          - image_name: lazurite
-            source_image_name: lxqt-atomic
-          - image_name: vauxite
-            source_image_name: xfce-atomic
     with:
       image_name: ${{ matrix.image_name }}
       image_variant: ${{ matrix.image_variant }}
-      source_image_name: ${{ matrix.source_image_name }}
-      fedora_version: 41
+      image_version: 41

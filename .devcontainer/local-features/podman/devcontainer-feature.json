@@ -1,0 +1,30 @@
+{
+    "$schema": "https://raw.githubusercontent.com/devcontainers/spec/refs/heads/main/schemas/devContainerFeature.schema.json",
+    "id": "podman",
+    "name": "Configure Nested Podman",
+    "version": "latest",
+    "privileged": true,
+    "installsAfter": [
+        "ghcr.io/devcontainers/features/common-utils"
+    ],
+    "mounts": [
+        {
+            "source": "podman-srv-containers-${containerWorkspaceFolderBasename}",
+            "target": "/srv/containers",
+            "type": "volume"
+        },
+        {
+            "source": "podman-var-lib-containers-${containerWorkspaceFolderBasename}",
+            "target": "/var/lib/containers",
+            "type": "volume"
+        }
+    ],
+    "entrypoint": "/usr/local/share/podman-in-podman-init.sh",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-azuretools.vscode-docker"
+            ]
+        }
+    }
+}

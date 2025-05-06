@@ -1,0 +1,9 @@
+{
+    "$schema": "https://raw.githubusercontent.com/devcontainers/spec/refs/heads/main/schemas/devContainerFeature.schema.json",
+    "id": "tools",
+    "name": "Configure Dev Container Tools",
+    "version": "latest",
+    "installsAfter": [
+        "ghcr.io/devcontainers/features/common-utils"
+    ]
+}

@@ -1,0 +1,5 @@
+FROM quay.io/fedora/fedora:latest
+
+ARG USERNAME="ublue"
+ENV USERNAME="${USERNAME}"
+ENV SET_X=1

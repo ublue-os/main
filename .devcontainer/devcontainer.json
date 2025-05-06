@@ -1,0 +1,50 @@
+// For format details, see https://aka.ms/devcontainer.json.
+{
+	"$schema": "https://raw.githubusercontent.com/devcontainers/spec/refs/heads/main/schemas/devContainer.schema.json",
+	"name": "ublue-main-devcontainer",
+	"build": {
+		"dockerfile": "Containerfile",
+		"args": {
+			"USERNAME": "ublue"
+		}
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"username": "ublue",
+			// Change these to your UID/GID if your user is not 1000
+			"userUid": "1000",
+			"userGid": "1000",
+			"installZsh": false,
+			"installOhMyZsh": false,
+			"installOhMyZshConfig": false
+		},
+		// Podman
+		"./local-features/podman": "",
+		// Tools
+		"./local-features/tools": ""
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"eamodio.gitlens",
+				"hangxingliu.vscode-systemd-support",
+				"mads-hartmann.bash-ide-vscode",
+				"ms-azuretools.vscode-docker",
+				"nefrob.vscode-just-syntax",
+				"timonwong.shellcheck"
+			]
+		}
+	},
+	"runArgs": [
+		// If using rootless podman as your devcontainer provider
+		// Uncomment --userns=keep-id so that the unprivileged user has your UID
+		// DevPod appears to automatically handle this for you but is necessary
+		// for VSCode and the reference implementation. This option is not compatible
+		// with docker-cli.
+		// "--userns=keep-id",
+		"--name",
+		"devcontainer-${containerWorkspaceFolderBasename}"
+	],
+	"remoteUser": "ublue",
+	"containerUser": "ublue"
+}
