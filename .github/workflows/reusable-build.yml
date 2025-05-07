@@ -15,20 +15,52 @@ on:
         required: false
         type: string
         default: "main"
+      platforms:
+        description: "The platforms to build the image for"
+        required: false
+        type: string
+        default: "amd64,arm64"
 
 env:
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
   SET_X: 1
+  PLATFORMS: ${{ inputs.platforms }}
 
 jobs:
+  generate_matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Set matrix
+        id: set-matrix
+        env:
+          PLATFORMS: "${{ inputs.platforms }}"
+        run: |
+          # turn the comma separated string into a list
+          platforms=()
+          IFS=',' read -r -a platforms <<< "${PLATFORMS}"
+
+          MATRIX="{\"include\":[]}"
+          for platform in "${platforms[@]}"; do
+            MATRIX="$(echo "${MATRIX}" | jq ".include += [{\"platform\": \"${platform}\"}]")"
+          done
+          echo "matrix=$(echo "${MATRIX}" | jq -c '.')" >> $GITHUB_OUTPUT
+
   build_ublue:
     name: main
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.platform == 'amd64' && 'ubuntu-24.04' || 'ubuntu-24.04-arm' }}
     permissions:
       contents: read
       packages: write
       id-token: write
     steps:
+      - name: Install dependencies
+        if: matrix.platform == 'arm64'
+        run: |
+          sudo apt update -y
+          sudo apt install -y \
+            podman
         # Checkout Git Repository
       - name: Checkout
         # yamllint disable-line rule:line-length rule:comments
@@ -46,6 +78,7 @@ jobs:
                "${{ inputs.image_name }}" \
                "${{ inputs.image_version }}" \
                "${{ inputs.image_variant }}" \
+               "${{ matrix.platform }}" \
                "${{ github.event_name }}"
 
       - name: Check Secureboot
@@ -71,6 +104,7 @@ jobs:
         env:
           REGISTRY_USER: ${{ github.actor }}
           REGISTRY_TOKEN: ${{ github.token }}
+          PLATFORM: ${{ matrix.platform }}
         shell: bash
         run: |
           just login-to-ghcr "$REGISTRY_USER" "$REGISTRY_TOKEN"

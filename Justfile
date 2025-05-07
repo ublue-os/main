@@ -158,7 +158,7 @@ run-container $image_name="" $fedora_version="" $variant="":
 
 # Build a Container
 [group('Container')]
-build-container $image_name="" $fedora_version="" $variant="" $github="":
+build-container $image_name="" $fedora_version="" $variant="" $platform="" $github="":
     #!/usr/bin/bash
     set ${SET_X:+-x} -eou pipefail
 
@@ -178,7 +178,7 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
     fi
 
     # Tags
-    declare -A gen_tags="($({{ just }} gen-tags $image_name $fedora_version $variant))"
+    declare -A gen_tags="($({{ just }} gen-tags $image_name $fedora_version $variant $platform))"
     if [[ "${github:-}" =~ pull_request ]]; then
         tags=(${gen_tags["COMMIT_TAGS"]})
     else
@@ -238,7 +238,7 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
 
 # Generate Tags
 [group('Utility')]
-gen-tags $image_name="" $fedora_version="" $variant="":
+gen-tags $image_name="" $fedora_version="" $variant="" $platform="":
     #!/usr/bin/bash
     set ${SET_X:+-x} -eou pipefail
 
@@ -268,14 +268,14 @@ gen-tags $image_name="" $fedora_version="" $variant="":
 
     # Define Versions
     if [[ "$fedora_version" -eq "{{ gts }}" ]]; then
-        COMMIT_TAGS=("$SHA_SHORT-gts")
-        BUILD_TAGS=("gts" "gts-$TIMESTAMP")
+        COMMIT_TAGS=("$SHA_SHORT-gts-$platform")
+        BUILD_TAGS=("gts-$platform" "gts-$TIMESTAMP-$platform")
     elif [[ "$fedora_version" -eq "{{ latest }}" ]]; then
-        COMMIT_TAGS=("$SHA_SHORT-latest")
-        BUILD_TAGS=("latest" "latest-$TIMESTAMP")
+        COMMIT_TAGS=("$SHA_SHORT-latest-$platform")
+        BUILD_TAGS=("latest-$platform" "latest-$TIMESTAMP-$platform")
     elif [[ "$fedora_version" -eq "{{ beta }}" ]]; then
-        COMMIT_TAGS=("$SHA_SHORT-beta")
-        BUILD_TAGS=("beta beta-$TIMESTAMP")
+        COMMIT_TAGS=("$SHA_SHORT-beta-$platform")
+        BUILD_TAGS=("beta-$platform" "beta-$TIMESTAMP-$platform")
     fi
 
     COMMIT_TAGS+=("$SHA_SHORT-$fedora_version" "$fedora_version")
