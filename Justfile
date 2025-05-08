@@ -508,7 +508,7 @@ cosign-sign $image_name $fedora_version $variant $destination="": install-cosign
     {{ get-names }}
     {{ build-missing }}
 
-    digest="$({{ PODMAN }} inspect localhost/$image_name:$fedora_version --format '{{ ' {{ .Digest }} ' }}')"
+    digest="$({{ PODMAN }} inspect localhost/$image_name:$fedora_version --format '{{{{ .Digest }}')"
     : "${destination:={{ IMAGE_REGISTRY }}}"
     cosign sign -y --key env://COSIGN_PRIVATE_KEY "$destination/$image_name@$digest"
 
