@@ -192,7 +192,7 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
 
     # Labels
     VERSION="$fedora_version.$TIMESTAMP"
-    KERNEL_VERSION="$(skopeo inspect docker://{{ IMAGE_REGISTRY }}/akmods:main-$fedora_version | jq -r '.Labels["ostree.linux"]')"
+    KERNEL_VERSION="$(skopeo inspect docker://{{ IMAGE_REGISTRY }}/akmods@$AKMODS_DIGEST | jq -r '.Labels["ostree.linux"]')"
     LABELS=(
         "--label" "org.opencontainers.image.title=${image_name}"
         "--label" "org.opencontainers.image.version=${VERSION}"
@@ -496,7 +496,7 @@ push-to-registry $image_name $fedora_version $variant $destination="" $transport
 
     declare -a TAGS="($({{ PODMAN }} image list localhost/$image_name:$fedora_version --noheading --format 'table {{{{ .Tag }}'))"
     for tag in "${TAGS[@]}"; do
-        skopeo copy --retry-times=3 "containers-storage:localhost/$image_name:$fedora_version" "$transport$destination/$image_name:$tag" >&2
+        {{ PODMAN }} push "localhost/$image_name:$fedora_version" "$transport$destination/$image_name:$tag" >&2
     done
 
 # Sign Images with Cosign
@@ -508,7 +508,7 @@ cosign-sign $image_name $fedora_version $variant $destination="": install-cosign
     {{ get-names }}
     {{ build-missing }}
 
-    digest="$({{ PODMAN }} inspect localhost/$image_name:$fedora_version --format '{{ ' {{ .Digest }} ' }}')"
+    digest="$({{ PODMAN }} inspect localhost/$image_name:$fedora_version --format '{{{{ .Digest }}')"
     : "${destination:={{ IMAGE_REGISTRY }}}"
     cosign sign -y --key env://COSIGN_PRIVATE_KEY "$destination/$image_name@$digest"
 
