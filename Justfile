@@ -508,8 +508,8 @@ cosign-sign $image_name $fedora_version $variant $destination="": install-cosign
     {{ get-names }}
     {{ build-missing }}
 
-    digest="$({{ PODMAN }} inspect localhost/$image_name:$fedora_version --format '{{{{ .Digest }}')"
     : "${destination:={{ IMAGE_REGISTRY }}}"
+    digest="$(skopeo inspect docker://$destination/$image_name:$fedora_version --format '{{{{ .Digest }}')"
     cosign sign -y --key env://COSIGN_PRIVATE_KEY "$destination/$image_name@$digest"
 
 # Generate SBOM
