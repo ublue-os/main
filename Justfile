@@ -496,7 +496,7 @@ push-to-registry $image_name $fedora_version $variant $destination="" $transport
 
     declare -a TAGS="($({{ PODMAN }} image list localhost/$image_name:$fedora_version --noheading --format 'table {{{{ .Tag }}'))"
     for tag in "${TAGS[@]}"; do
-        skopeo copy --retry-times=3 "containers-storage:localhost/$image_name:$fedora_version" "$transport$destination/$image_name:$tag" >&2
+        {{ PODMAN }} push "localhost/$image_name:$fedora_version" "$transport$destination/$image_name:$tag" >&2
     done
 
 # Sign Images with Cosign
