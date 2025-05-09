@@ -209,7 +209,7 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
 
     # Build Arguments
     BUILD_ARGS=(
-        "--build-arg" "IMAGE_NAME=$image_name"
+        "--build-arg" "IMAGE_NAME=${image_name%-*}"
         "--build-arg" "SOURCE_ORG={{ source_org }}"
         "--build-arg" "SOURCE_IMAGE=${source_image_name}"
         "--build-arg" "FEDORA_MAJOR_VERSION=$fedora_version"
