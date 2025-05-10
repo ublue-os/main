@@ -7,6 +7,7 @@ dnf5 install -y \
     dosfstools \
     erofs-utils \
     fd \
+    gh \
     glibc-langpack-en \
     grub2 \
     grub2-efi \
