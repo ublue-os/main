@@ -26,22 +26,16 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"eamodio.gitlens",
+				"github.vscode-github-actions",
+				"github.vscode-pull-request-github",
 				"hangxingliu.vscode-systemd-support",
 				"mads-hartmann.bash-ide-vscode",
-				"ms-azuretools.vscode-docker",
 				"nefrob.vscode-just-syntax",
 				"timonwong.shellcheck"
 			]
 		}
 	},
 	"runArgs": [
-		// If using rootless podman as your devcontainer provider
-		// Uncomment --userns=keep-id so that the unprivileged user has your UID
-		// DevPod appears to automatically handle this for you but is necessary
-		// for VSCode and the reference implementation. This option is not compatible
-		// with docker-cli.
-		// "--userns=keep-id",
 		"--name",
 		"devcontainer-${containerWorkspaceFolderBasename}"
 	],

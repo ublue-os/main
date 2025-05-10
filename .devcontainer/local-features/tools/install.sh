@@ -7,6 +7,7 @@ dnf5 install -y \
     dosfstools \
     erofs-utils \
     fd \
+    glibc-langpack-en \
     grub2 \
     grub2-efi \
     grub2-tools \
@@ -89,10 +90,6 @@ done
 curl --retry 3 -L# "${YAMLFMT}" | tar -xz -C /usr/local/bin/
 
 tee -a /etc/bashrc >/dev/null <<'EOF'
-# Fix Locales
-export LC_ALL='C.utf8'
-export LC_CTYPE='C.utf8'
-
 # Pretty Colors
 alias ll='ls -la'
 alias la='ls -la'
