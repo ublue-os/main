@@ -497,7 +497,7 @@ push-to-registry $image_name $fedora_version $variant $destination="" $transport
     declare -a TAGS="($({{ PODMAN }} image list localhost/$image_name:$fedora_version --noheading --format 'table {{{{ .Tag }}'))"
     for tag in "${TAGS[@]}"; do
         for i in {1..5}; do
-            {{ PODMAN }} push "localhost/$image_name:$fedora_version" "$transport$destination/$image_name:$tag" && break || sleep $((5 * i));
+            {{ PODMAN }} push "localhost/$image_name:$fedora_version" "$transport$destination/$image_name:$tag" 2>&1 && break || sleep $((5 * i));
         done
     done
 
