@@ -39,6 +39,15 @@
         "patch"
       ],
       "enabled": false
+    },
+    {
+      "matchPackageNames": [
+        "quay.io/fedora/fedora"
+      ],
+      "matchFileNames": [
+        ".devcontainer/Containerfile"
+      ],
+      "enabled": false
     }
   ]
 }

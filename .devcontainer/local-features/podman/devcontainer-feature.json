@@ -4,9 +4,7 @@
     "name": "Configure Nested Podman",
     "version": "latest",
     "privileged": true,
-    "installsAfter": [
-        "ghcr.io/devcontainers/features/common-utils"
-    ],
+    "installsAfter": ["ghcr.io/devcontainers/features/common-utils"],
     "mounts": [
         {
             "source": "podman-srv-containers-${containerWorkspaceFolderBasename}",
@@ -22,9 +20,11 @@
     "entrypoint": "/usr/local/share/podman-in-podman-init.sh",
     "customizations": {
         "vscode": {
-            "extensions": [
-                "ms-azuretools.vscode-docker"
-            ]
+            "extensions": ["ms-azuretools.vscode-containers"],
+            "settings": {
+                "containers.containerClient": "com.microsoft.visualstudio.containers.podman",
+                "containers.containerCommand": "podman"
+            }
         }
     }
 }

@@ -128,8 +128,11 @@ fi
 # Work for Podman in Docker
 sudo_if mount --make-rshared / || true
 
+# Make any user able to create XDG_RUNTIME_DIR
+sudo_if chmod 777 /run/user
+
 # Don't Block
-exec "\$@"
+exec "$@"
 EOF
 
 tee -a /etc/bashrc >/dev/null <<'EOF'
@@ -142,18 +145,6 @@ if [ "$(id -u)" -ne 0 ]; then
     if ! mountpoint -q "/home/$USERNAME/.local/share/containers"; then
         sudo mount --bind /srv/containers "/home/$USERNAME/.local/share/containers" || true
     fi
-    if [ ! -w "/run/user" ]; then
-        sudo chmod 777 /run/user || true
-        mkdir -p "/run/user/$USERNAME"
-    fi
-    sudo ln -sf /run/user/$USERNAME/podman.sock /var/run/docker.sock
-fi
-EOF
-
-tee -a /etc/profile.d/podman-socket.sh > /dev/null <<EOF
-#!/bin/sh
-if [ "$USERNAME" = "\$(whoami)" ] && [ ! -e /run/user/$USERNAME/podman.sock ]; then
-    podman system service -t0 unix:///run/user/$USERNAME/podman.sock 2> /dev/null &
 fi
 EOF
 
