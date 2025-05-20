@@ -13,7 +13,7 @@
       "enabled": false,
       "matchUpdateTypes": ["digest", "pinDigest", "pin"],
       "matchDepTypes": ["container"],
-      "matchFileNames": [".github/workflows/**.yaml", ".github/workflows/**.yml"]
+      "matchFileNames": [".github/workflows/**.yaml", ".github/workflows/**.yml", ".devcontainer/Containerfile"]
     },
     {
       "matchPackageNames": [
