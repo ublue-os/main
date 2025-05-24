@@ -52,6 +52,8 @@
                 "symlinks",
                 "tcpdump",
                 "tmux",
+                "tpm2-pkcs11",
+                "tpm2-pkcs11-tools",
                 "traceroute",
                 "vim",
                 "wireguard-tools",
