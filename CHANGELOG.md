@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.4.0](https://github.com/ublue-os/main/compare/v2.3.0...v2.4.0) (2025-05-24)
+
+
+### Features
+
+* cleanup justfile and use just to build ([#770](https://github.com/ublue-os/main/issues/770)) ([fd623d7](https://github.com/ublue-os/main/commit/fd623d756049a5a5979781fa96a1c3b13709c7e1))
+
+
+### Bug Fixes
+
+* **ci:** Get Digest from the remote for signing ([#856](https://github.com/ublue-os/main/issues/856)) ([0a47bdc](https://github.com/ublue-os/main/commit/0a47bdc680a19ae5eec5e4f9e2ea9cf8fedbe690))
+* **ci:** group and automerge akmods updates ([#798](https://github.com/ublue-os/main/issues/798)) ([ddee958](https://github.com/ublue-os/main/commit/ddee958f126870ce486bbf73b9140b193f471b8e))
+* **ci:** use digest when extracting kernel versions ([#814](https://github.com/ublue-os/main/issues/814)) ([e736a99](https://github.com/ublue-os/main/commit/e736a999e5006bae60c2ce975dc3b3f45bf2c2af))
+* **ci:** Use podman push instead of skopeo copy ([#854](https://github.com/ublue-os/main/issues/854)) ([f87420c](https://github.com/ublue-os/main/commit/f87420c1dfa6fe211217a1a910c46c3668c2666e))
+* ensure initramfs is generated after nvidia driver install ([#832](https://github.com/ublue-os/main/issues/832)) ([5df3bd4](https://github.com/ublue-os/main/commit/5df3bd42cb79de50dda44bb8a8e05dadab64b7c1))
+* ensure kmod-nvidia version matches nvidia-driver ([#891](https://github.com/ublue-os/main/issues/891)) ([525e900](https://github.com/ublue-os/main/commit/525e900bf8b3327e3738574a54089acb963a4d3e))
+* IMAGE_NAME Build arg should not have -main or -nvidia ([#860](https://github.com/ublue-os/main/issues/860)) ([a65ce2d](https://github.com/ublue-os/main/commit/a65ce2dec28ed4de675e43d46b2521907cec6b5e))
+* **packages:** remove gnome-tweaks ([#782](https://github.com/ublue-os/main/issues/782)) ([c7091bd](https://github.com/ublue-os/main/commit/c7091bd102552749631cb17045819c9656793387))
+* **repo:** correct automerge casing ([#794](https://github.com/ublue-os/main/issues/794)) ([97d27f0](https://github.com/ublue-os/main/commit/97d27f025e8de3bcf1239f25d8ff00c96dcfb1b8))
+* stop renovate from updating dev container ([#887](https://github.com/ublue-os/main/issues/887)) ([0f4797a](https://github.com/ublue-os/main/commit/0f4797a57d2de47db50f0a101777282368bcd830))
+* sway-atomic not getting proper env file on nvidia ([#825](https://github.com/ublue-os/main/issues/825)) ([2d42dbb](https://github.com/ublue-os/main/commit/2d42dbb2bb08d70130faa9285a751651092bcf4f))
+
 ## [2.3.0](https://github.com/ublue-os/main/compare/v2.2.0...v2.3.0) (2025-04-16)
 
 
