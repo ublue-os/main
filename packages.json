@@ -7,8 +7,6 @@
                 "apr",
                 "apr-util",
                 "distrobox",
-                "fcitx5",
-                "fcitx5-configtool",
                 "fdk-aac",
                 "ffmpeg",
                 "ffmpeg-libs",
@@ -65,11 +63,18 @@
             ],
             "silverblue": [
                 "adw-gtk3-theme",
-                "fcitx5-gtk",
                 "gvfs-nfs"
             ],
             "kinoite": [
                 "fcitx5-qt",
+                "fcitx5-gtk",
+               	"fcitx5-chinese-addons",
+				"fcitx5-hangul",
+				"fcitx5-libthai",
+				"fcitx5-mozc",
+				"fcitx5-sayura",
+				"fcitx5-unikey",
+                "fcitx5-configtool",
                 "kcm-fcitx5",
                 "icoutils",
                 "kate",
