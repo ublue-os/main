@@ -63,7 +63,9 @@
             ],
             "silverblue": [
                 "adw-gtk3-theme",
-                "gvfs-nfs"
+                "gvfs-nfs",
+                "ibus-unikey",
+                "ibus-mozc"
             ],
             "kinoite": [
                 "fcitx5-qt",
