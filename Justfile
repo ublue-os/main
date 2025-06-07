@@ -40,10 +40,6 @@ images := '(
     ["sway-atomic"]="sway-atomic"
     ["budgie-atomic"]="budgie-atomic"
     ["cosmic-atomic"]="cosmic-atomic"
-    ["sericea"]="sway-atomic"
-    ["onyx"]="budgie-atomic"
-    ["lazurite"]="lxqt-atomic"
-    ["vauxite"]="xfce-atomic"
 )'
 
 # Fedora Versions

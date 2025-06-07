@@ -17,15 +17,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # TODO: Change to new names when GTS = F42
         image_name:
           - base
-          - silverblue
           - kinoite
-          - sericea
-          - onyx
-          - lazurite
-          - vauxite
+          - silverblue
         image_variant:
           - main
           - nvidia
