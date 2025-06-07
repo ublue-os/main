@@ -19,8 +19,8 @@ jobs:
       matrix:
         image_name:
           - base
-          - silverblue
           - kinoite
+          - silverblue
           - sway-atomic
           - budgie-atomic
           - cosmic-atomic

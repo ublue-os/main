@@ -21,11 +21,8 @@ jobs:
       matrix:
         image_name:
           - base
-          - silverblue
           - kinoite
-          - sway-atomic
-          - budgie-atomic
-          - cosmic-atomic
+          - silverblue
         image_variant:
           - main
           - nvidia
