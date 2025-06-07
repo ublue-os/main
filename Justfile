@@ -35,11 +35,8 @@ image-file := justfile_dir() / "image-versions.yaml"
 [private]
 images := '(
     ["base"]="base-atomic"
-    ["silverblue"]="silverblue"
     ["kinoite"]="kinoite"
-    ["sway-atomic"]="sway-atomic"
-    ["budgie-atomic"]="budgie-atomic"
-    ["cosmic-atomic"]="cosmic-atomic"
+    ["silverblue"]="silverblue"
 )'
 
 # Fedora Versions
