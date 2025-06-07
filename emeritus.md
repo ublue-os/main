@@ -10,3 +10,5 @@ The following contributors have become legend, forever enshrined as masters of a
 - [@bobslept](https://github.com/bobslept)
 - [@akdev1l](https://github.com/akdevl1)
 - [@noelmiller](https://github.com/noelmiller)
+- @jstone
+- [@fiftydinar](https://github.com/fiftydinar)
