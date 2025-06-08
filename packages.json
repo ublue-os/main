@@ -73,12 +73,6 @@
                 "ksshaskpass",
                 "qt6-qtimageformats"
             ],
-            "sway-atomic": [
-                "clipman",
-                "gvfs-mtp",
-                "thunar-volman",
-                "tumbler"
-            ]
         },
         "exclude": {
             "all": ["google-noto-sans-cjk-vf-fonts", "default-fonts-cjk-sans"],
@@ -92,7 +86,6 @@
     "41": {
         "include": {
             "all": [],
-            "sericea": ["clipman", "gvfs-mtp", "thunar-volman", "tumbler"]
         },
         "exclude": {
             "all": []
@@ -101,7 +94,6 @@
     "42": {
         "include": {
             "all": [],
-            "sway-atomic": []
         },
         "exclude": {
             "all": []
