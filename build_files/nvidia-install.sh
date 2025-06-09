@@ -114,11 +114,6 @@ sed -i 's@omit_drivers@force_drivers@g' /usr/lib/dracut/dracut.conf.d/99-nvidia.
 # as we need forced load, also mustpre-load intel/amd iGPU else chromium web browsers fail to use hardware acceleration
 sed -i 's@ nvidia @ i915 amdgpu nvidia @g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
 
-if [[ "${IMAGE_NAME}" =~ sericea|sway-atomic ]]; then
-    mv /etc/sway/environment{,.orig}
-    install -Dm644 /usr/share/ublue-os/etc/sway/environment /etc/sway/environment
-fi
-
 # re-enable negativo17-mutlimedia since we disabled it
 if [[ "${NEGATIVO17_MULT_PREV_ENABLED}" = "Y" ]]; then
     sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-multimedia.repo

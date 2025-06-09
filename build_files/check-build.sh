@@ -25,19 +25,6 @@ case "${VARIANT_ID:-}" in
         sddm
     )
     ;;
-"budgie-atomic")
-    IMPORTANT_PACKAGES+=(
-        lightdm
-        magpie
-        budgie-desktop
-    )
-    ;;
-"sway-atomic")
-    IMPORTANT_PACKAGES+=(
-        sddm
-        sway
-    )
-    ;;
 *) ;;
 esac
 
