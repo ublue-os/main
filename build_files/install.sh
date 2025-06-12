@@ -93,6 +93,11 @@ if [[ "$IMAGE_NAME" == "silverblue" ]]; then
     dnf5 versionlock add gnome-software
 fi
 
+# Prevent partial QT upgrades that may break SDDM/KWin
+if [[ "$IMAGE_NAME" == "kinoite" ]]; then
+    dnf5 versionlock add "qt6-*"
+fi
+
 # run common packages script
 /ctx/packages.sh
 
