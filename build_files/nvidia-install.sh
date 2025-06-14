@@ -3,20 +3,18 @@
 set -ouex pipefail
 
 RELEASE="$(rpm -E %fedora)"
-AKMODNV_PATH=${AKMODNV_PATH:-/tmp/akmods-rpms}
+: "${AKMODNV_PATH:=/tmp/akmods-rpms}"
 
 # this is only to aid in human understanding of any issues in CI
 find "${AKMODNV_PATH}"/
 
-if [[ ! $(command -v dnf5) ]]; then
+if ! command -v dnf5 >/dev/null; then
     echo "Requires dnf5... Exiting"
     exit 1
 fi
 
 # disable any remaining rpmfusion repos
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion*.repo
-
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
+dnf5 config-manager setopt "rpmfusion*".enabled=0 fedora-cisco-openh264.enabled=0
 
 ## nvidia install steps
 dnf5 install -y "${AKMODNV_PATH}"/ublue-os/ublue-os-nvidia-addons-*.rpm
@@ -43,15 +41,14 @@ fi
 dnf5 install -y "${MULTILIB[@]}"
 
 # enable repos provided by ublue-os-nvidia-addons
-sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
-sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/nvidia-container-toolkit.repo
+dnf5 config-manager setopt fedora-nvidia.enabled=1 nvidia-container-toolkit.enabled=1
 
 # Disable Multimedia
 NEGATIVO17_MULT_PREV_ENABLED=N
-if [[ -f /etc/yum.repos.d/negativo17-fedora-multimedia.repo ]] && grep -q "enabled=1" /etc/yum.repos.d/negativo17-fedora-multimedia.repo; then
+if dnf5 repolist --enabled | grep -q "fedora-multimedia"; then
     NEGATIVO17_MULT_PREV_ENABLED=Y
     echo "disabling negativo17-fedora-multimedia to ensure negativo17-fedora-nvidia is used"
-    sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
+    dnf5 config-manager setopt fedora-multimedia.enabled=0
 fi
 
 # Enable staging for supergfxctl if repo file exists
@@ -94,8 +91,7 @@ fi
 
 ## nvidia post-install steps
 # disable repos provided by ublue-os-nvidia-addons
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/nvidia-container-toolkit.repo
+dnf5 config-manager setopt fedora-nvidia.enabled=0 nvidia-container-toolkit.enabled=0
 
 # Disable staging
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/_copr_ublue-os-staging.repo
@@ -121,5 +117,5 @@ fi
 
 # re-enable negativo17-mutlimedia since we disabled it
 if [[ "${NEGATIVO17_MULT_PREV_ENABLED}" = "Y" ]]; then
-    sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
+    dnf5 config-manager setopt fedora-multimedia.enabled=1
 fi
