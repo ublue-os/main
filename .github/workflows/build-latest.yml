@@ -21,9 +21,6 @@ jobs:
           - base
           - kinoite
           - silverblue
-          - sway-atomic
-          - budgie-atomic
-          - cosmic-atomic
         image_variant:
           - main
           - nvidia
