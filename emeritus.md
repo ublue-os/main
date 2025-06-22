@@ -12,3 +12,4 @@ The following contributors have become legend, forever enshrined as masters of a
 - [@noelmiller](https://github.com/noelmiller)
 - @jstone
 - [@fiftydinar](https://github.com/fiftydinar)
+- [@xynydev](https://github.com/xynydev)
