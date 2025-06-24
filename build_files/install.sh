@@ -18,6 +18,10 @@ fi
 dnf5 -y swap --repo='fedora' \
     OpenCL-ICD-Loader ocl-icd
 
+# Downgrade and versionlock glibc
+dnf5 -y downgrade glibc-2.41-5.fc"$(rpm -E %fedora)"
+dnf5 versionlock add glibc
+
 # Add COPRs
 dnf5 -y copr enable ublue-os/packages
 dnf5 -y copr enable ublue-os/staging
