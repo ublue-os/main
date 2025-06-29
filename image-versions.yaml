@@ -10,11 +10,11 @@ images:
   - name: base-atomic-41
     image: quay.io/fedora-ostree-desktops/base-atomic
     tag: 41
-    digest: sha256:d6cad8fe4ef6be9707fedcb34e3fa81544d27f6f6f2d6a3808378964843f0b7a
+    digest: sha256:b9558072e3df528627d42d6995357282ef9bf400587782fa9dbc04905872e5e0
   - name: silverblue-41
     image: quay.io/fedora-ostree-desktops/silverblue
     tag: 41
-    digest: sha256:66948308e65c2003320890d4e49424d81b562141802bfa4ad91f75c1c278d4e2
+    digest: sha256:cbb0231ef556ee5825bb6952ec466535f6e4c2274bc2707f32cbe49f3cc255a9
   - name: kinoite-41
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 41
@@ -22,7 +22,7 @@ images:
   - name: sway-atomic-41
     image: quay.io/fedora-ostree-desktops/sway-atomic
     tag: 41
-    digest: sha256:0e37037dec2686ad12737e2ff3f007afade15c353c6b09a05492b0f7c32b2810
+    digest: sha256:d1536bd1e049e077068ac95c5a94cc9395bf157640639fd879327f46cd4f42c7
   - name: budgie-atomic-41
     image: quay.io/fedora-ostree-desktops/budgie-atomic
     tag: 41
@@ -30,7 +30,7 @@ images:
   - name: lxqt-atomic-41
     image: quay.io/fedora-ostree-desktops/lxqt-atomic
     tag: 41
-    digest: sha256:a809c1bffc99d735f360afd9ba96371d0eced920ad0bdd1802666f4cd94e3ae3
+    digest: sha256:02c040b50e241c8142cba481d7bbb29a18a5f2174e1c151b9d7c41d772918d28
   - name: xfce-atomic-41
     image: quay.io/fedora-ostree-desktops/xfce-atomic
     tag: 41
@@ -55,7 +55,7 @@ images:
   - name: kinoite-42
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 42
-    digest: sha256:bbd1c78dddd48826f920bec7a19c356ea9ebf51846a16c7568742d32fc38f07b
+    digest: sha256:8b6bba93da483e951a9ac7a94af993feb5edfbaf789b0119b33eeb033d8acc67
   - name: sway-atomic-42
     image: quay.io/fedora-ostree-desktops/sway-atomic
     tag: 42
@@ -63,7 +63,7 @@ images:
   - name: budgie-atomic-42
     image: quay.io/fedora-ostree-desktops/budgie-atomic
     tag: 42
-    digest: sha256:5e239cd22f5e2ec3f6d2ca04ce5d5c3e27f6b7cb45dd38f4c3dd1f519e98cc3c
+    digest: sha256:a0f44e4a2e9ec7850acd99efab47ca63bc62bfb251ef071836ff61747020c45a
   - name: cosmic-atomic-42
     image: quay.io/fedora-ostree-desktops/cosmic-atomic
     tag: 42
