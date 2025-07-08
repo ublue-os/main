@@ -21,9 +21,81 @@ env:
   SET_X: 1
 
 jobs:
+  check-build-required:
+    name: Check if build is required
+    runs-on: ubuntu-latest
+    outputs:
+      build_required: ${{ steps.check.outputs.build_required }}
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main
+          fetch-depth: 0
+
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          path: pr
+          fetch-depth: 0
+
+      - name: Compare image digests to determine if build is required
+        if: ${{ github.actor == 'ubot-7274[bot]' || github.actor == 'p5' }}
+        id: check
+        shell: bash
+        env:
+          IMAGE_NAME: ${{ inputs.image_name }}
+          IMAGE_VERSION: ${{ inputs.image_version }}
+          IMAGE_VARIANT: ${{ inputs.image_variant }}
+        run: |
+          set -e
+
+          BASE_NAME="${IMAGE_NAME}-${IMAGE_VERSION}"
+          AKMODS_NAME="akmods-${IMAGE_VERSION}"
+
+          OLD_BASE_DIGEST=$(yq -r ".images[] | select(.name == \"${BASE_NAME}\") | .digest" main/image-versions.yaml)
+          NEW_BASE_DIGEST=$(yq -r ".images[] | select(.name == \"${BASE_NAME}\") | .digest" pr/image-versions.yaml)
+
+          OLD_AKMODS_DIGEST=$(yq -r ".images[] | select(.name == \"${AKMODS_NAME}\") | .digest" main/image-versions.yaml)
+          NEW_AKMODS_DIGEST=$(yq -r ".images[] | select(.name == \"${AKMODS_NAME}\") | .digest" pr/image-versions.yaml)
+
+          echo "Comparing digests:"
+          echo "Base image old: ${OLD_BASE_DIGEST}, new: ${NEW_BASE_DIGEST}"
+          echo "Akmods image old: ${OLD_AKMODS_DIGEST}, new: ${NEW_AKMODS_DIGEST}"
+
+          BUILD_REQUIRED=false
+
+          if [ "$OLD_BASE_DIGEST" != "$NEW_BASE_DIGEST" ]; then
+            echo "Base digest changed."
+            BUILD_REQUIRED=true
+          fi
+
+          if [ "$OLD_AKMODS_DIGEST" != "$NEW_AKMODS_DIGEST" ]; then
+            echo "Akmods digest changed."
+            BUILD_REQUIRED=true
+          fi
+
+          if [ "${IMAGE_VARIANT}" == "nvidia" ]; then
+            AKMODS_NVIDIA_NAME="akmods-nvidia-open-${IMAGE_VERSION}"
+            OLD_AKMODS_NVIDIA_DIGEST=$(yq -r ".images[] | select(.name == \"${AKMODS_NVIDIA_NAME}\") | .digest" main/image-versions.yaml)
+            NEW_AKMODS_NVIDIA_DIGEST=$(yq -r ".images[] | select(.name == \"${AKMODS_NVIDIA_NAME}\") | .digest" pr/image-versions.yaml)
+
+            echo "Akmods-NVIDIA image old: ${OLD_AKMODS_NVIDIA_DIGEST}, new: ${NEW_AKMODS_NVIDIA_DIGEST}"
+
+            if [ "$OLD_AKMODS_NVIDIA_DIGEST" != "$NEW_AKMODS_NVIDIA_DIGEST" ]; then
+              echo "Akmods-NVIDIA digest changed."
+              BUILD_REQUIRED=true
+            fi
+          fi
+
+          echo "build_required=${BUILD_REQUIRED}" >> "$GITHUB_OUTPUT"
+
   build_ublue:
     name: main
     runs-on: ubuntu-24.04
+    needs: check-build-required
+    if: ${{ needs.check-build-required.outputs.build_required == 'true' }}
     permissions:
       contents: read
       packages: write
