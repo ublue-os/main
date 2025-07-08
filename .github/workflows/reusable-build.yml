@@ -55,7 +55,7 @@ jobs:
           set -e
 
           # Fetch version from the Justfile
-          IMAGE_VERSION=$(just -f ./pr/Justfile version "${IMAGE_VERSION_ALIAS}")
+          IMAGE_VERSION=$(just -f ./pr/Justfile --evaluate "${IMAGE_VERSION_ALIAS}")
 
           BASE_NAME="${IMAGE_NAME}-${IMAGE_VERSION}"
           AKMODS_NAME="akmods-${IMAGE_VERSION}"

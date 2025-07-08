@@ -139,11 +139,6 @@ function pull-retry() {
 _default:
     @{{ just }} --list
 
-# Query version
-[group('Utility')]
-version alias:
-    @just --justfile {{justfile()}} --evaluate {{alias}} | cut -d'=' -f2 | xargs echo
-
 # Run a Container
 [group('Container')]
 run-container $image_name="" $fedora_version="" $variant="":
