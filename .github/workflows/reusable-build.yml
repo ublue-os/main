@@ -40,16 +40,23 @@ jobs:
           path: pr
           fetch-depth: 0
 
+      - name: Setup Just
+        # yamllint disable-line rule:line-length rule:comments
+        uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff # v3
+
       - name: Compare image digests to determine if build is required
         if: ${{ github.actor == 'ubot-7274[bot]' || github.actor == 'p5' }}
         id: check
         shell: bash
         env:
           IMAGE_NAME: ${{ inputs.image_name }}
-          IMAGE_VERSION: ${{ inputs.image_version }}
+          IMAGE_VERSION_ALIAS: ${{ inputs.image_version }}
           IMAGE_VARIANT: ${{ inputs.image_variant }}
         run: |
           set -e
+
+          # Fetch version from the Justfile
+          IMAGE_VERSION=$(just -f ./pr/Justfile version "${IMAGE_VERSION_ALIAS}")
 
           BASE_NAME="${IMAGE_NAME}-${IMAGE_VERSION}"
           AKMODS_NAME="akmods-${IMAGE_VERSION}"
@@ -87,6 +94,14 @@ jobs:
               echo "Akmods-NVIDIA digest changed."
               BUILD_REQUIRED=true
             fi
+          fi
+
+          # If any file other than the image-versions.yaml has changed, we also need to build.
+          if ! git diff --name-only main pr | grep -qv 'image-versions.yaml'; then
+            echo "No other files changed."
+          else
+            echo "Other files changed, setting BUILD_REQUIRED to true."
+            BUILD_REQUIRED=true
           fi
 
           echo "build_required=${BUILD_REQUIRED}" >> "$GITHUB_OUTPUT"
