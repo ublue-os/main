@@ -45,7 +45,6 @@ jobs:
         uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff # v3
 
       - name: Compare image digests to determine if build is required
-        if: ${{ github.actor == 'ubot-7274[bot]' || github.actor == 'p5' }}
         id: check
         shell: bash
         env:
