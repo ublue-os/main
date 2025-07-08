@@ -27,4 +27,4 @@ jobs:
     with:
       image_name: ${{ matrix.image_name }}
       image_variant: ${{ matrix.image_variant }}
-      image_version: 41
+      image_version: gts
