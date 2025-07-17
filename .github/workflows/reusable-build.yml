@@ -185,6 +185,7 @@ jobs:
               "${{ steps.registry_case.outputs.lowercase }}"
 
       - name: SBOM Setup
+        if: false
         run: |
           set -eou pipefail
           echo "=== FREE SPACE ==="
