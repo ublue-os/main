@@ -23,7 +23,7 @@ dnf5 -y copr enable ublue-os/packages
 dnf5 -y copr enable ublue-os/staging
 dnf5 -y copr enable kylegospo/oversteer
 
-# Install ublue-os pacakges, fedora archives,and zstd
+# Install ublue-os packages, fedora archives,and zstd
 dnf5 -y install \
     ublue-os-just \
     ublue-os-luks \
