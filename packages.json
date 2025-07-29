@@ -54,7 +54,7 @@
                 "tcpdump",
                 "tmux",
                 "traceroute",
-		"usbmuxd",
+                "usbmuxd",
                 "vim",
                 "wireguard-tools",
                 "wl-clipboard",
