@@ -30,7 +30,7 @@
                 "libcamera-ipa",
                 "libfdk-aac",
                 "libheif",
-		"libimobiledevice-utils",
+                "libimobiledevice-utils",
                 "libratbag-ratbagd",
                 "libva-utils",
                 "lshw",
