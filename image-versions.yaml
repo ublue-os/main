@@ -26,7 +26,7 @@ images:
   - name: budgie-atomic-41
     image: quay.io/fedora-ostree-desktops/budgie-atomic
     tag: 41
-    digest: sha256:15ece94392f2ac29930d5681434613193aa3deddc3b94878c18dbeb030b3ea48
+    digest: sha256:a9a6aac7e410bbb6c298d787fd3efc6b01ca3564bfad2fdc3b54f96de404aeaf
   - name: lxqt-atomic-41
     image: quay.io/fedora-ostree-desktops/lxqt-atomic
     tag: 41
