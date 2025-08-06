@@ -14,11 +14,11 @@ images:
   - name: silverblue-41
     image: quay.io/fedora-ostree-desktops/silverblue
     tag: 41
-    digest: sha256:b9a637b688630be10eeeee35d08921b5365ce38c730e0ea8b1ea90ad0b13ba7d
+    digest: sha256:ea244c24d3b9d5b83073f5581ac1718ff486392313ded34351893c319cb6e382
   - name: kinoite-41
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 41
-    digest: sha256:4002f7cab1b6e6906849db68d37b52f7bd3468735777d5174610dbf798c0591f
+    digest: sha256:0cd0fcb3121e95959105efecbf546cca6310b08ab78aeee356537d9fd7cc49b7
   - name: sway-atomic-41
     image: quay.io/fedora-ostree-desktops/sway-atomic
     tag: 41
@@ -26,15 +26,15 @@ images:
   - name: budgie-atomic-41
     image: quay.io/fedora-ostree-desktops/budgie-atomic
     tag: 41
-    digest: sha256:e73ab6f07e342143166cf9ae1bc7a9dce106cb824894375ff8dfb4d9611222b2
+    digest: sha256:0e8975ea9aa2276c269ee241e26c2183a1594813f83e028a8e29ac3867022bc3
   - name: lxqt-atomic-41
     image: quay.io/fedora-ostree-desktops/lxqt-atomic
     tag: 41
-    digest: sha256:4fe6f9d6fecc083b33f8fb71ccc3d2a78b8c8c95fc8ded8bde4ed10a94571837
+    digest: sha256:5e2fc2c0c708ad0bf3ac1b56a819ad1c4e44d77c2fde079550acfc97a954a6ec
   - name: xfce-atomic-41
     image: quay.io/fedora-ostree-desktops/xfce-atomic
     tag: 41
-    digest: sha256:bae9b684f5a4ed46f14ae306af40460e77a1bde826b4e9660e3c2eb3e1f35d1e
+    digest: sha256:e2f2bdea204127e1953bd3a0cc6d5a2c479a1b5aa0820b4ac15dbaaf07420779
 
   - name: akmods-42
     image: ghcr.io/ublue-os/akmods
@@ -63,8 +63,8 @@ images:
   - name: budgie-atomic-42
     image: quay.io/fedora-ostree-desktops/budgie-atomic
     tag: 42
-    digest: sha256:6a18516fac2b9fee586b54c1053af6643571b5f762b4cad07e6ca3b96627d09e
+    digest: sha256:1cf776b9d3fc12308baec26a7d79fbc951fd2d0d9df66fcecf94c586db7b58d9
   - name: cosmic-atomic-42
     image: quay.io/fedora-ostree-desktops/cosmic-atomic
     tag: 42
-    digest: sha256:0c17e4910174746d085c8e8438434c64d31eb04a778fa25963823bcca8691238
+    digest: sha256:7d91643a659d1f118781a114bdca366c52380f977ce9715ff46d561929f17da7
