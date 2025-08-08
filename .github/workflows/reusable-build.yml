@@ -97,11 +97,26 @@ jobs:
 
           # If any file other than image-versions.yaml has changed, we also need to build.
           echo "Checking for changes outside image-versions.yaml..."
-          CHANGED_FILES=$(diff -rq --exclude='.git' main/ pr/ | grep -v 'Only in.*/image-versions.yaml' || true)
 
-          if [[ -n "$CHANGED_FILES" ]]; then
+          # Run recursive diff and collect output
+          ALL_DIFFS=$(diff -rq --exclude='.git' main/ pr/ || true)
+
+          # Define exclusions (as regex patterns)
+          EXCLUDED_DIFF_PATTERNS=(
+            "Only in.*/image-versions.yaml"
+            "Files .*image-versions.yaml and .*image-versions.yaml differ"
+          )
+
+          # Filter out excluded diffs
+          FILTERED_DIFFS="$ALL_DIFFS"
+          for pattern in "${EXCLUDED_DIFF_PATTERNS[@]}"; do
+            FILTERED_DIFFS=$(echo "$FILTERED_DIFFS" | grep -Ev "$pattern" || true)
+          done
+
+          # Output filtered changes
+          if [[ -n "$FILTERED_DIFFS" ]]; then
             echo "Other files changed:"
-            echo "$CHANGED_FILES"
+            echo "$FILTERED_DIFFS"
             BUILD_REQUIRED=true
           else
             echo "No other files changed."
