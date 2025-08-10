@@ -24,6 +24,10 @@ cp /usr/share/ublue-os/update-services/etc/rpm-ostreed.conf /etc/rpm-ostreed.con
 # Fix cjk fonts
 ln -s "/usr/share/fonts/google-noto-sans-cjk-fonts" "/usr/share/fonts/noto-cjk"
 
+# Add linuxbrew to the list of paths usable by `sudo`
+# Even though brew isn't installed as part of this image, it's fine to add it here as it's reused by multiple ublue images
+sed -Ei "s/secure_path = (.*)/secure_path = \1:\/home\/linuxbrew\/.linuxbrew\/bin/" /etc/sudoers
+
 # Remove coprs
 dnf5 -y copr remove ublue-os/staging
 dnf5 -y copr remove ublue-os/packages
