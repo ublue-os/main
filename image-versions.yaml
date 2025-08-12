@@ -18,7 +18,7 @@ images:
   - name: kinoite-41
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 41
-    digest: sha256:3745c6a3b399f7789626f3901cacf8af3b85106803381235a478761a4837a793
+    digest: sha256:57d47342ddb0ee21c4e11df309e3b06059412f796e46b976c26ead6fa4aab241
   - name: sway-atomic-41
     image: quay.io/fedora-ostree-desktops/sway-atomic
     tag: 41
