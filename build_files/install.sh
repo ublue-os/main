@@ -92,6 +92,11 @@ if [[ "$IMAGE_NAME" == "silverblue" ]]; then
     dnf5 versionlock add gnome-software
 fi
 
+# Remove Fedora Flatpak and related packages
+dnf5 remove -y \
+    fedora-flathub-remote \
+    fedora-third-party
+
 # Prevent partial QT upgrades that may break SDDM/KWin
 if [[ "$IMAGE_NAME" == "kinoite" ]]; then
     dnf5 versionlock add "qt6-*"
@@ -108,3 +113,8 @@ fi
 CSFG=/usr/lib/systemd/system-generators/coreos-sulogin-force-generator
 curl -sSLo ${CSFG} https://raw.githubusercontent.com/coreos/fedora-coreos-config/refs/heads/stable/overlay.d/05core/usr/lib/systemd/system-generators/coreos-sulogin-force-generator
 chmod +x ${CSFG}
+
+# Cleanup
+dnf5 -y copr disable kylegospo/oversteer
+dnf5 -y copr disable ublue-os/packages
+dnf5 -y copr disable ublue-os/staging
