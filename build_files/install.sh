@@ -117,7 +117,3 @@ fi
 CSFG=/usr/lib/systemd/system-generators/coreos-sulogin-force-generator
 curl -sSLo ${CSFG} https://raw.githubusercontent.com/coreos/fedora-coreos-config/refs/heads/stable/overlay.d/05core/usr/lib/systemd/system-generators/coreos-sulogin-force-generator
 chmod +x ${CSFG}
-
-# Cleanup
-dnf5 -y copr disable ublue-os/packages
-dnf5 -y copr disable ublue-os/staging
