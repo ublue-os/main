@@ -96,6 +96,11 @@ dnf5 remove -y \
     fedora-flathub-remote \
     fedora-third-party
 
+# Add Flathub to the image for application, ensure Fedora's repository's service is overridden.
+mkdir -p /etc/flatpak/remotes.d/
+curl --retry 3 -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub.org/repo/flathub.flatpakrepo
+mv -f /usr/lib/systemd/system/flatpak-add-flathub-repos.service /usr/lib/systemd/system/flatpak-add-fedora-repos.service
+
 # Prevent partial QT upgrades that may break SDDM/KWin
 if [[ "$IMAGE_NAME" == "kinoite" ]]; then
     dnf5 versionlock add "qt6-*"
