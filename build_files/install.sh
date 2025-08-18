@@ -95,7 +95,7 @@ fi
 dnf5 remove -y \
     fedora-flathub-remote
 
-# fedora-third-party has a trojan horse via plasma-discover requiring it in it's spec, replace it with a dummy package.
+# fedora-third-party has a trojan horse via plasma-discover requiring it in its spec, replace it with a dummy package.
 dnf5 swap -y \
     fedora-third-party ublue-os-flatpak
 
