@@ -1,5 +1,5 @@
 [Unit]
-Description=Add Flathub flatpak repositories, modified from Fedora's own insertion into the flatpak package to remove fedora's repo entirely.
+Description=Add Flathub flatpak repositories. This replaces a service included by Fedora that normally installs a defective repo.
 ConditionPathExists=!/var/lib/flatpak/.ublue-initialized
 Before=flatpak-system-helper.service
 
