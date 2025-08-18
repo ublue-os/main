@@ -21,7 +21,6 @@ dnf5 -y swap --repo='fedora' \
 # Add COPRs
 dnf5 -y copr enable ublue-os/packages
 dnf5 -y copr enable ublue-os/staging
-dnf5 -y copr enable kylegospo/oversteer
 
 # Install ublue-os packages, fedora archives,and zstd
 dnf5 -y install \
@@ -115,6 +114,5 @@ curl -sSLo ${CSFG} https://raw.githubusercontent.com/coreos/fedora-coreos-config
 chmod +x ${CSFG}
 
 # Cleanup
-dnf5 -y copr disable kylegospo/oversteer
 dnf5 -y copr disable ublue-os/packages
 dnf5 -y copr disable ublue-os/staging
