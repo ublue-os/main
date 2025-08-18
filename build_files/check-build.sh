@@ -16,6 +16,7 @@ case "${VARIANT_ID:-}" in
         gdm
         mutter
         gnome-session
+        gnome-software
     )
     ;;
 "kinoite")
@@ -23,6 +24,7 @@ case "${VARIANT_ID:-}" in
         kwin
         plasma-desktop
         sddm
+        plasma-discover
     )
     ;;
 "budgie-atomic")
@@ -30,6 +32,7 @@ case "${VARIANT_ID:-}" in
         lightdm
         magpie
         budgie-desktop
+        plasma-discover
     )
     ;;
 "sway-atomic")
