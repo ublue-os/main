@@ -96,6 +96,13 @@ dnf5 remove -y \
     fedora-flathub-remote \
     fedora-third-party
 
+# Add Flathub to the image for eventual application
+mkdir -p /etc/flatpak/remotes.d/
+curl --retry 3 -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub.org/repo/flathub.flatpakrepo
+
+# Fedora Flatpak service is a part of the flatpak package, ensure it's overridden by moving to replace it at the end of the build.
+mv -f /usr/lib/systemd/system/flatpak-add-flathub-repos.service /usr/lib/systemd/system/flatpak-add-fedora-repos.service
+
 # Prevent partial QT upgrades that may break SDDM/KWin
 if [[ "$IMAGE_NAME" == "kinoite" ]]; then
     dnf5 versionlock add "qt6-*"
@@ -112,7 +119,3 @@ fi
 CSFG=/usr/lib/systemd/system-generators/coreos-sulogin-force-generator
 curl -sSLo ${CSFG} https://raw.githubusercontent.com/coreos/fedora-coreos-config/refs/heads/stable/overlay.d/05core/usr/lib/systemd/system-generators/coreos-sulogin-force-generator
 chmod +x ${CSFG}
-
-# Cleanup
-dnf5 -y copr disable ublue-os/packages
-dnf5 -y copr disable ublue-os/staging
