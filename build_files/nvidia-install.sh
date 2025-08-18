@@ -13,8 +13,13 @@ if ! command -v dnf5 >/dev/null; then
     exit 1
 fi
 
-# disable any remaining rpmfusion repos
-dnf5 config-manager setopt "rpmfusion*".enabled=0 fedora-cisco-openh264.enabled=0
+# Check if any rpmfusion repos exist before trying to disable them
+if dnf5 repolist --all | grep -q rpmfusion; then
+    dnf5 config-manager setopt "rpmfusion*".enabled=0
+fi
+
+# Always try to disable cisco repo (or add similar check)
+dnf5 config-manager setopt fedora-cisco-openh264.enabled=0
 
 ## nvidia install steps
 dnf5 install -y "${AKMODNV_PATH}"/ublue-os/ublue-os-nvidia-addons-*.rpm
