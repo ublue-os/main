@@ -1,0 +1,15 @@
+[Unit]
+Description=Add Flathub flatpak repositories, modified from Fedora's own insertion into the flatpak package to remove fedora's repo entirely.
+ConditionPathExists=!/var/lib/flatpak/.ublue-initialized
+Before=flatpak-system-helper.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+ExecStart=/usr/bin/flatpak remote-add --system --if-not-exists --disable --title "Fedora Flatpaks" fedora oci+https://registry.fedoraproject.org
+ExecStart=/usr/bin/flatpak remote-add --system --if-not-exists --disable --title "Fedora Flatpaks (testing)" fedora-testing oci+https://registry.fedoraproject.org#testing
+ExecStartPost=/usr/bin/touch /var/lib/flatpak/.ublue-initialized
+
+[Install]
+WantedBy=multi-user.target
