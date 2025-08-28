@@ -18,7 +18,7 @@ images:
   - name: kinoite-41
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 41
-    digest: sha256:4bd923d557e67ce02386e49c98856da1b31559a957ed19fa8f86106679b30389
+    digest: sha256:7b604266ae857d394b5507985cb97ec9b14999b2d3a3d533f775f4fb1fb5871e
   - name: sway-atomic-41
     image: quay.io/fedora-ostree-desktops/sway-atomic
     tag: 41
@@ -26,7 +26,7 @@ images:
   - name: budgie-atomic-41
     image: quay.io/fedora-ostree-desktops/budgie-atomic
     tag: 41
-    digest: sha256:b1b2a0b08dcc45fbaa65462341d2e9441ce3c75f6f166762ab9b4246190e95a1
+    digest: sha256:e1bb2a2e2f9c1c8865b1539ba0d6dbc1f96b6c9b39dc35690ce26b7ab02b92d2
   - name: lxqt-atomic-41
     image: quay.io/fedora-ostree-desktops/lxqt-atomic
     tag: 41
@@ -34,7 +34,7 @@ images:
   - name: xfce-atomic-41
     image: quay.io/fedora-ostree-desktops/xfce-atomic
     tag: 41
-    digest: sha256:a7abeb57e448593dc65c67e87eeec718a09df677e06b8536c3317d5469844090
+    digest: sha256:7e47a8c5d2fbcd5f3809a458bcc716cb712a4992684156a48edb2ec3794b41af
 
   - name: akmods-42
     image: ghcr.io/ublue-os/akmods
