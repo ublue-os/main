@@ -1,5 +1,62 @@
 # Changelog
 
+## 1.0.0 (2025-09-06)
+
+
+### Features
+
+* add cosmic build ([#788](https://github.com/ublue-os/main/issues/788)) ([4ffd509](https://github.com/ublue-os/main/commit/4ffd509a20887778ddc84d4e400b5a519f0e45b9))
+* add fcitx5 packages ([#913](https://github.com/ublue-os/main/issues/913)) ([4d1a14d](https://github.com/ublue-os/main/commit/4d1a14d9ef25d88e1b59c0b6cf01fde005ec8c89))
+* Add libimobiledevice-utils, usbmuxd for interacting with iDevices ([#1082](https://github.com/ublue-os/main/issues/1082)) ([977d664](https://github.com/ublue-os/main/commit/977d66405a299498531bd6c125d4ac500e90520c))
+* add linuxbrew path to sudoers secure_path ([#1140](https://github.com/ublue-os/main/issues/1140)) ([04cf800](https://github.com/ublue-os/main/commit/04cf800afcd02e27a33c1a11cef00d394a2e16ef))
+* add self to emeritus ([#975](https://github.com/ublue-os/main/issues/975)) ([feccca8](https://github.com/ublue-os/main/commit/feccca83190b087ec02a3d60b53c0a2d24c544ae))
+* bump latest to F42, bump GTS to F41, deprecate F40 ([#785](https://github.com/ublue-os/main/issues/785)) ([e372745](https://github.com/ublue-os/main/commit/e372745281203d32727bad3e6347336640abe556))
+* check for the existence of the upstream software stores ([#1180](https://github.com/ublue-os/main/issues/1180)) ([8b48302](https://github.com/ublue-os/main/commit/8b48302b5cf5770b491664ba6f69bf59a9c6645c))
+* **ci:** add registry cleanup script ([#680](https://github.com/ublue-os/main/issues/680)) ([1e2bc12](https://github.com/ublue-os/main/commit/1e2bc1205d9807049b5248a105e65eb54e2801cd))
+* cleanup coredumps after 5 days ([#1231](https://github.com/ublue-os/main/issues/1231)) ([100455e](https://github.com/ublue-os/main/commit/100455e74fcee8c8f9ca762b0d00acab6366d2d2))
+* cleanup justfile and use just to build ([#770](https://github.com/ublue-os/main/issues/770)) ([fd623d7](https://github.com/ublue-os/main/commit/fd623d756049a5a5979781fa96a1c3b13709c7e1))
+* Remove Fedora Filtered Flathub, RPM Fusion Steam, and other worthless repositories. ([#1174](https://github.com/ublue-os/main/issues/1174)) ([186df39](https://github.com/ublue-os/main/commit/186df39c2e81e3922dd90cb5cf18bdeb0336f09f))
+* Replace gnome-software with non-dkms version on F41 and above. ([#671](https://github.com/ublue-os/main/issues/671)) ([90054b9](https://github.com/ublue-os/main/commit/90054b90907a9e403ea626e637ca367f78694cc3))
+* Switch to dnf5, F42 ([#766](https://github.com/ublue-os/main/issues/766)) ([a1ba197](https://github.com/ublue-os/main/commit/a1ba1973eaa8415882cb4d2508b6e39c330eb926))
+* update emeritus.md ([#914](https://github.com/ublue-os/main/issues/914)) ([1f7d21e](https://github.com/ublue-os/main/commit/1f7d21e59c0d0818bac148c6ce0d4177e7fe5f19))
+
+
+### Bug Fixes
+
+* added 42 badge ([#789](https://github.com/ublue-os/main/issues/789)) ([8c0728b](https://github.com/ublue-os/main/commit/8c0728b4638e20b3e76422ee2d888415bef795d1))
+* change just's Chinese readme file name to prevent deploy issues ([#771](https://github.com/ublue-os/main/issues/771)) ([0b98781](https://github.com/ublue-os/main/commit/0b98781bd50baddb8886f8cea2a76cb3b8668812))
+* **ci:** disable SBOM setup step ([#1055](https://github.com/ublue-os/main/issues/1055)) ([f58aae9](https://github.com/ublue-os/main/commit/f58aae954d0a9975a232d4f13e2c9a7c30678c3b))
+* **ci:** fix logic to determine whether builds are required ([#1132](https://github.com/ublue-os/main/issues/1132)) ([b655640](https://github.com/ublue-os/main/commit/b655640c0e475c2eecaccc20575e06a0ef9be009))
+* **ci:** Get Digest from the remote for signing ([#856](https://github.com/ublue-os/main/issues/856)) ([0a47bdc](https://github.com/ublue-os/main/commit/0a47bdc680a19ae5eec5e4f9e2ea9cf8fedbe690))
+* **ci:** group and automerge akmods updates ([#798](https://github.com/ublue-os/main/issues/798)) ([ddee958](https://github.com/ublue-os/main/commit/ddee958f126870ce486bbf73b9140b193f471b8e))
+* **ci:** reference upstream cosign public keys from main branch ([#1224](https://github.com/ublue-os/main/issues/1224)) ([91e8fd9](https://github.com/ublue-os/main/commit/91e8fd9c29f2bdc7e70e3311c690ed2dee6b2141))
+* **ci:** use digest when extracting kernel versions ([#814](https://github.com/ublue-os/main/issues/814)) ([e736a99](https://github.com/ublue-os/main/commit/e736a999e5006bae60c2ce975dc3b3f45bf2c2af))
+* **ci:** Use podman push instead of skopeo copy ([#854](https://github.com/ublue-os/main/issues/854)) ([f87420c](https://github.com/ublue-os/main/commit/f87420c1dfa6fe211217a1a910c46c3668c2666e))
+* Ensure flathub flatpakrepo file is present in-image ([#1178](https://github.com/ublue-os/main/issues/1178)) ([3432983](https://github.com/ublue-os/main/commit/34329831bb6517cd96b49f08dc6158915561a37d))
+* ensure initramfs is generated after nvidia driver install ([#832](https://github.com/ublue-os/main/issues/832)) ([5df3bd4](https://github.com/ublue-os/main/commit/5df3bd42cb79de50dda44bb8a8e05dadab64b7c1))
+* ensure kmod-nvidia version matches nvidia-driver ([#891](https://github.com/ublue-os/main/issues/891)) ([525e900](https://github.com/ublue-os/main/commit/525e900bf8b3327e3738574a54089acb963a4d3e))
+* ensure xorg-x11-xauth package is installed ([#774](https://github.com/ublue-os/main/issues/774)) ([8736d15](https://github.com/ublue-os/main/commit/8736d15a1e934b76cdec03284963139cc83ed38e))
+* Fix Nvidia Install Script and other various fixes ([#952](https://github.com/ublue-os/main/issues/952)) ([529fac1](https://github.com/ublue-os/main/commit/529fac1748ffad5c1e037dac78761ba6e7ac36ec))
+* github release install silently fails if no urls found ([#571](https://github.com/ublue-os/main/issues/571)) ([4561ed4](https://github.com/ublue-os/main/commit/4561ed4858e9a7ad131e7ea2e051ea1a690cff82))
+* IMAGE_NAME Build arg should not have -main or -nvidia ([#860](https://github.com/ublue-os/main/issues/860)) ([a65ce2d](https://github.com/ublue-os/main/commit/a65ce2dec28ed4de675e43d46b2521907cec6b5e))
+* **install.sh:** Intel video GPU acceleration ([#775](https://github.com/ublue-os/main/issues/775)) ([3020278](https://github.com/ublue-os/main/commit/3020278bc1485ce11538905498d2c45279429730))
+* **install.sh:** There is no need now to manually remove `mesa-libglapi` ([#751](https://github.com/ublue-os/main/issues/751)) ([7bac3e7](https://github.com/ublue-os/main/commit/7bac3e7bdd83ad50e20fd363c954a56e05e45ad3))
+* mitigate OpenCL packaging error ([#692](https://github.com/ublue-os/main/issues/692)) ([f6f9024](https://github.com/ublue-os/main/commit/f6f90249e419d8b694c660b62cba4d679728a11c))
+* **nvidia:** don't check for the rpm release field ([#1213](https://github.com/ublue-os/main/issues/1213)) ([d5907f3](https://github.com/ublue-os/main/commit/d5907f36989614231a638dcaf6a8ed92c93f510e))
+* Override copr plugin config to use fedora chroot by default ([#663](https://github.com/ublue-os/main/issues/663)) ([12829ea](https://github.com/ublue-os/main/commit/12829ea1b846497085a38342af8a3821efff6102))
+* Override copr plugin config to use fedora chroot by default (resubmission) ([#665](https://github.com/ublue-os/main/issues/665)) ([99b6864](https://github.com/ublue-os/main/commit/99b6864790c6605c652f591003bccefe605fae63))
+* **packages:** remove gnome-tweaks ([#782](https://github.com/ublue-os/main/issues/782)) ([c7091bd](https://github.com/ublue-os/main/commit/c7091bd102552749631cb17045819c9656793387))
+* remove dependency on kernel images ([#719](https://github.com/ublue-os/main/issues/719)) ([8e8c72b](https://github.com/ublue-os/main/commit/8e8c72bb33c4f84511cc5ded5214dd80bdb662ae))
+* remove F39 and add F41 build status from README ([#686](https://github.com/ublue-os/main/issues/686)) ([fa108e3](https://github.com/ublue-os/main/commit/fa108e343f1a212ab035756aa0e3df93aeef4790))
+* remove kernel-uki-virt ([#1001](https://github.com/ublue-os/main/issues/1001)) ([e8ce59f](https://github.com/ublue-os/main/commit/e8ce59ff399723e9afb278590723a7e3fe0ef14b))
+* **repo:** correct automerge casing ([#794](https://github.com/ublue-os/main/issues/794)) ([97d27f0](https://github.com/ublue-os/main/commit/97d27f025e8de3bcf1239f25d8ff00c96dcfb1b8))
+* Revert "feat: add fcitx5 packages ([#913](https://github.com/ublue-os/main/issues/913))" ([#943](https://github.com/ublue-os/main/issues/943)) ([aac14bc](https://github.com/ublue-os/main/commit/aac14bc4bb35bb80e60899e8c361c28dde9052a8))
+* stop renovate from updating dev container ([#887](https://github.com/ublue-os/main/issues/887)) ([0f4797a](https://github.com/ublue-os/main/commit/0f4797a57d2de47db50f0a101777282368bcd830))
+* suffix the Fedora 41 source image names with -atomic for non-sil… ([#702](https://github.com/ublue-os/main/issues/702)) ([a70140c](https://github.com/ublue-os/main/commit/a70140c66d31fe5072275e6cd940c12558f70ec8))
+* Swap fedora-third-party rather than removing ([#1181](https://github.com/ublue-os/main/issues/1181)) ([08c43eb](https://github.com/ublue-os/main/commit/08c43eb5f356748e27e256606ffe6a68c8e46cd4))
+* sway-atomic not getting proper env file on nvidia ([#825](https://github.com/ublue-os/main/issues/825)) ([2d42dbb](https://github.com/ublue-os/main/commit/2d42dbb2bb08d70130faa9285a751651092bcf4f))
+* versionlock QT6 and add fcitx packages back ([#949](https://github.com/ublue-os/main/issues/949)) ([fa35882](https://github.com/ublue-os/main/commit/fa35882c0a2b9337becc1a51c8ab090102b9a7db))
+
 ## [2.3.0](https://github.com/ublue-os/main/compare/v2.2.0...v2.3.0) (2025-04-16)
 
 
