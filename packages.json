@@ -82,6 +82,8 @@
                 "kcm-fcitx5",
                 "icoutils",
                 "kate",
+				"kcharselect",
+				"kcalc",
                 "kf6-kimageformats",
                 "kio-admin",
                 "ksshaskpass",
