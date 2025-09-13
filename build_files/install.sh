@@ -64,12 +64,12 @@ dnf5 versionlock add kernel kernel-core kernel-modules kernel-modules-core kerne
 
 # use override to replace mesa and others with less crippled versions
 OVERRIDES=(
-    "libva"
     "intel-gmmlib"
-    "intel-vpl-gpu-rt"
     "intel-mediasdk"
-    "libva-intel-media-driver"
+    "intel-vpl-gpu-rt"
     "libheif"
+    "libva"
+    "libva-intel-media-driver"
     "mesa-dri-drivers"
     "mesa-filesystem"
     "mesa-libEGL"
