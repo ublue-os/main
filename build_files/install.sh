@@ -69,6 +69,7 @@ OVERRIDES=(
     "intel-vpl-gpu-rt"
     "intel-mediasdk"
     "libva-intel-media-driver"
+    "libheif"
     "mesa-dri-drivers"
     "mesa-filesystem"
     "mesa-libEGL"
