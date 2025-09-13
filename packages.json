@@ -27,6 +27,7 @@
                 "libcamera",
                 "libcamera-gstreamer",
                 "libcamera-ipa",
+                "libheif",
                 "libcamera-tools",
                 "libfdk-aac",
                 "libimobiledevice-utils",
