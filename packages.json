@@ -70,22 +70,19 @@
                 "ibus-mozc"
             ],
             "kinoite": [
-                "fcitx5-qt",
-                "fcitx5-gtk",
-               	"fcitx5-chinese-addons",
-				"fcitx5-hangul",
-				"fcitx5-libthai",
-				"fcitx5-mozc",
-				"fcitx5-sayura",
-				"fcitx5-unikey",
+                "fcitx5-chinese-addons",
                 "fcitx5-configtool",
-                "kcm-fcitx5",
+                "fcitx5-gtk",
+                "fcitx5-hangul",
+                "fcitx5-libthai",
+                "fcitx5-mozc",
+                "fcitx5-qt",
+                "fcitx5-sayura",
+                "fcitx5-unikey",
                 "icoutils",
                 "kate",
-                "kf6-kimageformats",
-                "kio-admin",
-                "ksshaskpass",
-                "qt6-qtimageformats"
+                "kcm-fcitx5",
+                "ksshaskpass"
             ],
             "sway-atomic": [
                 "clipman",
