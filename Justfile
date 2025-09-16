@@ -170,7 +170,7 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
     {{ just }} verify-container "akmods@$AKMODS_DIGEST"
     {{ just }} verify-container "akmods-nvidia-open@$AKMODS_NVIDIA_DIGEST"
     if [[ "$fedora_version" -ge "41" ]]; then
-        {{ just }} verify-container "$source_image_name@$BASE_IMAGE_DIGEST" "{{ source_registry }}" "https://gitlab.com/fedora/ostree/ci-test/-/raw/f$fedora_version/quay.io-fedora-ostree-desktops.pub?ref_type=heads"
+        {{ just }} verify-container "$source_image_name@$BASE_IMAGE_DIGEST" "{{ source_registry }}" "https://gitlab.com/fedora/ostree/ci-test/-/raw/main/quay.io-fedora-ostree-desktops.pub?ref_type=heads"
     fi
 
     # Tags

@@ -13,8 +13,13 @@ if ! command -v dnf5 >/dev/null; then
     exit 1
 fi
 
-# disable any remaining rpmfusion repos
-dnf5 config-manager setopt "rpmfusion*".enabled=0 fedora-cisco-openh264.enabled=0
+# Check if any rpmfusion repos exist before trying to disable them
+if dnf5 repolist --all | grep -q rpmfusion; then
+    dnf5 config-manager setopt "rpmfusion*".enabled=0
+fi
+
+# Always try to disable cisco repo (or add similar check)
+dnf5 config-manager setopt fedora-cisco-openh264.enabled=0
 
 ## nvidia install steps
 dnf5 install -y "${AKMODNV_PATH}"/ublue-os/ublue-os-nvidia-addons-*.rpm
@@ -82,8 +87,8 @@ dnf5 install -y \
     "${AKMODNV_PATH}"/kmods/kmod-nvidia-"${KERNEL_VERSION}"-"${NVIDIA_AKMOD_VERSION}"."${DIST_ARCH}".rpm
 
 # Ensure the version of the Nvidia module matches the driver
-KMOD_VERSION="$(rpm -q --queryformat '%{VERSION}-%{RELEASE}' kmod-nvidia)"
-DRIVER_VERSION="$(rpm -q --queryformat '%{VERSION}-%{RELEASE}' nvidia-driver)"
+KMOD_VERSION="$(rpm -q --queryformat '%{VERSION}' kmod-nvidia)"
+DRIVER_VERSION="$(rpm -q --queryformat '%{VERSION}' nvidia-driver)"
 if [ "$KMOD_VERSION" != "$DRIVER_VERSION" ]; then
     echo "Error: kmod-nvidia version ($KMOD_VERSION) does not match nvidia-driver version ($DRIVER_VERSION)"
     exit 1
