@@ -55,7 +55,7 @@ images:
   - name: kinoite-42
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 42
-    digest: sha256:1ee63a387c2849942ef7085065354d3129f441ef7014c0c363ee846ff5cd0ef4
+    digest: sha256:e57be295468d0bc01c20bb41fc093eacff4493eb46b2a3589a4009cc7e5d23ea
   - name: sway-atomic-42
     image: quay.io/fedora-ostree-desktops/sway-atomic
     tag: 42
@@ -63,7 +63,7 @@ images:
   - name: budgie-atomic-42
     image: quay.io/fedora-ostree-desktops/budgie-atomic
     tag: 42
-    digest: sha256:ed36b681660f8b406ab333af79a55601e1f678e5e399c9976ab136e33fbe61e7
+    digest: sha256:929cc2595698f33537a79843f508f3f2b62f08e525541c6f36ef5466a4256cc1
   - name: cosmic-atomic-42
     image: quay.io/fedora-ostree-desktops/cosmic-atomic
     tag: 42
