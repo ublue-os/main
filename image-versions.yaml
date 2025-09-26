@@ -2,7 +2,7 @@ images:
   - name: akmods-41
     image: ghcr.io/ublue-os/akmods
     tag: main-41
-    digest: sha256:fa57fe8d4039483f3708f526a585920ccc1de1ec713b3958e27a075523f8b51f
+    digest: sha256:751f0641f856f5d7cab988e1d18536c6b79a8a2f818aafc2e308b653cc51da45
   - name: akmods-nvidia-open-41
     image: ghcr.io/ublue-os/akmods-nvidia-open
     tag: main-41
@@ -39,7 +39,7 @@ images:
   - name: akmods-42
     image: ghcr.io/ublue-os/akmods
     tag: main-42
-    digest: sha256:f5eb72a908533cdcf8d1499f79d5cfaa36e4accbad316299ecc49139d79c56f7
+    digest: sha256:f1d420b1c07442112c930d88aa564a7c8246100843fbded9b3c4e0e700f330c2
   - name: akmods-nvidia-open-42
     image: ghcr.io/ublue-os/akmods-nvidia-open
     tag: main-42
