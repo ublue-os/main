@@ -1,5 +1,35 @@
 # Changelog
 
+## 1.0.0 (2025-10-04)
+
+
+### Features
+
+* add fcitx5 packages ([#913](https://github.com/ublue-os/main/issues/913)) ([4d1a14d](https://github.com/ublue-os/main/commit/4d1a14d9ef25d88e1b59c0b6cf01fde005ec8c89))
+* Add libimobiledevice-utils, usbmuxd for interacting with iDevices ([#1082](https://github.com/ublue-os/main/issues/1082)) ([977d664](https://github.com/ublue-os/main/commit/977d66405a299498531bd6c125d4ac500e90520c))
+* add linuxbrew path to sudoers secure_path ([#1140](https://github.com/ublue-os/main/issues/1140)) ([04cf800](https://github.com/ublue-os/main/commit/04cf800afcd02e27a33c1a11cef00d394a2e16ef))
+* add self to emeritus ([#975](https://github.com/ublue-os/main/issues/975)) ([feccca8](https://github.com/ublue-os/main/commit/feccca83190b087ec02a3d60b53c0a2d24c544ae))
+* check for the existence of the upstream software stores ([#1180](https://github.com/ublue-os/main/issues/1180)) ([8b48302](https://github.com/ublue-os/main/commit/8b48302b5cf5770b491664ba6f69bf59a9c6645c))
+* cleanup coredumps after 5 days ([#1231](https://github.com/ublue-os/main/issues/1231)) ([100455e](https://github.com/ublue-os/main/commit/100455e74fcee8c8f9ca762b0d00acab6366d2d2))
+* Remove Fedora Filtered Flathub, RPM Fusion Steam, and other worthless repositories. ([#1174](https://github.com/ublue-os/main/issues/1174)) ([186df39](https://github.com/ublue-os/main/commit/186df39c2e81e3922dd90cb5cf18bdeb0336f09f))
+* update emeritus.md ([#914](https://github.com/ublue-os/main/issues/914)) ([1f7d21e](https://github.com/ublue-os/main/commit/1f7d21e59c0d0818bac148c6ce0d4177e7fe5f19))
+
+
+### Bug Fixes
+
+* actually swap to negativo libheif ([#1366](https://github.com/ublue-os/main/issues/1366)) ([775b229](https://github.com/ublue-os/main/commit/775b229f45903fdd41f41406b7bce9e74ccaeb62))
+* **ci:** disable SBOM setup step ([#1055](https://github.com/ublue-os/main/issues/1055)) ([f58aae9](https://github.com/ublue-os/main/commit/f58aae954d0a9975a232d4f13e2c9a7c30678c3b))
+* **ci:** fix logic to determine whether builds are required ([#1132](https://github.com/ublue-os/main/issues/1132)) ([b655640](https://github.com/ublue-os/main/commit/b655640c0e475c2eecaccc20575e06a0ef9be009))
+* **ci:** reference upstream cosign public keys from main branch ([#1224](https://github.com/ublue-os/main/issues/1224)) ([91e8fd9](https://github.com/ublue-os/main/commit/91e8fd9c29f2bdc7e70e3311c690ed2dee6b2141))
+* Ensure flathub flatpakrepo file is present in-image ([#1178](https://github.com/ublue-os/main/issues/1178)) ([3432983](https://github.com/ublue-os/main/commit/34329831bb6517cd96b49f08dc6158915561a37d))
+* Fix Nvidia Install Script and other various fixes ([#952](https://github.com/ublue-os/main/issues/952)) ([529fac1](https://github.com/ublue-os/main/commit/529fac1748ffad5c1e037dac78761ba6e7ac36ec))
+* **nvidia:** don't check for the rpm release field ([#1213](https://github.com/ublue-os/main/issues/1213)) ([d5907f3](https://github.com/ublue-os/main/commit/d5907f36989614231a638dcaf6a8ed92c93f510e))
+* remove kernel-uki-virt ([#1001](https://github.com/ublue-os/main/issues/1001)) ([e8ce59f](https://github.com/ublue-os/main/commit/e8ce59ff399723e9afb278590723a7e3fe0ef14b))
+* Revert "feat: add fcitx5 packages ([#913](https://github.com/ublue-os/main/issues/913))" ([#943](https://github.com/ublue-os/main/issues/943)) ([aac14bc](https://github.com/ublue-os/main/commit/aac14bc4bb35bb80e60899e8c361c28dde9052a8))
+* Swap fedora-third-party rather than removing ([#1181](https://github.com/ublue-os/main/issues/1181)) ([08c43eb](https://github.com/ublue-os/main/commit/08c43eb5f356748e27e256606ffe6a68c8e46cd4))
+* use libheif from negativo for dolphin thumbnails ([#1328](https://github.com/ublue-os/main/issues/1328)) ([9579033](https://github.com/ublue-os/main/commit/95790333a587134c2fae6b13800058755e064cbf))
+* versionlock QT6 and add fcitx packages back ([#949](https://github.com/ublue-os/main/issues/949)) ([fa35882](https://github.com/ublue-os/main/commit/fa35882c0a2b9337becc1a51c8ab090102b9a7db))
+
 ## [2.3.0](https://github.com/ublue-os/main/compare/v2.2.0...v2.3.0) (2025-04-16)
 
 
