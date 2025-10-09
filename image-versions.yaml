@@ -67,7 +67,7 @@ images:
   - name: cosmic-atomic-42
     image: quay.io/fedora-ostree-desktops/cosmic-atomic
     tag: 42
-    digest: sha256:84146e42a8f75b9034748b0d28a94df7fdde99377c74df8618c3146536d1173e
+    digest: sha256:66db453dd1aa81c6fabb7c86355ae8e707fcfedee97e721f4ca842c531e87175
 
   - name: akmods-43
     image: ghcr.io/ublue-os/akmods
