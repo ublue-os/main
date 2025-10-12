@@ -417,7 +417,7 @@ fix:
 
 # Verify Container with Cosign
 [group('Utility')]
-verify-container $container="" $registry="" $key="": install-cosign
+verify-container $container="" $registry="" $key="":
     #!/usr/bin/env bash
     set ${SET_X:+-x} -eou pipefail
 
@@ -445,29 +445,6 @@ clean $image_name $fedora_version $variant $registry="":
     declare -a CLEAN="($({{ PODMAN }} image list $registry/$image_name --noheading --format 'table {{{{ .ID }}' | uniq))"
     if [[ -n "${CLEAN[@]:-}" ]]; then
         {{ PODMAN }} rmi -f "${CLEAN[@]}"
-    fi
-
-# Get Cosign if Needed
-install-cosign:
-    #!/usr/bin/bash
-    set ${SET_X:+-x} -eou pipefail
-
-    {{ pull-retry }}
-
-    if ! command -v cosign >/dev/null; then
-        pull-retry "cgr.dev/chainguard/cosign:latest"
-        COSIGN_CONTAINER_ID=$({{ PODMAN }} create cgr.dev/chainguard/cosign:latest bash)
-        {{ PODMAN }} cp "${COSIGN_CONTAINER_ID}":/usr/bin/cosign /tmp/cosign.install
-        {{ SUDOIF }} cp /tmp/cosign.install /usr/local/bin/cosign
-        {{ SUDOIF }} rm -f /tmp/cosign.install
-        {{ PODMAN }} rm -f "${COSIGN_CONTAINER_ID}"
-        {{ PODMAN }} rmi "cgr.dev/chainguard/cosign:latest"
-
-        if ! cosign verify --certificate-oidc-issuer=https://token.actions.githubusercontent.com --certificate-identity=https://github.com/chainguard-images/images/.github/workflows/release.yaml@refs/heads/main cgr.dev/chainguard/cosign >/dev/null; then
-            echo "{{ style('error') }}NOTICE: Failed to verify cosign image signatures.{{ NORMAL }}" >&2
-            exit 1
-        fi
-
     fi
 
 # Get Digest
@@ -499,7 +476,7 @@ push-to-registry $image_name $fedora_version $variant $destination="" $transport
 
 # Sign Images with Cosign
 [group('CI')]
-cosign-sign $image_name $fedora_version $variant $destination="": install-cosign
+cosign-sign $image_name $fedora_version $variant $destination="":
     #!/usr/bin/bash
     set ${SET_X:+-x} -eou pipefail
 
@@ -558,7 +535,7 @@ gen-sbom $image_name $fedora_version $variant:
 
 # Add SBOM attestation
 [group('CI')]
-sbom-attest $fedora_version $image_name $variant $destination="" $sbom="" $digest="": install-cosign
+sbom-attest $fedora_version $image_name $variant $destination="" $sbom="" $digest="":
     #!/usr/bin/bash
     set ${SET_X:+-x} -eou pipefail
 
