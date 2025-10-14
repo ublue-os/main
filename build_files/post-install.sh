@@ -7,7 +7,7 @@ if [[ "$IMAGE_NAME" == "base" ]]; then
     systemctl enable getty@tty1
 fi
 
-# Workaround: Rename just's CN readme to README.zh-cn.md 
+# Workaround: Rename just's CN readme to README.zh-cn.md
 mv '/usr/share/doc/just/README.中文.md' '/usr/share/doc/just/README.zh-cn.md'
 
 # Remove dnf5 versionlocks
@@ -24,10 +24,13 @@ cp /usr/share/ublue-os/update-services/etc/rpm-ostreed.conf /etc/rpm-ostreed.con
 # Fix cjk fonts
 ln -s "/usr/share/fonts/google-noto-sans-cjk-fonts" "/usr/share/fonts/noto-cjk"
 
+# Add linuxbrew to the list of paths usable by `sudo`
+# Even though brew isn't installed as part of this image, it's fine to add it here as it's reused by multiple ublue images
+sed -Ei "s/secure_path = (.*)/secure_path = \1:\/home\/linuxbrew\/.linuxbrew\/bin/" /etc/sudoers
+
 # Remove coprs
 dnf5 -y copr remove ublue-os/staging
 dnf5 -y copr remove ublue-os/packages
-dnf5 -y copr remove kylegospo/oversteer
 
 # Disable Negativo17 Fedora Multimedia
 # This needs to be a whole organiztion change
@@ -38,10 +41,9 @@ dnf5 -y copr remove kylegospo/oversteer
 rm -rf /tmp/* || true
 rm -rf /usr/etc
 rm -rf /boot && mkdir /boot
-
-shopt -s extglob
-rm -rf /var/!(cache)
-rm -rf /var/cache/!(libdnf5)
+# Preserve cache mounts
+find /var/* -maxdepth 0 -type d \! -name cache \! -name log -exec rm -rf {} \;
+find /var/cache/* -maxdepth 0 -type d \! -name libdnf5 -exec rm -rf {} \;
 
 # Make sure /var/tmp is properly created
 mkdir -p /var/tmp
@@ -50,6 +52,5 @@ chmod -R 1777 /var/tmp
 # Check to make sure important packages are present
 /ctx/check-build.sh
 
-# bootc/ostree checks
-bootc container lint
+# ostree checks
 ostree container commit

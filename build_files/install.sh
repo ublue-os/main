@@ -21,9 +21,8 @@ dnf5 -y swap --repo='fedora' \
 # Add COPRs
 dnf5 -y copr enable ublue-os/packages
 dnf5 -y copr enable ublue-os/staging
-dnf5 -y copr enable kylegospo/oversteer
 
-# Install ublue-os pacakges, fedora archives,and zstd
+# Install ublue-os packages, fedora archives,and zstd
 dnf5 -y install \
     ublue-os-just \
     ublue-os-luks \
@@ -59,17 +58,17 @@ KERNEL_RPMS=(
     "/tmp/kernel-rpms/kernel-modules-${KERNEL_VERSION}.rpm"
     "/tmp/kernel-rpms/kernel-modules-core-${KERNEL_VERSION}.rpm"
     "/tmp/kernel-rpms/kernel-modules-extra-${KERNEL_VERSION}.rpm"
-    "/tmp/kernel-rpms/kernel-uki-virt-${KERNEL_VERSION}.rpm"
 )
 dnf5 -y install "${KERNEL_RPMS[@]}"
 dnf5 versionlock add kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
 
 # use override to replace mesa and others with less crippled versions
 OVERRIDES=(
-    "libva"
     "intel-gmmlib"
-    "intel-vpl-gpu-rt"
     "intel-mediasdk"
+    "intel-vpl-gpu-rt"
+    "libheif"
+    "libva"
     "libva-intel-media-driver"
     "mesa-dri-drivers"
     "mesa-filesystem"
@@ -80,7 +79,7 @@ OVERRIDES=(
     "mesa-vulkan-drivers"
 )
 
-dnf5 distro-sync -y --repo='fedora-multimedia' "${OVERRIDES[@]}"
+dnf5 distro-sync --skip-unavailable -y --repo='fedora-multimedia' "${OVERRIDES[@]}"
 dnf5 versionlock add "${OVERRIDES[@]}"
 
 # Disable DKMS support in gnome-software
@@ -91,6 +90,26 @@ if [[ "$IMAGE_NAME" == "silverblue" ]]; then
         --repo=copr:copr.fedorainfracloud.org:ublue-os:staging \
         gnome-software gnome-software
     dnf5 versionlock add gnome-software
+fi
+
+# Remove Fedora Flatpak and related packages
+dnf5 remove -y \
+    fedora-flathub-remote
+
+# fedora-third-party has a trojan horse via plasma-discover requiring it in its spec, replace it with a dummy package.
+dnf5 swap -y \
+    fedora-third-party ublue-os-flatpak
+
+# Add Flathub to the image for eventual application
+mkdir -p /etc/flatpak/remotes.d/
+curl --retry 3 -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub.org/repo/flathub.flatpakrepo
+
+# Fedora Flatpak service is a part of the flatpak package, ensure it's overridden by moving to replace it at the end of the build.
+mv -f /usr/lib/systemd/system/flatpak-add-flathub-repos.service /usr/lib/systemd/system/flatpak-add-fedora-repos.service
+
+# Prevent partial QT upgrades that may break SDDM/KWin
+if [[ "$IMAGE_NAME" == "kinoite" ]]; then
+    dnf5 versionlock add "qt6-*"
 fi
 
 # run common packages script

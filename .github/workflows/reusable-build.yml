@@ -21,9 +21,117 @@ env:
   SET_X: 1
 
 jobs:
+  check-build-required:
+    name: Check if build is required
+    runs-on: ubuntu-latest
+    outputs:
+      build_required: ${{ steps.check.outputs.build_required }}
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          ref: main
+          path: main
+          fetch-depth: 0
+
+      - name: Checkout PR branch
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          path: pr
+          fetch-depth: 0
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@d7543c93d881b35a8faa02e8e3605f69b7a1ce62 # v3.10.0
+
+      - name: Setup Just
+        # yamllint disable-line rule:line-length rule:comments
+        uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff # v3
+
+      - name: Compare image digests to determine if build is required
+        id: check
+        shell: bash
+        env:
+          IMAGE_NAME: ${{ inputs.image_name }}
+          IMAGE_VERSION_ALIAS: ${{ inputs.image_version }}
+          IMAGE_VARIANT: ${{ inputs.image_variant }}
+        run: |
+          set -e
+
+          # Fetch version from the Justfile
+          IMAGE_VERSION=$(just -f ./pr/Justfile --evaluate "${IMAGE_VERSION_ALIAS}")
+
+          BASE_NAME="${IMAGE_NAME}-${IMAGE_VERSION}"
+          AKMODS_NAME="akmods-${IMAGE_VERSION}"
+
+          OLD_BASE_DIGEST=$(yq -r ".images[] | select(.name == \"${BASE_NAME}\") | .digest" main/image-versions.yaml)
+          NEW_BASE_DIGEST=$(yq -r ".images[] | select(.name == \"${BASE_NAME}\") | .digest" pr/image-versions.yaml)
+
+          OLD_AKMODS_DIGEST=$(yq -r ".images[] | select(.name == \"${AKMODS_NAME}\") | .digest" main/image-versions.yaml)
+          NEW_AKMODS_DIGEST=$(yq -r ".images[] | select(.name == \"${AKMODS_NAME}\") | .digest" pr/image-versions.yaml)
+
+          echo "Comparing digests:"
+          echo "Base image old: ${OLD_BASE_DIGEST}, new: ${NEW_BASE_DIGEST}"
+          echo "Akmods image old: ${OLD_AKMODS_DIGEST}, new: ${NEW_AKMODS_DIGEST}"
+
+          BUILD_REQUIRED=false
+
+          if [ "$OLD_BASE_DIGEST" != "$NEW_BASE_DIGEST" ]; then
+            echo "Base digest changed."
+            BUILD_REQUIRED=true
+          fi
+
+          if [ "$OLD_AKMODS_DIGEST" != "$NEW_AKMODS_DIGEST" ]; then
+            echo "Akmods digest changed."
+            BUILD_REQUIRED=true
+          fi
+
+          if [ "${IMAGE_VARIANT}" == "nvidia" ]; then
+            AKMODS_NVIDIA_NAME="akmods-nvidia-open-${IMAGE_VERSION}"
+            OLD_AKMODS_NVIDIA_DIGEST=$(yq -r ".images[] | select(.name == \"${AKMODS_NVIDIA_NAME}\") | .digest" main/image-versions.yaml)
+            NEW_AKMODS_NVIDIA_DIGEST=$(yq -r ".images[] | select(.name == \"${AKMODS_NVIDIA_NAME}\") | .digest" pr/image-versions.yaml)
+
+            echo "Akmods-NVIDIA image old: ${OLD_AKMODS_NVIDIA_DIGEST}, new: ${NEW_AKMODS_NVIDIA_DIGEST}"
+
+            if [ "$OLD_AKMODS_NVIDIA_DIGEST" != "$NEW_AKMODS_NVIDIA_DIGEST" ]; then
+              echo "Akmods-NVIDIA digest changed."
+              BUILD_REQUIRED=true
+            fi
+          fi
+
+          # If any file other than image-versions.yaml has changed, we also need to build.
+          echo "Checking for changes outside image-versions.yaml..."
+
+          # Run recursive diff and collect output
+          ALL_DIFFS=$(diff -rq --exclude='.git' main/ pr/ || true)
+
+          # Define exclusions (as regex patterns)
+          EXCLUDED_DIFF_PATTERNS=(
+            "Only in.*/image-versions.yaml"
+            "Files .*image-versions.yaml and .*image-versions.yaml differ"
+          )
+
+          # Filter out excluded diffs
+          FILTERED_DIFFS="$ALL_DIFFS"
+          for pattern in "${EXCLUDED_DIFF_PATTERNS[@]}"; do
+            FILTERED_DIFFS=$(echo "$FILTERED_DIFFS" | grep -Ev "$pattern" || true)
+          done
+
+          # Output filtered changes
+          if [[ -n "$FILTERED_DIFFS" ]]; then
+            echo "Other files changed:"
+            echo "$FILTERED_DIFFS"
+            BUILD_REQUIRED=true
+          else
+            echo "No other files changed."
+          fi
+
+          echo "build_required=${BUILD_REQUIRED}" >> "$GITHUB_OUTPUT"
+
   build_ublue:
     name: main
     runs-on: ubuntu-24.04
+    needs: check-build-required
+    if: ${{ needs.check-build-required.outputs.build_required == 'true' }}
     permissions:
       contents: read
       packages: write
@@ -32,7 +140,10 @@ jobs:
         # Checkout Git Repository
       - name: Checkout
         # yamllint disable-line rule:line-length rule:comments
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@d7543c93d881b35a8faa02e8e3605f69b7a1ce62 # v3.10.0
 
       - name: Setup Just
         # yamllint disable-line rule:line-length rule:comments
@@ -95,6 +206,7 @@ jobs:
               "${{ steps.registry_case.outputs.lowercase }}"
 
       - name: SBOM Setup
+        if: false
         run: |
           set -eou pipefail
           echo "=== FREE SPACE ==="

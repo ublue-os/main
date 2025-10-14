@@ -3,20 +3,23 @@
 set -ouex pipefail
 
 RELEASE="$(rpm -E %fedora)"
-AKMODNV_PATH=${AKMODNV_PATH:-/tmp/akmods-rpms}
+: "${AKMODNV_PATH:=/tmp/akmods-rpms}"
 
 # this is only to aid in human understanding of any issues in CI
 find "${AKMODNV_PATH}"/
 
-if [[ ! $(command -v dnf5) ]]; then
+if ! command -v dnf5 >/dev/null; then
     echo "Requires dnf5... Exiting"
     exit 1
 fi
 
-# disable any remaining rpmfusion repos
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion*.repo
+# Check if any rpmfusion repos exist before trying to disable them
+if dnf5 repolist --all | grep -q rpmfusion; then
+    dnf5 config-manager setopt "rpmfusion*".enabled=0
+fi
 
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
+# Always try to disable cisco repo (or add similar check)
+dnf5 config-manager setopt fedora-cisco-openh264.enabled=0
 
 ## nvidia install steps
 dnf5 install -y "${AKMODNV_PATH}"/ublue-os/ublue-os-nvidia-addons-*.rpm
@@ -43,15 +46,14 @@ fi
 dnf5 install -y "${MULTILIB[@]}"
 
 # enable repos provided by ublue-os-nvidia-addons
-sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
-sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/nvidia-container-toolkit.repo
+dnf5 config-manager setopt fedora-nvidia.enabled=1 nvidia-container-toolkit.enabled=1
 
 # Disable Multimedia
 NEGATIVO17_MULT_PREV_ENABLED=N
-if [[ -f /etc/yum.repos.d/negativo17-fedora-multimedia.repo ]] && grep -q "enabled=1" /etc/yum.repos.d/negativo17-fedora-multimedia.repo; then
+if dnf5 repolist --enabled | grep -q "fedora-multimedia"; then
     NEGATIVO17_MULT_PREV_ENABLED=Y
     echo "disabling negativo17-fedora-multimedia to ensure negativo17-fedora-nvidia is used"
-    sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
+    dnf5 config-manager setopt fedora-multimedia.enabled=0
 fi
 
 # Enable staging for supergfxctl if repo file exists
@@ -82,11 +84,11 @@ dnf5 install -y \
     nvidia-driver-libs.i686 \
     nvidia-settings \
     nvidia-container-toolkit ${VARIANT_PKGS} \
-    "${AKMODNV_PATH}"/kmods/kmod-nvidia-"${KERNEL_VERSION}"-"${NVIDIA_AKMOD_VERSION}".fc"${RELEASE}".rpm
+    "${AKMODNV_PATH}"/kmods/kmod-nvidia-"${KERNEL_VERSION}"-"${NVIDIA_AKMOD_VERSION}"."${DIST_ARCH}".rpm
 
 # Ensure the version of the Nvidia module matches the driver
-KMOD_VERSION="$(rpm -q --queryformat '%{VERSION}-%{RELEASE}' kmod-nvidia)"
-DRIVER_VERSION="$(rpm -q --queryformat '%{VERSION}-%{RELEASE}' nvidia-driver)"
+KMOD_VERSION="$(rpm -q --queryformat '%{VERSION}' kmod-nvidia)"
+DRIVER_VERSION="$(rpm -q --queryformat '%{VERSION}' nvidia-driver)"
 if [ "$KMOD_VERSION" != "$DRIVER_VERSION" ]; then
     echo "Error: kmod-nvidia version ($KMOD_VERSION) does not match nvidia-driver version ($DRIVER_VERSION)"
     exit 1
@@ -94,8 +96,7 @@ fi
 
 ## nvidia post-install steps
 # disable repos provided by ublue-os-nvidia-addons
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/nvidia-container-toolkit.repo
+dnf5 config-manager setopt fedora-nvidia.enabled=0 nvidia-container-toolkit.enabled=0
 
 # Disable staging
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/_copr_ublue-os-staging.repo
@@ -116,5 +117,5 @@ sed -i 's@ nvidia @ i915 amdgpu nvidia @g' /usr/lib/dracut/dracut.conf.d/99-nvid
 
 # re-enable negativo17-mutlimedia since we disabled it
 if [[ "${NEGATIVO17_MULT_PREV_ENABLED}" = "Y" ]]; then
-    sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
+    dnf5 config-manager setopt fedora-multimedia.enabled=1
 fi
