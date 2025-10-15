@@ -37,9 +37,6 @@ images := '(
     ["base"]="base-atomic"
     ["silverblue"]="silverblue"
     ["kinoite"]="kinoite"
-    ["sway-atomic"]="sway-atomic"
-    ["budgie-atomic"]="budgie-atomic"
-    ["cosmic-atomic"]="cosmic-atomic"
 )'
 
 # Fedora Versions
@@ -305,12 +302,6 @@ image-name-check $image_name $fedora_version $variant:
     # TODO: Remove this block when 42 becomes GTS
     if [[ "$fedora_version" -eq "40" ]]; then
         echo "($image_name-$variant $image_name $fedora_version)"
-    elif [[ "$image_name" =~ lazurite|vauxite && "$fedora_version" -ge "42" ]]; then
-        echo '{{ style('error') }}Invalid Image Name{{ NORMAL }}: Lazurite and Vauxite no longer supported >= F42' >&2
-        exit 1
-    elif [[ "$image_name" =~ sericea|onyx && "$fedora_version" -ge "42" ]]; then
-        echo '{{ style('error') }}Invalid Image Name{{ NORMAL }}: Sericea and Onyx names are `-atomic` names on >= F42' >&2
-        exit 1
     elif [[ "$image_name" =~ atomic && "$fedora_version" -le "41" ]]; then
         echo '{{ style('error') }}Invalid Image Name{{ NORMAL }}: {{ style('command') }}`-atomic` names only used on >= F42{{ NORMAL }}' >&2
         exit 1

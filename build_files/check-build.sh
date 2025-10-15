@@ -27,20 +27,6 @@ case "${VARIANT_ID:-}" in
         plasma-discover
     )
     ;;
-"budgie-atomic")
-    IMPORTANT_PACKAGES+=(
-        lightdm
-        magpie
-        budgie-desktop
-        plasma-discover
-    )
-    ;;
-"sway-atomic")
-    IMPORTANT_PACKAGES+=(
-        sddm
-        sway
-    )
-    ;;
 *) ;;
 esac
 
