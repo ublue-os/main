@@ -34,7 +34,6 @@
                 "libratbag-ratbagd",
                 "libva-utils",
                 "lshw",
-                "mesa-libxatracker",
                 "net-tools",
                 "nvme-cli",
                 "nvtop",
@@ -44,7 +43,6 @@
                 "pam-u2f",
                 "pam_yubico",
                 "pamu2fcfg",
-                "pipewire-libs-extra",
                 "pipewire-plugin-libcamera",
                 "powerstat",
                 "smartmontools",
@@ -102,7 +100,10 @@
     },
     "41": {
         "include": {
-            "all": [],
+            "all": [
+                "mesa-libxatracker",
+                "pipewire-libs-extra"
+            ],
             "sericea": ["clipman", "gvfs-mtp", "thunar-volman", "tumbler"]
         },
         "exclude": {
@@ -111,7 +112,10 @@
     },
     "42": {
         "include": {
-            "all": [],
+            "all": [
+                "mesa-libxatracker",
+                "pipewire-libs-extra"
+            ],
             "sway-atomic": []
         },
         "exclude": {
