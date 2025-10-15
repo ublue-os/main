@@ -3,7 +3,6 @@
         "include": {
             "all": [
                 "alsa-firmware",
-                "android-udev-rules",
                 "apr",
                 "apr-util",
                 "distrobox",
@@ -95,6 +94,7 @@
     "41": {
         "include": {
             "all": [
+                "android-udev-rules",
                 "mesa-libxatracker",
                 "pipewire-libs-extra"
             ]
@@ -106,6 +106,7 @@
     "42": {
         "include": {
             "all": [
+                "android-udev-rules",
                 "mesa-libxatracker",
                 "pipewire-libs-extra"
             ]
