@@ -1,5 +1,5 @@
 # NOTICE 15 October 2025: 
-The deprecated cosmic, budgie, and cosmic images have now been removed, see #927
+The deprecated sway, budgie, and cosmic images have now been removed, see #927
 
 # Main
 
