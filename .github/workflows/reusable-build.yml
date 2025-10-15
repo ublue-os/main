@@ -57,6 +57,13 @@ jobs:
         run: |
           set -e
 
+          # Always build when workflow_dispatch is triggered
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "Build triggered by workflow_dispatch - always building"
+            echo "build_required=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
           # Fetch version from the Justfile
           IMAGE_VERSION=$(just -f ./pr/Justfile --evaluate "${IMAGE_VERSION_ALIAS}")
 
