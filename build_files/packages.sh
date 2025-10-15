@@ -2,6 +2,14 @@
 
 set -ouex pipefail
 
+# Validate packages.json before attempting to parse it
+# This ensures builds fail fast if the JSON is malformed
+if ! jq empty /ctx/packages.json 2>/dev/null; then
+    echo "ERROR: packages.json contains syntax errors and cannot be parsed" >&2
+    echo "Please fix the JSON syntax before building" >&2
+    exit 1
+fi
+
 # build list of all packages requested for inclusion
 readarray -t INCLUDED_PACKAGES < <(jq -r "[(.all.include | (.all, select(.\"$IMAGE_NAME\" != null).\"$IMAGE_NAME\")[]), \
                              (select(.\"$FEDORA_MAJOR_VERSION\" != null).\"$FEDORA_MAJOR_VERSION\".include | (.all, select(.\"$IMAGE_NAME\" != null).\"$IMAGE_NAME\")[])] \
