@@ -83,7 +83,7 @@
                 "kate",
                 "kcm-fcitx5",
                 "ksshaskpass"
-            ],
+            ]
         },
         "exclude": {
             "all": ["google-noto-sans-cjk-vf-fonts", "default-fonts-cjk-sans"],
@@ -96,7 +96,7 @@
     },
     "41": {
         "include": {
-            "all": [],
+            "all": []
         },
         "exclude": {
             "all": []
@@ -104,7 +104,7 @@
     },
     "42": {
         "include": {
-            "all": [],
+            "all": []
         },
         "exclude": {
             "all": []
