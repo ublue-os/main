@@ -39,4 +39,4 @@ images:
   - name: kinoite-42
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 42
-    digest: sha256:f1d968935644f6dccef27d5990350b5ff675cefe03a8de055b8e617ce07e2e0f
+    digest: sha256:49d55fb8edf523e2eb7063ebcf93146524849181ec4620c99bc7fad5327202b5
