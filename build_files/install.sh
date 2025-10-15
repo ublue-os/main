@@ -59,7 +59,32 @@ KERNEL_RPMS=(
     "/tmp/kernel-rpms/kernel-modules-core-${KERNEL_VERSION}.rpm"
     "/tmp/kernel-rpms/kernel-modules-extra-${KERNEL_VERSION}.rpm"
 )
+
+# on F43, a new problem manifests where during kernel install, dracut errors and fails
+
+# shim to bypass all of kernel-install... safe?
+#mv /usr/sbin/kernel-install /usr/sbin/kernel-install.bak
+#printf '%s\n' '#!/bin/sh' 'exit 0' > /usr/sbin/kernel-install
+#mv -f /usr/sbin/kernel-install.bak /usr/sbin/kernel-install
+
+# create a shims to bypass kernel install triggering dracut/rpm-ostree
+# seems to be minimal impact, but allows progress on build
+cd /usr/lib/kernel/install.d \
+&& mv 05-rpmostree.install 05-rpmostree.install.bak \
+&& mv 50-dracut.install 50-dracut.install.bak \
+&& printf '%s\n' '#!/bin/sh' 'exit 0' > 05-rpmostree.install \
+&& printf '%s\n' '#!/bin/sh' 'exit 0' > 50-dracut.install \
+&& chmod +x  05-rpmostree.install 50-dracut.install
+
+# instead of shims, could skip scriptlets: dnf install -y --setopt=tsflags=noscripts
+# but skipping all scriptlets for kernel install may not be safe
 dnf5 -y install "${KERNEL_RPMS[@]}"
+
+# restore kernel install
+mv -f 05-rpmostree.install.bak 05-rpmostree.install \
+&& mv -f 50-dracut.install.bak 50-dracut.install
+cd -
+
 dnf5 versionlock add kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
 
 # use override to replace mesa and others with less crippled versions
