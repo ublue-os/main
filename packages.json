@@ -81,12 +81,6 @@
                 "kate",
                 "kcm-fcitx5",
                 "ksshaskpass"
-            ],
-            "sway-atomic": [
-                "clipman",
-                "gvfs-mtp",
-                "thunar-volman",
-                "tumbler"
             ]
         },
         "exclude": {
@@ -103,8 +97,7 @@
             "all": [
                 "mesa-libxatracker",
                 "pipewire-libs-extra"
-            ],
-            "sericea": ["clipman", "gvfs-mtp", "thunar-volman", "tumbler"]
+            ]
         },
         "exclude": {
             "all": []
@@ -115,8 +108,7 @@
             "all": [
                 "mesa-libxatracker",
                 "pipewire-libs-extra"
-            ],
-            "sway-atomic": []
+            ]
         },
         "exclude": {
             "all": []

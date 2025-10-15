@@ -1,3 +1,6 @@
+# NOTICE 15 October 2025: 
+The deprecated sway, budgie, and cosmic images have now been removed, see #927
+
 # Main
 
 [![build-41](https://github.com/ublue-os/main/actions/workflows/build-41.yml/badge.svg)](https://github.com/ublue-os/main/actions/workflows/build-41.yml)
