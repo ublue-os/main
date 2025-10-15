@@ -54,8 +54,16 @@ jobs:
           IMAGE_NAME: ${{ inputs.image_name }}
           IMAGE_VERSION_ALIAS: ${{ inputs.image_version }}
           IMAGE_VARIANT: ${{ inputs.image_variant }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           set -e
+
+          # Always build when workflow_dispatch is triggered
+          if [ "${EVENT_NAME}" == "workflow_dispatch" ]; then
+            echo "Build triggered by workflow_dispatch - always building"
+            echo "build_required=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
 
           # Fetch version from the Justfile
           IMAGE_VERSION=$(just -f ./pr/Justfile --evaluate "${IMAGE_VERSION_ALIAS}")
