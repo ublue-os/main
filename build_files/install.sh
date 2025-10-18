@@ -8,6 +8,10 @@ rsync -rvK /ctx/sys_files/ /
 # make root's home
 mkdir -p /var/roothome
 
+# make /opt/ great again
+rm /opt
+mkdir /opt
+
 # Install dnf5 if not installed
 if ! rpm -q dnf5 >/dev/null; then
     rpm-ostree install dnf5 dnf5-plugins
