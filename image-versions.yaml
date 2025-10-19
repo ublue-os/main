@@ -19,7 +19,7 @@ images:
   - name: kinoite-41
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 41
-    digest: sha256:bcd50ae71c9264c6ea48339165c92c0b1e56b8712352a15ba7853fce73b4b77e
+    digest: sha256:50058a908962fc5ec26470d68507bac04f5c54817b2200ecd47d877f38d91d5e
 
   # Fedora 42
   - name: akmods-42
