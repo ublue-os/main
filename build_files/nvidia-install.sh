@@ -2,7 +2,7 @@
 
 set -ouex pipefail
 
-RELEASE="$(rpm -E %fedora)"
+FRELEASE="$(rpm -E %fedora)"
 : "${AKMODNV_PATH:=/tmp/akmods-rpms}"
 
 # this is only to aid in human understanding of any issues in CI
@@ -61,7 +61,7 @@ if [[ -f /etc/yum.repos.d/_copr_ublue-os-staging.repo ]]; then
     sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/_copr_ublue-os-staging.repo
 else
     # Otherwise, retrieve the repo file for staging
-    curl -Lo /etc/yum.repos.d/_copr_ublue-os-staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
+    curl -Lo /etc/yum.repos.d/_copr_ublue-os-staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${FRELEASE}"/ublue-os-staging-fedora-"${FRELEASE}".repo
 fi
 
 source "${AKMODNV_PATH}"/kmods/nvidia-vars
@@ -88,7 +88,7 @@ dnf5 install -y \
 
 # nvidia-container-toolkit is not built with required crypto digests for RPM
 # 6+, introduced in Fedora 43
-if [[ "${RELEASE}" -ne 43 ]]; then
+if [[ "${FRELEASE}" -ne 43 ]]; then
     dnf5 install -y nvidia-container-toolkit
 fi
 
