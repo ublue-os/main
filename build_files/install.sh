@@ -14,6 +14,7 @@ if ! rpm -q dnf5 >/dev/null; then
 fi
 
 # mitigate upstream bug with rpm-ostree failing to layer packages in F43.
+# can be removed when rpm-ostree's libdnf submodule is 8eadf440 or newer
 if [[ "$(rpm -E %fedora)" -eq 43 ]]; then
     dnf5 -y copr enable ublue-os/staging
     dnf5 -y swap --repo='copr:copr.fedorainfracloud.org:ublue-os:staging' \
