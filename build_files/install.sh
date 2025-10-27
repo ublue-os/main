@@ -14,7 +14,7 @@ if ! rpm -q dnf5 >/dev/null; then
 fi
 
 # mitigate upstream bug with rpm-ostree failing to layer packages in F43.
-if [[ "${FRELEASE}" -eq 43 ]]; then
+if [[ "$(rpm -E %fedora)" -eq 43 ]]; then
     dnf5 -y swap --repo='copr:copr.fedorainfracloud.org:ublue-os:staging' \
         rpm-ostree rpm-ostree
     dnf5 versionlock add rpm-ostree
