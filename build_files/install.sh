@@ -15,9 +15,11 @@ fi
 
 # mitigate upstream bug with rpm-ostree failing to layer packages in F43.
 if [[ "$(rpm -E %fedora)" -eq 43 ]]; then
+    dnf5 -y copr enable ublue-os/staging
     dnf5 -y swap --repo='copr:copr.fedorainfracloud.org:ublue-os:staging' \
         rpm-ostree rpm-ostree
     dnf5 versionlock add rpm-ostree
+    dnf5 -y copr disable ublue-os/staging
 fi
 
 # mitigate upstream packaging bug: https://bugzilla.redhat.com/show_bug.cgi?id=2332429
