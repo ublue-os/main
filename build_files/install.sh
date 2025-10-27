@@ -13,6 +13,16 @@ if ! rpm -q dnf5 >/dev/null; then
     rpm-ostree install dnf5 dnf5-plugins
 fi
 
+# mitigate upstream bug with rpm-ostree failing to layer packages in F43.
+# can be removed when rpm-ostree's libdnf submodule is 8eadf440 or newer
+if [[ "$(rpm -E %fedora)" -gt 41 ]]; then
+    dnf5 -y copr enable ublue-os/staging
+    dnf5 -y swap --repo='copr:copr.fedorainfracloud.org:ublue-os:staging' \
+        rpm-ostree rpm-ostree
+    dnf5 versionlock add rpm-ostree
+    dnf5 -y copr disable ublue-os/staging
+fi
+
 # mitigate upstream packaging bug: https://bugzilla.redhat.com/show_bug.cgi?id=2332429
 # swap the incorrectly installed OpenCL-ICD-Loader for ocl-icd, the expected package
 dnf5 -y swap --repo='fedora' \
