@@ -17,6 +17,7 @@ fi
 if [[ "${FRELEASE}" -eq 43 ]]; then
     dnf5 -y swap --repo='copr:copr.fedorainfracloud.org:ublue-os:staging' \
         rpm-ostree rpm-ostree
+    dnf5 versionlock add rpm-ostree
 fi
 
 # mitigate upstream packaging bug: https://bugzilla.redhat.com/show_bug.cgi?id=2332429
