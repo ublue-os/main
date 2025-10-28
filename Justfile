@@ -166,9 +166,7 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
     # Verify Source Containers
     {{ just }} verify-container "akmods@$AKMODS_DIGEST"
     {{ just }} verify-container "akmods-nvidia-open@$AKMODS_NVIDIA_DIGEST"
-    if [[ "$fedora_version" -ge "41" ]]; then
-        {{ just }} verify-container "$source_image_name@$BASE_IMAGE_DIGEST" "{{ source_registry }}" "https://gitlab.com/fedora/ostree/ci-test/-/raw/main/quay.io-fedora-ostree-desktops.pub?ref_type=heads"
-    fi
+    {{ just }} verify-container "$source_image_name@$BASE_IMAGE_DIGEST" "{{ source_registry }}" "https://gitlab.com/fedora/ostree/ci-test/-/raw/main/quay.io-fedora-ostree-desktops.pub?ref_type=heads"
 
     # Tags
     declare -A gen_tags="($({{ just }} gen-tags $image_name $fedora_version $variant))"

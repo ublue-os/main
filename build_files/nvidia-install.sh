@@ -36,13 +36,6 @@ MULTILIB=(
     mesa-vulkan-drivers.i686
 )
 
-if [[ "$(rpm -E %fedora)" -lt 41 ]]; then
-    MULTILIB+=(
-        mesa-libglapi.i686
-        libvdpau.i686
-    )
-fi
-
 dnf5 install -y "${MULTILIB[@]}"
 
 # enable repos provided by ublue-os-nvidia-addons
