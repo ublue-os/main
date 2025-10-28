@@ -1,26 +1,4 @@
 images:
-  # Fedora 41
-  - name: akmods-41
-    image: ghcr.io/ublue-os/akmods
-    tag: main-41
-    digest: sha256:106817495c075609beb7744d0afd833efb53873e7afe242a3de8925bdc4ab1e4
-  - name: akmods-nvidia-open-41
-    image: ghcr.io/ublue-os/akmods-nvidia-open
-    tag: main-41
-    digest: sha256:4b230cb421371862c18375bee8e0b9be4ed1dfac187b3673c4d68a7181d33569
-  - name: base-atomic-41
-    image: quay.io/fedora-ostree-desktops/base-atomic
-    tag: 41
-    digest: sha256:c1f06a7639519cdad6ac4b7dcb09f916a99fe79ba7c92efab25588f2cd9bec6c
-  - name: silverblue-41
-    image: quay.io/fedora-ostree-desktops/silverblue
-    tag: 41
-    digest: sha256:e09a6d8af0f2d8da739dbaa85f8a913273141664a73f683ffcf1b47566bd0aef
-  - name: kinoite-41
-    image: quay.io/fedora-ostree-desktops/kinoite
-    tag: 41
-    digest: sha256:657914406fd618a391e72a785b129d45d1763a147eb7ee94e50afa5afa239538
-
   # Fedora 42
   - name: akmods-42
     image: ghcr.io/ublue-os/akmods

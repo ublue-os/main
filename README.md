@@ -3,8 +3,8 @@ The deprecated sway, budgie, and cosmic images have now been removed, see #927
 
 # Main
 
-[![build-41](https://github.com/ublue-os/main/actions/workflows/build-41.yml/badge.svg)](https://github.com/ublue-os/main/actions/workflows/build-41.yml)
-[![build-42](https://github.com/ublue-os/main/actions/workflows/build-42.yml/badge.svg)](https://github.com/ublue-os/main/actions/workflows/build-42.yml)
+[![build-gts](https://github.com/ublue-os/main/actions/workflows/build-gts.yml/badge.svg)](https://github.com/ublue-os/main/actions/workflows/build-gts.yml)
+[![build-latest](https://github.com/ublue-os/main/actions/workflows/build-latest.yml/badge.svg)](https://github.com/ublue-os/main/actions/workflows/build-latest.yml)
 
 A common main image for all other uBlue images, with minimal (but important) adjustments to Fedora. <3
 

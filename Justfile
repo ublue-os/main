@@ -2,8 +2,8 @@ set unstable := true
 
 # Tags
 
-gts := "41"
-latest := "42"
+gts := "42"
+latest := "43"
 [private]
 beta := "43"
 
@@ -166,9 +166,7 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
     # Verify Source Containers
     {{ just }} verify-container "akmods@$AKMODS_DIGEST"
     {{ just }} verify-container "akmods-nvidia-open@$AKMODS_NVIDIA_DIGEST"
-    if [[ "$fedora_version" -ge "41" ]]; then
-        {{ just }} verify-container "$source_image_name@$BASE_IMAGE_DIGEST" "{{ source_registry }}" "https://gitlab.com/fedora/ostree/ci-test/-/raw/main/quay.io-fedora-ostree-desktops.pub?ref_type=heads"
-    fi
+    {{ just }} verify-container "$source_image_name@$BASE_IMAGE_DIGEST" "{{ source_registry }}" "https://gitlab.com/fedora/ostree/ci-test/-/raw/main/quay.io-fedora-ostree-desktops.pub?ref_type=heads"
 
     # Tags
     declare -A gen_tags="($({{ just }} gen-tags $image_name $fedora_version $variant))"
@@ -299,15 +297,7 @@ image-name-check $image_name $fedora_version $variant:
     fedora_version="$({{ just }} fedora-version-check $fedora_version || exit 1)"
     variant="$({{ just }} fedora-variant-check $variant || exit 1)"
 
-    # TODO: Remove this block when 42 becomes GTS
-    if [[ "$fedora_version" -eq "40" ]]; then
-        echo "($image_name-$variant $image_name $fedora_version)"
-    elif [[ "$image_name" =~ atomic && "$fedora_version" -le "41" ]]; then
-        echo '{{ style('error') }}Invalid Image Name{{ NORMAL }}: {{ style('command') }}`-atomic` names only used on >= F42{{ NORMAL }}' >&2
-        exit 1
-    else
-        echo "($image_name-$variant $source_image_name $fedora_version)"
-    fi
+    echo "($image_name-$variant $source_image_name $fedora_version)"
 
 # Check Valid Fedora Version
 [group('Utility')]
