@@ -5,7 +5,7 @@ set unstable := true
 gts := "42"
 latest := "43"
 [private]
-beta := "43"
+beta := "44"
 
 # Defaults
 
