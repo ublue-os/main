@@ -121,10 +121,6 @@ dnf5 versionlock add "${OVERRIDES[@]}"
 if [[ "$IMAGE_NAME" == "silverblue" ]]; then
     dnf5 remove -y \
         gnome-software-rpm-ostree
-    dnf5 swap -y \
-        --repo=copr:copr.fedorainfracloud.org:ublue-os:staging \
-        gnome-software gnome-software
-    dnf5 versionlock add gnome-software
 fi
 
 # Remove Fedora Flatpak and related packages
