@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.0.0 (2025-11-19)
+
+
+### Features
+
+* Add myself to emeritus.md ([#1530](https://github.com/ublue-os/main/issues/1530)) ([eea625b](https://github.com/ublue-os/main/commit/eea625bfccd12e17751d9fe20960fb619f5883f1))
+* cleanup coredumps after 5 days ([#1231](https://github.com/ublue-os/main/issues/1231)) ([100455e](https://github.com/ublue-os/main/commit/100455e74fcee8c8f9ca762b0d00acab6366d2d2))
+
+
+### Bug Fixes
+
+* actually swap to negativo libheif ([#1366](https://github.com/ublue-os/main/issues/1366)) ([775b229](https://github.com/ublue-os/main/commit/775b229f45903fdd41f41406b7bce9e74ccaeb62))
+* **ci:** always build images when workflow_dispatch is triggered ([#1511](https://github.com/ublue-os/main/issues/1511)) ([ef8c20a](https://github.com/ublue-os/main/commit/ef8c20a0ae81a38536d4622fcde20a73bb87cce9))
+* **ci:** reference upstream cosign public keys from main branch ([#1224](https://github.com/ublue-os/main/issues/1224)) ([91e8fd9](https://github.com/ublue-os/main/commit/91e8fd9c29f2bdc7e70e3311c690ed2dee6b2141))
+* Drop ancient and unmaintained patched gnome-software from main ([#1716](https://github.com/ublue-os/main/issues/1716)) ([9e15d60](https://github.com/ublue-os/main/commit/9e15d60af476e24961565c0aff21f8b35c2120fb))
+* **nvidia:** don't check for the rpm release field ([#1213](https://github.com/ublue-os/main/issues/1213)) ([d5907f3](https://github.com/ublue-os/main/commit/d5907f36989614231a638dcaf6a8ed92c93f510e))
+* packages.json syntax ([#1507](https://github.com/ublue-os/main/issues/1507)) ([e562071](https://github.com/ublue-os/main/commit/e562071d1ba31c6b8cdc15988c3d36f1d068a47e))
+* rename RELEASE var to prevent aliasing ([#1546](https://github.com/ublue-os/main/issues/1546)) ([28dd342](https://github.com/ublue-os/main/commit/28dd34280275ad91df1d5ca42fa32aa8ae91f685))
+* replace chainguard cosign installer with official action ([#1494](https://github.com/ublue-os/main/issues/1494)) ([82005aa](https://github.com/ublue-os/main/commit/82005aa014c48124d37f4d540400e5c8441ee534))
+* use libheif from negativo for dolphin thumbnails ([#1328](https://github.com/ublue-os/main/issues/1328)) ([9579033](https://github.com/ublue-os/main/commit/95790333a587134c2fae6b13800058755e064cbf))
+* Use patched rpm-ostree on F43. ([#1600](https://github.com/ublue-os/main/issues/1600)) ([e54da92](https://github.com/ublue-os/main/commit/e54da92a7167ad304777b95492e91a6b52941be7))
+* Validate packages.json to block builds on parse errors ([#1509](https://github.com/ublue-os/main/issues/1509)) ([008024f](https://github.com/ublue-os/main/commit/008024fcfd72f90fd8ea74c61177ce35bebdc285))
+
 ## [2.3.0](https://github.com/ublue-os/main/compare/v2.2.0...v2.3.0) (2025-04-16)
 
 
