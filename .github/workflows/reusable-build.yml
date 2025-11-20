@@ -145,19 +145,13 @@ jobs:
       packages: write
       id-token: write
     steps:
-      - name: Maximize build space
-        shell: bash
-        run: |
-          set -xeuo pipefail
-          df -h
-          # Remove host toolchains, browsers
-          shopt -s nullglob
-          printf '/host-sys%s\0' /opt/PyPy /opt/az /opt/node/ /opt/pipx /opt/go /opt/Ruby \
-              /usr/lib/llvm-* /usr/local/julia* /usr/local/lib/android /usr/share/dotnet \
-              /usr/share/swift /usr/local/.ghcup /usr/lib/firefox /opt/google/chrome \
-              /opt/microsoft/msedge \
-              | xargs -0 -n1 -P4 rm -rf
-          df -h
+      - name: Mount BTRFS for podman storage
+        id: container-storage-action
+        uses: ublue-os/container-storage-action@911baca08baf30c8654933e9e9723cb399892140
+        continue-on-error: true
+        with:
+          mount-opts: compress-force=zstd:2
+          loopback-free: '1'
 
         # Checkout Git Repository
       - name: Checkout
