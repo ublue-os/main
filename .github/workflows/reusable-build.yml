@@ -145,6 +145,20 @@ jobs:
       packages: write
       id-token: write
     steps:
+      - name: Maximize build space
+        shell: bash
+        run: |
+          set -xeuo pipefail
+          df -h
+          # Remove host toolchains, browsers
+          shopt -s nullglob
+          printf '/host-sys%s\0' /opt/PyPy /opt/az /opt/node/ /opt/pipx /opt/go /opt/Ruby \
+              /usr/lib/llvm-* /usr/local/julia* /usr/local/lib/android /usr/share/dotnet \
+              /usr/share/swift /usr/local/.ghcup /usr/lib/firefox /opt/google/chrome \
+              /opt/microsoft/msedge \
+              | xargs -0 -n1 -P4 rm -rf
+          df -h
+
         # Checkout Git Repository
       - name: Checkout
         # yamllint disable-line rule:line-length rule:comments
