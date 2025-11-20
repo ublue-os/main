@@ -145,6 +145,14 @@ jobs:
       packages: write
       id-token: write
     steps:
+      - name: Mount BTRFS for podman storage
+        id: container-storage-action
+        uses: ublue-os/container-storage-action@911baca08baf30c8654933e9e9723cb399892140
+        continue-on-error: true
+        with:
+          mount-opts: compress-force=zstd:2
+          loopback-free: '1'
+
         # Checkout Git Repository
       - name: Checkout
         # yamllint disable-line rule:line-length rule:comments
