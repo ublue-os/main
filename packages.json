@@ -42,6 +42,7 @@
                 "pam-u2f",
                 "pam_yubico",
                 "pamu2fcfg",
+                "pipewire-libs-extra",
                 "pipewire-plugin-libcamera",
                 "powerstat",
                 "smartmontools",
@@ -95,8 +96,7 @@
         "include": {
             "all": [
                 "android-udev-rules",
-                "mesa-libxatracker",
-                "pipewire-libs-extra"
+                "mesa-libxatracker"
             ]
         },
         "exclude": {
