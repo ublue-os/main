@@ -76,14 +76,9 @@ dnf5 install -y \
     nvidia-driver-cuda-libs.i686 \
     nvidia-driver-libs.i686 \
     nvidia-settings \
+    nvidia-container-toolkit \
     ${VARIANT_PKGS} \
     "${AKMODNV_PATH}"/kmods/kmod-nvidia-"${KERNEL_VERSION}"-"${NVIDIA_AKMOD_VERSION}"."${DIST_ARCH}".rpm
-
-# nvidia-container-toolkit is not built with required crypto digests for RPM
-# 6+, introduced in Fedora 43
-if [[ "${FRELEASE}" -ne 43 ]]; then
-    dnf5 install -y nvidia-container-toolkit
-fi
 
 # Ensure the version of the Nvidia module matches the driver
 KMOD_VERSION="$(rpm -q --queryformat '%{VERSION}' kmod-nvidia)"
