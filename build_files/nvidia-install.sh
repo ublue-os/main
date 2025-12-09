@@ -38,7 +38,7 @@ MULTILIB=(
 
 dnf5 install -y "${MULTILIB[@]}"
 
-# enable repos provided by ublue-os-nvidia-addons
+# enable repos provided by ublue-os-nvidia-addons (not enabling fedora-nvidia-lts)
 dnf5 config-manager setopt fedora-nvidia.enabled=1 nvidia-container-toolkit.enabled=1
 
 # Disable Multimedia
@@ -90,14 +90,10 @@ fi
 
 ## nvidia post-install steps
 # disable repos provided by ublue-os-nvidia-addons
-dnf5 config-manager setopt fedora-nvidia.enabled=0 nvidia-container-toolkit.enabled=0
+dnf5 config-manager setopt fedora-nvidia.enabled=0 fedora-nvidia-lts.enabled=0 nvidia-container-toolkit.enabled=0
 
 # Disable staging
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/_copr_ublue-os-staging.repo
-
-# ensure kernel.conf matches NVIDIA_FLAVOR (which must be nvidia or nvidia-open)
-# kmod-nvidia-common defaults to 'nvidia-open' but this will match our akmod image
-sed -i "s/^MODULE_VARIANT=.*/MODULE_VARIANT=$KERNEL_MODULE_TYPE/" /etc/nvidia/kernel.conf
 
 systemctl enable ublue-nvctk-cdi.service
 semodule --verbose --install /usr/share/selinux/packages/nvidia-container.pp
