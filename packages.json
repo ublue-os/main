@@ -84,7 +84,7 @@
             ]
         },
         "exclude": {
-            "all": ["google-noto-sans-cjk-vf-fonts", "default-fonts-cjk-sans"],
+            "all": ["google-noto-sans-cjk-vf-fonts", "default-fonts-cjk-sans", "fedora-third-party"],
             "silverblue": [
                 "totem-video-thumbnailer",
                 "gnome-software-rpm-ostree"
