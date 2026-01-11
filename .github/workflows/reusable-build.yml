@@ -20,6 +20,11 @@ on:
         required: false
         type: string
         default: "amd64"
+      image_prefix:
+        description: "Prefix to add to image name when pushing (e.g. 'test-' for testing)"
+        required: false
+        type: string
+        default: ""
 
 env:
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
@@ -246,27 +251,39 @@ jobs:
         env:
           REGISTRY_USER: ${{ github.actor }}
           REGISTRY_TOKEN: ${{ github.token }}
+          IMAGE_PREFIX: ${{ inputs.image_prefix }}
         shell: bash
         run: |
           just login-to-ghcr "$REGISTRY_USER" "$REGISTRY_TOKEN"
-          just push-to-registry \
-              "${{ inputs.image_name }}" \
-              "${{ inputs.image_version }}" \
-              "${{ inputs.image_variant }}" \
-              "${{ steps.registry_case.outputs.lowercase }}"
+
+          # Build with original name, but push to prefixed name
+          IMAGE_NAME_FULL="${{ inputs.image_name }}-${{ inputs.image_variant }}"
+          PREFIXED_NAME="${IMAGE_PREFIX}${IMAGE_NAME_FULL}"
+          IMAGE_VERSION_FULL=$(just --evaluate "${{ inputs.image_version }}")
+
+          # Tag with prefixed name if prefix is set
+          if [[ -n "${IMAGE_PREFIX}" ]]; then
+            podman tag "localhost/${IMAGE_NAME_FULL}:${IMAGE_VERSION_FULL}" "localhost/${PREFIXED_NAME}:${IMAGE_VERSION_FULL}"
+          fi
+
+          # Push using the prefixed name
+          REGISTRY="${{ steps.registry_case.outputs.lowercase }}"
+          podman push "localhost/${PREFIXED_NAME}:${IMAGE_VERSION_FULL}" "docker://${REGISTRY}/${PREFIXED_NAME}:${IMAGE_VERSION_FULL}"
 
       - name: Get Image Digest
         id: digest
         if: github.event_name != 'pull_request'
         env:
           IMAGE_REGISTRY: ${{ steps.registry_case.outputs.lowercase }}
+          IMAGE_PREFIX: ${{ inputs.image_prefix }}
         shell: bash
         run: |
           IMAGE_NAME_FULL="${{ inputs.image_name }}-${{ inputs.image_variant }}"
+          PREFIXED_NAME="${IMAGE_PREFIX}${IMAGE_NAME_FULL}"
           IMAGE_VERSION_FULL=$(just --evaluate "${{ inputs.image_version }}")
-          DIGEST=$(skopeo inspect docker://${IMAGE_REGISTRY}/${IMAGE_NAME_FULL}:${IMAGE_VERSION_FULL} --format '{{ .Digest }}')
+          DIGEST=$(skopeo inspect docker://${IMAGE_REGISTRY}/${PREFIXED_NAME}:${IMAGE_VERSION_FULL} --format '{{ .Digest }}')
           echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
-          echo "image_name_full=${IMAGE_NAME_FULL}" >> "$GITHUB_OUTPUT"
+          echo "image_name_full=${PREFIXED_NAME}" >> "$GITHUB_OUTPUT"
           echo "image_version_full=${IMAGE_VERSION_FULL}" >> "$GITHUB_OUTPUT"
 
       - name: Save Digest to File
@@ -331,16 +348,19 @@ jobs:
 
       - name: Generate Tags
         id: gen-tags
+        env:
+          IMAGE_PREFIX: ${{ inputs.image_prefix }}
         shell: bash
         run: |
           IMAGE_NAME_FULL="${{ inputs.image_name }}-${{ inputs.image_variant }}"
+          PREFIXED_NAME="${IMAGE_PREFIX}${IMAGE_NAME_FULL}"
           IMAGE_VERSION_FULL=$(just --evaluate "${{ inputs.image_version }}")
 
           # Generate Timestamp with incrementing version point
           TIMESTAMP="$(date +%Y%m%d)"
           LIST_TAGS="$(mktemp)"
           while [[ ! -s "$LIST_TAGS" ]]; do
-            skopeo list-tags docker://${{ steps.registry_case.outputs.lowercase }}/${IMAGE_NAME_FULL} > "$LIST_TAGS" || true
+            skopeo list-tags docker://${{ steps.registry_case.outputs.lowercase }}/${PREFIXED_NAME} > "$LIST_TAGS" || true
           done
           if [[ -s "$LIST_TAGS" ]] && [[ $(cat "$LIST_TAGS" | jq "any(.Tags[]; contains(\"${IMAGE_VERSION_FULL}-$TIMESTAMP\"))") == "true" ]]; then
             POINT="1"
@@ -380,7 +400,7 @@ jobs:
           # Trim whitespace from each line
           TAGS=$(echo "$TAGS" | sed 's/^[[:space:]]*//')
 
-          echo "image_name_full=${IMAGE_NAME_FULL}" >> "$GITHUB_OUTPUT"
+          echo "image_name_full=${PREFIXED_NAME}" >> "$GITHUB_OUTPUT"
           echo "image_version_full=${IMAGE_VERSION_FULL}" >> "$GITHUB_OUTPUT"
           # Use delimiter for multiline output
           echo "tags<<EOF" >> "$GITHUB_OUTPUT"
