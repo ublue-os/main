@@ -1,7 +1,7 @@
 name: ublue beta
 
 on:
-  # pull_request:
+  pull_request:
   # merge_group:
   workflow_dispatch:
 
@@ -29,3 +29,4 @@ jobs:
       image_variant: ${{ matrix.image_variant }}
       image_version: beta
       platforms: "amd64,arm64"
+      image_prefix: "test-"
