@@ -28,3 +28,4 @@ jobs:
       image_name: ${{ matrix.image_name }}
       image_variant: ${{ matrix.image_variant }}
       image_version: gts
+      platforms: "amd64,arm64"
