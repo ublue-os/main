@@ -15,6 +15,16 @@ on:
         required: false
         type: string
         default: "main"
+      platforms:
+        description: "Comma-separated list of platforms to build (e.g. amd64,arm64)"
+        required: false
+        type: string
+        default: "amd64"
+      image_prefix:
+        description: "Prefix to add to image name when pushing (e.g. 'test-' for testing)"
+        required: false
+        type: string
+        default: ""
 
 env:
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
@@ -135,23 +145,59 @@ jobs:
 
           echo "build_required=${BUILD_REQUIRED}" >> "$GITHUB_OUTPUT"
 
-  build_ublue:
-    name: main
-    runs-on: ubuntu-24.04
+  generate_matrix:
+    name: Generate build matrix
+    runs-on: ubuntu-latest
     needs: check-build-required
     if: ${{ needs.check-build-required.outputs.build_required == 'true' }}
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Set matrix
+        id: set-matrix
+        env:
+          PLATFORMS: "${{ inputs.platforms }}"
+        run: |
+          # Turn the comma separated string into a JSON matrix
+          platforms=()
+          IFS=',' read -r -a platforms <<< "${PLATFORMS}"
+
+          MATRIX="{\"include\":[]}"
+          for platform in "${platforms[@]}"; do
+            MATRIX="$(echo "${MATRIX}" | jq ".include += [{\"platform\": \"${platform}\"}]")"
+          done
+          echo "matrix=$(echo "${MATRIX}" | jq -c '.')" >> $GITHUB_OUTPUT
+
+  build_ublue:
+    name: Build (${{ matrix.platform }})
+    runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    needs: [check-build-required, generate_matrix]
+    if: ${{ needs.check-build-required.outputs.build_required == 'true' }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate_matrix.outputs.matrix) }}
     permissions:
       contents: read
       packages: write
       id-token: write
+    outputs:
+      image_name_full: ${{ steps.build.outputs.image_name_full }}
+      image_version_full: ${{ steps.build.outputs.image_version_full }}
     steps:
+      - name: Install dependencies (arm64)
+        if: matrix.platform == 'arm64'
+        run: |
+          sudo apt update -y
+          sudo apt install -y podman
+
       - name: Mount BTRFS for podman storage
         id: container-storage-action
+        if: matrix.platform != 'arm64'
         uses: ublue-os/container-storage-action@911baca08baf30c8654933e9e9723cb399892140
         continue-on-error: true
         with:
           mount-opts: compress-force=zstd:2
-          loopback-free: '1'
+          loopback-free: "1"
 
         # Checkout Git Repository
       - name: Checkout
@@ -166,6 +212,7 @@ jobs:
         uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff # v3
 
       - name: Build Image
+        id: build
         shell: bash
         run: |
           set -x
@@ -174,6 +221,12 @@ jobs:
                "${{ inputs.image_version }}" \
                "${{ inputs.image_variant }}" \
                "${{ github.event_name }}"
+
+          # Capture the full image name and version for manifest creation
+          IMAGE_NAME_FULL="${{ inputs.image_name }}-${{ inputs.image_variant }}"
+          IMAGE_VERSION_FULL=$(just --evaluate "${{ inputs.image_version }}")
+          echo "image_name_full=${IMAGE_NAME_FULL}" >> "$GITHUB_OUTPUT"
+          echo "image_version_full=${IMAGE_VERSION_FULL}" >> "$GITHUB_OUTPUT"
 
       - name: Check Secureboot
         shell: bash
@@ -198,82 +251,248 @@ jobs:
         env:
           REGISTRY_USER: ${{ github.actor }}
           REGISTRY_TOKEN: ${{ github.token }}
+          IMAGE_PREFIX: ${{ inputs.image_prefix }}
         shell: bash
         run: |
           just login-to-ghcr "$REGISTRY_USER" "$REGISTRY_TOKEN"
-          just push-to-registry \
-              "${{ inputs.image_name }}" \
-              "${{ inputs.image_version }}" \
-              "${{ inputs.image_variant }}" \
-              "${{ steps.registry_case.outputs.lowercase }}"
 
-      - name: Sign Container Image
-        id: sign
+          # Build with original name, but push to prefixed name
+          IMAGE_NAME_FULL="${{ inputs.image_name }}-${{ inputs.image_variant }}"
+          PREFIXED_NAME="${IMAGE_PREFIX}${IMAGE_NAME_FULL}"
+          IMAGE_VERSION_FULL=$(just --evaluate "${{ inputs.image_version }}")
+
+          # Tag with prefixed name if prefix is set
+          if [[ -n "${IMAGE_PREFIX}" ]]; then
+            podman tag "localhost/${IMAGE_NAME_FULL}:${IMAGE_VERSION_FULL}" "localhost/${PREFIXED_NAME}:${IMAGE_VERSION_FULL}"
+          fi
+
+          # Push using the prefixed name
+          REGISTRY="${{ steps.registry_case.outputs.lowercase }}"
+          podman push "localhost/${PREFIXED_NAME}:${IMAGE_VERSION_FULL}" "docker://${REGISTRY}/${PREFIXED_NAME}:${IMAGE_VERSION_FULL}"
+
+      - name: Get Image Digest
+        id: digest
         if: github.event_name != 'pull_request'
         env:
+          IMAGE_REGISTRY: ${{ steps.registry_case.outputs.lowercase }}
+          IMAGE_PREFIX: ${{ inputs.image_prefix }}
+        shell: bash
+        run: |
+          IMAGE_NAME_FULL="${{ inputs.image_name }}-${{ inputs.image_variant }}"
+          PREFIXED_NAME="${IMAGE_PREFIX}${IMAGE_NAME_FULL}"
+          IMAGE_VERSION_FULL=$(just --evaluate "${{ inputs.image_version }}")
+          DIGEST=$(skopeo inspect docker://${IMAGE_REGISTRY}/${PREFIXED_NAME}:${IMAGE_VERSION_FULL} --format '{{ .Digest }}')
+          echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
+          echo "image_name_full=${PREFIXED_NAME}" >> "$GITHUB_OUTPUT"
+          echo "image_version_full=${IMAGE_VERSION_FULL}" >> "$GITHUB_OUTPUT"
+
+      - name: Save Digest to File
+        if: github.event_name != 'pull_request'
+        run: |
+          mkdir -p /tmp/digests
+          echo "${{ steps.digest.outputs.digest }}" > "/tmp/digests/${{ matrix.platform }}.txt"
+
+      - name: Upload Digest File
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: digest-${{ inputs.image_name }}-${{ inputs.image_variant }}-${{ inputs.image_version }}-${{ matrix.platform }}
+          path: /tmp/digests/${{ matrix.platform }}.txt
+          retention-days: 1
+
+  manifest:
+    name: Create and push manifest
+    runs-on: ubuntu-latest
+    needs: [build_ublue, generate_matrix]
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    outputs:
+      digest: ${{ steps.push_manifest.outputs.digest }}
+      image: ${{ steps.push_manifest.outputs.image }}
+    steps:
+      # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
+      - name: Lowercase Registry
+        id: registry_case
+        uses: ASzc/change-string-case-action@d0603cd0a7dd490be678164909f65c7737470a7f # v6
+        with:
+          string: ${{ env.IMAGE_REGISTRY }}
+
+      - name: Download Digest Artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: digest-${{ inputs.image_name }}-${{ inputs.image_variant }}-${{ inputs.image_version }}-*
+          merge-multiple: true
+          path: /tmp/digests
+
+      - name: Setup Just
+        uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff # v3
+
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Load Digests
+        id: load-digests
+        run: |
+          DIGESTS_JSON="$(jq -n '{}')"
+          for digest_file in /tmp/digests/*.txt; do
+            # Extract the platform from the file name
+            PLATFORM="$(basename "${digest_file}" .txt)"
+            DIGEST="$(cat "${digest_file}")"
+            # Add the platform and digest to the JSON object
+            DIGESTS_JSON="$(echo "${DIGESTS_JSON}" | jq --arg key "${PLATFORM}" --arg value "${DIGEST}" '. + {($key): $value}')"
+          done
+          echo "digests_json=$(echo "$DIGESTS_JSON" | jq -c '.')" >> "${GITHUB_OUTPUT}"
+
+      - name: Generate Tags
+        id: gen-tags
+        env:
+          IMAGE_PREFIX: ${{ inputs.image_prefix }}
+        shell: bash
+        run: |
+          IMAGE_NAME_FULL="${{ inputs.image_name }}-${{ inputs.image_variant }}"
+          PREFIXED_NAME="${IMAGE_PREFIX}${IMAGE_NAME_FULL}"
+          IMAGE_VERSION_FULL=$(just --evaluate "${{ inputs.image_version }}")
+
+          # Generate Timestamp with incrementing version point
+          TIMESTAMP="$(date +%Y%m%d)"
+          LIST_TAGS="$(mktemp)"
+          while [[ ! -s "$LIST_TAGS" ]]; do
+            skopeo list-tags docker://${{ steps.registry_case.outputs.lowercase }}/${PREFIXED_NAME} > "$LIST_TAGS" || true
+          done
+          if [[ -s "$LIST_TAGS" ]] && [[ $(cat "$LIST_TAGS" | jq "any(.Tags[]; contains(\"${IMAGE_VERSION_FULL}-$TIMESTAMP\"))") == "true" ]]; then
+            POINT="1"
+            while $(cat "$LIST_TAGS" | jq -e "any(.Tags[]; contains(\"${IMAGE_VERSION_FULL}-$TIMESTAMP.$POINT\"))")
+            do
+              (( POINT++ ))
+            done
+          fi
+
+          if [[ -n "${POINT:-}" ]]; then
+            TIMESTAMP="$TIMESTAMP.$POINT"
+          fi
+
+          # Build tags list
+          TAGS="${IMAGE_VERSION_FULL}
+          ${IMAGE_VERSION_FULL}-${TIMESTAMP}"
+
+          # Add version alias tags (gts, latest, beta)
+          case "${{ inputs.image_version }}" in
+            gts)
+              TAGS="${TAGS}
+          gts
+          gts-${TIMESTAMP}"
+              ;;
+            latest)
+              TAGS="${TAGS}
+          latest
+          latest-${TIMESTAMP}"
+              ;;
+            beta)
+              TAGS="${TAGS}
+          beta
+          beta-${TIMESTAMP}"
+              ;;
+          esac
+
+          # Trim whitespace from each line
+          TAGS=$(echo "$TAGS" | sed 's/^[[:space:]]*//')
+
+          echo "image_name_full=${PREFIXED_NAME}" >> "$GITHUB_OUTPUT"
+          echo "image_version_full=${IMAGE_VERSION_FULL}" >> "$GITHUB_OUTPUT"
+          # Use delimiter for multiline output
+          echo "tags<<EOF" >> "$GITHUB_OUTPUT"
+          echo "${TAGS}" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Login to GitHub Container Registry
+        env:
+          REGISTRY: ghcr.io
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | podman login -u "${{ github.actor }}" --password-stdin "${REGISTRY}"
+
+      - name: Create Manifest
+        id: create-manifest
+        env:
+          IMAGE_REGISTRY: ${{ steps.registry_case.outputs.lowercase }}
+          IMAGE_NAME: ${{ steps.gen-tags.outputs.image_name_full }}
+        run: |
+          podman manifest create ${IMAGE_REGISTRY}/${IMAGE_NAME}
+          echo "manifest=${IMAGE_REGISTRY}/${IMAGE_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Populate Manifest
+        env:
+          MANIFEST: ${{ steps.create-manifest.outputs.manifest }}
+          DIGESTS_JSON: ${{ steps.load-digests.outputs.digests_json }}
+          IMAGE_REGISTRY: ${{ steps.registry_case.outputs.lowercase }}
+          IMAGE_NAME: ${{ steps.gen-tags.outputs.image_name_full }}
+          PLATFORMS: "${{ inputs.platforms }}"
+        run: |
+          DIGESTS=$(echo "$DIGESTS_JSON" | jq -c '.')
+          # Turn the comma separated string into a list
+          platforms=()
+          IFS=',' read -r -a platforms <<< "${PLATFORMS}"
+          for platform in "${platforms[@]}"; do
+            digest="$(echo $DIGESTS | jq -r ".$platform")"
+            echo "Adding ${IMAGE_REGISTRY}/${IMAGE_NAME}@${digest} for ${platform}"
+            podman manifest add "${MANIFEST}" "${IMAGE_REGISTRY}/${IMAGE_NAME}@${digest}" --arch "${platform}"
+          done
+
+      - name: Push Manifest
+        id: push_manifest
+        env:
+          MANIFEST: ${{ steps.create-manifest.outputs.manifest }}
+          TAGS: ${{ steps.gen-tags.outputs.tags }}
+          IMAGE_REGISTRY: ${{ steps.registry_case.outputs.lowercase }}
+          IMAGE_NAME: ${{ steps.gen-tags.outputs.image_name_full }}
+        run: |
+          while IFS= read -r tag; do
+            [[ -z "$tag" ]] && continue
+            echo "Pushing manifest to ${IMAGE_REGISTRY}/${IMAGE_NAME}:${tag}"
+            podman manifest push --all=false --digestfile=/tmp/digestfile "${MANIFEST}" "${IMAGE_REGISTRY}/${IMAGE_NAME}:${tag}"
+          done <<< "$TAGS"
+
+          DIGEST=$(cat /tmp/digestfile)
+          echo "digest=$DIGEST" >> $GITHUB_OUTPUT
+          echo "image=${IMAGE_REGISTRY}/${IMAGE_NAME}" >> $GITHUB_OUTPUT
+
+  sign:
+    name: Sign manifest
+    needs: manifest
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Login to GitHub Container Registry
+        env:
+          REGISTRY: ghcr.io
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | podman login -u "${{ github.actor }}" --password-stdin "${REGISTRY}"
+          mkdir -p ~/.docker
+          cat ${XDG_RUNTIME_DIR}/containers/auth.json > ~/.docker/config.json
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@7e8b541eb2e61bf99390e1afd4be13a184e9ebc5 # v3.10.1
+
+      - name: Sign Manifest
+        env:
+          DIGEST: ${{ needs.manifest.outputs.digest }}
+          IMAGE: ${{ needs.manifest.outputs.image }}
           COSIGN_EXPERIMENTAL: false
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
-        shell: bash
         run: |
-          just cosign-sign \
-              "${{ inputs.image_name }}" \
-              "${{ inputs.image_version }}" \
-              "${{ inputs.image_variant }}" \
-              "${{ steps.registry_case.outputs.lowercase }}"
-
-      - name: SBOM Setup
-        if: false
-        run: |
-          set -eou pipefail
-          echo "=== FREE SPACE ==="
-          df -h
-          echo "=== MEMORY AND SWAP ==="
-          free -h
-          swapon --show
-          echo "=== MAKING SWAPFILE ==="
-          sudo swapoff /mnt/swapfile
-          sudo rm -f /mnt/swapfile
-          SWAP_FILE="/mnt/swapfile"
-          sudo fallocate -l 70G "$SWAP_FILE"
-          sudo chmod 600 "$SWAP_FILE"
-          sudo mkswap "$SWAP_FILE"
-          sudo swapon "$SWAP_FILE"
-          echo "=== FREE SPACE ==="
-          df -h
-          echo "=== MEMORY AND SWAP ==="
-          free -h
-          swapon --show
-
-      - name: Generate SBOM
-        id: sbom
-        if: false
-        shell: bash
-        run: |
-          systemctl enable --now --user podman.socket
-
-          sbom=$(just gen-sbom \
-              "${{ inputs.image_name }}" \
-              "${{ inputs.image_version }}" \
-              "${{ inputs.image_variant }}")
-          echo "sbom=$sbom" >> "$GITHUB_OUTPUT"
-
-      - name: Attest SBOM
-        id: attest
-        shell: bash
-        if: false
-        run: |
-          just sbom-attest \
-              "${{ inputs.image_name }}" \
-              "${{ inputs.image_version }}" \
-              "${{ inputs.image_variant }}" \
-              "${{ steps.registry_case.outputs.lowercase }}" \
-              "${{ steps.sbom.outputs.sbom }}"
+          cosign sign -y --key env://COSIGN_PRIVATE_KEY "${IMAGE}@${DIGEST}"
 
   check:
     name: Check all ${{ inputs.image_name }}:${{ inputs.image_version }} builds successful
     if: always()
     runs-on: ubuntu-latest
-    needs: [build_ublue]
+    needs: [build_ublue, manifest, sign]
     steps:
       - name: Check Jobs
         env:
