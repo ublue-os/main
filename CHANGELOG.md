@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.0.0 (2026-02-07)
+
+
+### Features
+
+* readd pipewire-libs-extra for Fedora 43 ([#1762](https://github.com/ublue-os/main/issues/1762)) ([8ea6ffb](https://github.com/ublue-os/main/commit/8ea6ffb669f415e4e5e9618d3fba06018693593c))
+* support nvidia-driver 590 from updated akmods builds ([#1812](https://github.com/ublue-os/main/issues/1812)) ([01ffb5d](https://github.com/ublue-os/main/commit/01ffb5d5b6820c9e9c9d7639435f41572b4e77ea))
+
+
+### Bug Fixes
+
+* add copr standard naming convention for ublue-os/staging ([#2046](https://github.com/ublue-os/main/issues/2046)) ([27c67a9](https://github.com/ublue-os/main/commit/27c67a97aa1bd3a69f23da22ca966ffc2e9cedc3))
+* Drop ancient and unmaintained patched gnome-software from main ([#1716](https://github.com/ublue-os/main/issues/1716)) ([9e15d60](https://github.com/ublue-os/main/commit/9e15d60af476e24961565c0aff21f8b35c2120fb))
+* get rid of ublue-os-flatpak dummy package ([#1841](https://github.com/ublue-os/main/issues/1841)) ([b5f1b7d](https://github.com/ublue-os/main/commit/b5f1b7d28c4efa3fe205857027e66ffc8a09dd1e))
+* **nvidia:** add nvidia-container-toolkit back ([#1787](https://github.com/ublue-os/main/issues/1787)) ([8ca3571](https://github.com/ublue-os/main/commit/8ca35718720c8efa3c339db0b0cf060a744e0c30))
+* Use patched rpm-ostree on F43. ([#1600](https://github.com/ublue-os/main/issues/1600)) ([e54da92](https://github.com/ublue-os/main/commit/e54da92a7167ad304777b95492e91a6b52941be7))
+
 ## [2.3.0](https://github.com/ublue-os/main/compare/v2.2.0...v2.3.0) (2025-04-16)
 
 
