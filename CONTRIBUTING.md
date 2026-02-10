@@ -136,7 +136,7 @@ test: ensure Tayne retains clothing
 
 ## Nvidia
 
-Please note, RPM Fusion supports the initial Nvidia driver release available with each Fedora version as well as the latest version. Any intermittent versions are not maintained by RPM Fusion after they have been superceded with a new version.
+Please note, negativo17 supports the initial Nvidia driver release available with each Fedora version as well as the latest version. Any intermittent versions are not maintained by negativo17 after they have been superseded with a new version.
 
 Keep in mind checks, other than building the akmods, do fail in pull requests.
 
