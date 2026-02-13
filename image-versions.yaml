@@ -3,7 +3,7 @@ images:
   - name: akmods-42
     image: ghcr.io/ublue-os/akmods
     tag: main-42
-    digest: sha256:4b7f312b5139a45db255e3e8f14ff121dafbe8fce42794e2f60b9ed17f7deda1
+    digest: sha256:2595a3895bbc4f1a725c8914ab212709cf076ccb2f4065b3f2bbd30a8fe87a01
   - name: akmods-nvidia-open-42
     image: ghcr.io/ublue-os/akmods-nvidia-open
     tag: main-42
@@ -11,21 +11,21 @@ images:
   - name: base-atomic-42
     image: quay.io/fedora-ostree-desktops/base-atomic
     tag: 42
-    digest: sha256:988526dde7ede299ce55f89aad7909691518d399168607ace69daf91596f2f2c
+    digest: sha256:609aedca027aaf92f510c6d3bd5543a2cbe2332bf4c3ee8bbe1f0da27a6a9868
   - name: silverblue-42
     image: quay.io/fedora-ostree-desktops/silverblue
     tag: 42
-    digest: sha256:1b1eb4913a7f01ae739424583975752b21e4ff1ecc5cdb61e67d410784764f2c
+    digest: sha256:411051166ce44bf0314c52e8b75adc143baa474c1d786686ef376e32be68e998
   - name: kinoite-42
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 42
-    digest: sha256:5850ab234ba5aaa9f47fd7fbeb4420fffc7cc9db48742aea6783319dbe87eadb
+    digest: sha256:9e1e777f2a5c77089810f50a604d590aaf5696c8d3bcf13e9851833d85359099
 
   # Fedora 43
   - name: akmods-43
     image: ghcr.io/ublue-os/akmods
     tag: main-43
-    digest: sha256:2087c83ce45de4a5e283dcf53febd6ccd41086c297fc961dca1ff68e4215da5e
+    digest: sha256:d3af9e7c932bf0239e10acf9a1b667ba8bc7210a55adc0f80958785448ea9b2b
   - name: akmods-nvidia-open-43
     image: ghcr.io/ublue-os/akmods-nvidia-open
     tag: main-43
@@ -33,12 +33,12 @@ images:
   - name: base-atomic-43
     image: quay.io/fedora-ostree-desktops/base-atomic
     tag: 43
-    digest: sha256:9f17cfe78d2f3a42c8c290fff26a8ff091e000bcac72e6cbbf0c7209e84c49e1
+    digest: sha256:bffa1fc8ae31f023481863d34fda7e274df59fcf3e53b0ddd9956b9b98d7654e
   - name: silverblue-43
     image: quay.io/fedora-ostree-desktops/silverblue
     tag: 43
-    digest: sha256:693ba7126ac5726dc821f632a5eb36455be6c9ff50d46ba90fd208c456528d46
+    digest: sha256:ca78584f674fc0fc78501a39520548e0e114328dabae876624bfadf6eabd459d
   - name: kinoite-43
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 43
-    digest: sha256:8331755d4f42b3cc9af7a9efe156e54b155e1e36a5a366ba1f159e511564497d
+    digest: sha256:662bbc2ea405142bd6c473abf0ff04caf7bd458ecdda06de814b82b0899242b0
