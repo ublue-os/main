@@ -62,7 +62,7 @@ fi
 source "${AKMODNV_PATH}"/kmods/nvidia-vars
 
 if [[ "${IMAGE_NAME}" == "kinoite" ]]; then
-    VARIANT_PKGS="supergfxctl-plasmoid supergfxctl"
+    VARIANT_PKGS="supergfxctl"
 elif [[ "${IMAGE_NAME}" == "silverblue" ]]; then
     VARIANT_PKGS="gnome-shell-extension-supergfxctl-gex supergfxctl"
 else
