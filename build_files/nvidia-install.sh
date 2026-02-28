@@ -9,11 +9,6 @@ FRELEASE="$(rpm -E %fedora)"
 # this is only to aid in human understanding of any issues in CI
 find "${AKMODNV_PATH}"/
 
-if ! command -v dnf5 >/dev/null; then
-    echo "Requires dnf5... Exiting"
-    exit 1
-fi
-
 # Check if any rpmfusion repos exist before trying to disable them
 if dnf5 repolist --all | grep -q rpmfusion; then
     dnf5 config-manager setopt "rpmfusion*".enabled=0
