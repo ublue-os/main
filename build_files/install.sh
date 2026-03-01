@@ -13,11 +13,6 @@ if ! rpm -q dnf5 >/dev/null; then
     rpm-ostree install dnf5 dnf5-plugins
 fi
 
-# mitigate upstream packaging bug: https://bugzilla.redhat.com/show_bug.cgi?id=2332429
-# swap the incorrectly installed OpenCL-ICD-Loader for ocl-icd, the expected package
-dnf5 -y swap --repo='fedora' \
-    OpenCL-ICD-Loader ocl-icd
-
 # Add COPRs
 dnf5 -y copr enable ublue-os/packages
 dnf5 -y copr enable ublue-os/staging
