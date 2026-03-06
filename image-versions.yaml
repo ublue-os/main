@@ -33,12 +33,12 @@ images:
   - name: base-atomic-43
     image: quay.io/fedora-ostree-desktops/base-atomic
     tag: 43
-    digest: sha256:8f2cbc9744aa03b7b3d03ab745b19f52806af9fd5783770bc84c11c91c4e8eba
+    digest: sha256:bed8d3ab434d415e03d3f752bcffeb11b226975abdebb4f4d4e8b895210e6719
   - name: silverblue-43
     image: quay.io/fedora-ostree-desktops/silverblue
     tag: 43
-    digest: sha256:4c25f5df4225034b4a9cff3cbe425d4abac17e9a6025594e63a92a7df2d50836
+    digest: sha256:2568c237b1e3243dd3485f114a617df37a2aaf278491bad0177cdd25c31b025c
   - name: kinoite-43
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 43
-    digest: sha256:df4bee726086e8fc3837bffc8de1109d0f3df84dc627c6d680b93b710de571bd
+    digest: sha256:41133e8daaa61764cc3450bb46b331e63e2076fcf29dab84225b6d063ffef2fb
