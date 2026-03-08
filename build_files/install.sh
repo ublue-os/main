@@ -13,6 +13,9 @@ if ! rpm -q dnf5 >/dev/null; then
     rpm-ostree install dnf5 dnf5-plugins
 fi
 
+# https://github.com/coreos/rpm-ostree/issues/5567
+dnf5 -y swap rpm-ostree rpm-ostree-2025.12-1.fc$(rpm -E %fedora)
+
 # mitigate upstream packaging bug: https://bugzilla.redhat.com/show_bug.cgi?id=2332429
 # swap the incorrectly installed OpenCL-ICD-Loader for ocl-icd, the expected package
 dnf5 -y swap --repo='fedora' \
