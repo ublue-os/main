@@ -94,15 +94,4 @@
             "kinoite": ["ffmpegthumbnailer", "plasma-discover-rpm-ostree"]
         }
     }
-    // "42": {
-    //     "include": {
-    //         "all": [
-    //             "android-udev-rules",
-    //             "mesa-libxatracker"
-    //         ]
-    //     },
-    //     "exclude": {
-    //         "all": []
-    //     }
-    // }
 }

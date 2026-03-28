@@ -2,7 +2,6 @@ set unstable := true
 
 # Tags
 
-gts := "42"
 latest := "43"
 [private]
 beta := "44"
@@ -43,8 +42,6 @@ images := '(
 
 [private]
 fedora_versions := '(
-    ["gts"]="' + gts + '"
-    ["' + gts + '"]="' + gts + '"
     ["latest"]="' + latest + '"
     ["' + latest + '"]="' + latest + '"
     ["beta"]="' + beta + '"
@@ -258,10 +255,7 @@ gen-tags $image_name="" $fedora_version="" $variant="":
     SHA_SHORT="$(git rev-parse --short HEAD)"
 
     # Define Versions
-    if [[ "$fedora_version" -eq "{{ gts }}" ]]; then
-        COMMIT_TAGS=("$SHA_SHORT-gts")
-        BUILD_TAGS=("gts" "gts-$TIMESTAMP")
-    elif [[ "$fedora_version" -eq "{{ latest }}" ]]; then
+    if [[ "$fedora_version" -eq "{{ latest }}" ]]; then
         COMMIT_TAGS=("$SHA_SHORT-latest")
         BUILD_TAGS=("latest" "latest-$TIMESTAMP")
     elif [[ "$fedora_version" -eq "{{ beta }}" ]]; then
