@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.0.0 (2026-04-19)
+
+
+### Features
+
+* add fcitx5-chewing and fcitx5-m17n to Kinoite based images ([#2057](https://github.com/ublue-os/main/issues/2057)) ([9c70151](https://github.com/ublue-os/main/commit/9c70151560783d73e681608451e889916cf7aba3))
+
+
+### Bug Fixes
+
+* add copr standard naming convention for ublue-os/staging ([#2046](https://github.com/ublue-os/main/issues/2046)) ([27c67a9](https://github.com/ublue-os/main/commit/27c67a97aa1bd3a69f23da22ca966ffc2e9cedc3))
+* Correct missed mention of old email ([#2077](https://github.com/ublue-os/main/issues/2077)) ([86caf6a](https://github.com/ublue-os/main/commit/86caf6a48991843b9b697b169bef1438013b104c))
+* get rid of ublue-os-flatpak dummy package ([#1841](https://github.com/ublue-os/main/issues/1841)) ([b5f1b7d](https://github.com/ublue-os/main/commit/b5f1b7d28c4efa3fe205857027e66ffc8a09dd1e))
+* Name the repo we're actually using for Nvidia drivers in 2026 ([#2078](https://github.com/ublue-os/main/issues/2078)) ([a62c988](https://github.com/ublue-os/main/commit/a62c9881869ade5820710f3bd077528aad2442aa))
+* pin rpm-ostree to 2025.12-1 ([#2171](https://github.com/ublue-os/main/issues/2171)) ([72abdb5](https://github.com/ublue-os/main/commit/72abdb5157d90b84c3c2c157e37e6defdb90a5ea))
+* Use new shared email in code of conduct document for reporting ([#2070](https://github.com/ublue-os/main/issues/2070)) ([ac8c870](https://github.com/ublue-os/main/commit/ac8c870a3fd99309869771da63af48c477cd7dc5))
+
 ## [2.3.0](https://github.com/ublue-os/main/compare/v2.2.0...v2.3.0) (2025-04-16)
 
 
