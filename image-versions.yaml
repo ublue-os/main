@@ -59,8 +59,8 @@ images:
   - name: silverblue-44
     image: quay.io/fedora-ostree-desktops/silverblue
     tag: 44
-    digest: sha256:88e7de3c55b3ee03767c3b49afdfa7bbceb3aed228218c001b8e0c261ae72450
+    digest: sha256:4fdb81cd212da9957d8d0cb4ecb1858761f481907a045f04e43dbc62eef2cc81
   - name: kinoite-44
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 44
-    digest: sha256:3510e43043c4c928785eb597e6023ccb7cd9d373fb5e89ac2cd04f1730f8fb5f
+    digest: sha256:9e0d8683e7c181cc256750322b2a52da255f32d660fe51843c4678b25dac7c4a
