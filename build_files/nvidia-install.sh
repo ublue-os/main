@@ -32,11 +32,15 @@ MULTILIB=(
     mesa-libEGL.i686
     mesa-libGL.i686
     mesa-libgbm.i686
-    mesa-va-drivers.i686
     mesa-vulkan-drivers.i686
 )
 
 dnf5 install -y "${MULTILIB[@]}"
+
+# F44 does not need this: https://src.fedoraproject.org/rpms/mesa/c/f747343d109d2b691d3abcf4649cd10ad42d6578?branch=f44
+if [ "$FRELEASE" -lt 44 ]; then
+    dnf5 install -y mesa-va-drivers.i686
+fi
 
 # enable repos provided by ublue-os-nvidia-addons (not enabling fedora-nvidia-lts)
 dnf5 config-manager setopt fedora-nvidia.enabled=1 nvidia-container-toolkit.enabled=1
