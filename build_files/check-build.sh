@@ -2,6 +2,7 @@
 
 set -eoux pipefail
 
+# This provides VARIANT_ID and VERSION_ID
 source /etc/os-release
 
 IMPORTANT_PACKAGES=(
@@ -23,9 +24,15 @@ case "${VARIANT_ID:-}" in
     IMPORTANT_PACKAGES+=(
         kwin
         plasma-desktop
-        sddm
         plasma-discover
     )
+    
+    # Check if Fedora version is 44 or newer
+    if [[ "${VERSION_ID}" -ge 44 ]]; then
+        IMPORTANT_PACKAGES+=("plasma-login-manager")
+    else
+        IMPORTANT_PACKAGES+=("sddm")
+    fi
     ;;
 *) ;;
 esac

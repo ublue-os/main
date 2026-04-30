@@ -32,11 +32,15 @@ MULTILIB=(
     mesa-libEGL.i686
     mesa-libGL.i686
     mesa-libgbm.i686
-    mesa-va-drivers.i686
     mesa-vulkan-drivers.i686
 )
 
 dnf5 install -y "${MULTILIB[@]}"
+
+# F44 does not need this: https://src.fedoraproject.org/rpms/mesa/c/f747343d109d2b691d3abcf4649cd10ad42d6578?branch=f44
+if [ "$FRELEASE" -lt 44 ]; then
+    dnf5 install -y mesa-va-drivers.i686
+fi
 
 # enable repos provided by ublue-os-nvidia-addons (not enabling fedora-nvidia-lts)
 dnf5 config-manager setopt fedora-nvidia.enabled=1 nvidia-container-toolkit.enabled=1
@@ -52,6 +56,8 @@ fi
 # Enable staging for supergfxctl if repo file exists
 if [[ -f /etc/yum.repos.d/_copr_ublue-os-staging.repo ]]; then
     sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/_copr_ublue-os-staging.repo
+elif [[ -f /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:ublue-os:staging.repo ]]; then
+    sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:ublue-os:staging.repo
 else
     # Otherwise, retrieve the repo file for staging
     curl -Lo /etc/yum.repos.d/_copr_ublue-os-staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${FRELEASE}"/ublue-os-staging-fedora-"${FRELEASE}".repo
@@ -60,7 +66,7 @@ fi
 source "${AKMODNV_PATH}"/kmods/nvidia-vars
 
 if [[ "${IMAGE_NAME}" == "kinoite" ]]; then
-    VARIANT_PKGS="supergfxctl-plasmoid supergfxctl"
+    VARIANT_PKGS="supergfxctl"
 elif [[ "${IMAGE_NAME}" == "silverblue" ]]; then
     VARIANT_PKGS="gnome-shell-extension-supergfxctl-gex supergfxctl"
 else
@@ -93,13 +99,15 @@ fi
 dnf5 config-manager setopt fedora-nvidia.enabled=0 fedora-nvidia-lts.enabled=0 nvidia-container-toolkit.enabled=0
 
 # Disable staging
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/_copr_ublue-os-staging.repo
+if [[ -f /etc/yum.repos.d/_copr_ublue-os-staging.repo ]]; then
+    sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/_copr_ublue-os-staging.repo
+elif [[ -f /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:ublue-os:staging.repo ]]; then
+    sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:ublue-os:staging.repo
+fi
 
 systemctl enable ublue-nvctk-cdi.service
 semodule --verbose --install /usr/share/selinux/packages/nvidia-container.pp
 
-# Universal Blue specific Initramfs fixes
-cp /etc/modprobe.d/nvidia-modeset.conf /usr/lib/modprobe.d/nvidia-modeset.conf
 # we must force driver load to fix black screen on boot for nvidia desktops
 sed -i 's@omit_drivers@force_drivers@g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
 # as we need forced load, also mustpre-load intel/amd iGPU else chromium web browsers fail to use hardware acceleration
