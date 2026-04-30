@@ -2,10 +2,10 @@ set unstable := true
 
 # Tags
 
-gts := "42"
-latest := "43"
+gts := "43"
+latest := "44"
 [private]
-beta := "44"
+beta := "45"
 
 # Defaults
 
