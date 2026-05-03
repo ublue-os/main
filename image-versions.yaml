@@ -11,15 +11,15 @@ images:
   - name: base-atomic-42
     image: quay.io/fedora-ostree-desktops/base-atomic
     tag: 42
-    digest: sha256:db9f1ac5c7846d1a35b4aa37ad2bd2080f533861c7e476a0bc9eed3cdfbaa5ae
+    digest: sha256:5d2107a0a8a3e2508dd16901d08c6b8377c47ca0676fa755a50eaa830f27d3a7
   - name: silverblue-42
     image: quay.io/fedora-ostree-desktops/silverblue
     tag: 42
-    digest: sha256:2eb54109f952c16818f78c6ee3b8534aafd9d20ae9c7adcd35c82513aea5a63e
+    digest: sha256:d1a22dcb51b45483f1b94971b09be60bb26a805eaa547b2edf5eb07aa42e6e2e
   - name: kinoite-42
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 42
-    digest: sha256:fdf8de88272e2833e7ad3776f6dd787defd24b68ab25c8b6a1b1a43d7d9fdf0b
+    digest: sha256:e2ca91f82bcecf7f2b11d1c036767ec2dcc62126791a8d17594b774f52870897
 
   # Fedora 43
   - name: akmods-43
@@ -33,15 +33,15 @@ images:
   - name: base-atomic-43
     image: quay.io/fedora-ostree-desktops/base-atomic
     tag: 43
-    digest: sha256:83ff13e6da100cb03bec606ba121970e90f6524db0ebb0306ab9e0ddd680f86e
+    digest: sha256:2f8c6c248a62acb03c111ac19cbb131fef7520bb02998227353a6ec5136ed3c4
   - name: silverblue-43
     image: quay.io/fedora-ostree-desktops/silverblue
     tag: 43
-    digest: sha256:b73b21c00f2ed12f4f05d7ddaef9b7d4c0e640ff11763466865f710403c4154d
+    digest: sha256:6bfc66fd9d27eb509236c88742d223997d6006c864617b53ac520ad1c1cdef20
   - name: kinoite-43
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 43
-    digest: sha256:d8b8dfb36744812e5eb7370f8cd97ff8965facf3bd6b1f990bd51037d90d1afd
+    digest: sha256:2a84d19c3b23ca8964239583f9f7f3ee773b5cb3af0889c616c63f2660aae1a5
 
   # Fedora 44
   - name: akmods-44
@@ -59,8 +59,8 @@ images:
   - name: silverblue-44
     image: quay.io/fedora-ostree-desktops/silverblue
     tag: 44
-    digest: sha256:b9e3eb8651aa5e57ce4ab7b5b8f95d20117ec0f97019b0ca916b4d8b273e291e
+    digest: sha256:2f3e5b9ace9e7071980429a55189c2a8f537e6691f7c3e31f80b55c984e3da9f
   - name: kinoite-44
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 44
-    digest: sha256:6b713b6c5cacef837d593f4d3e908d6a80f396adb12bed4443dcca7f447143b2
+    digest: sha256:2b592c16493cabe2bd161ecb568a751c980f6529f96cea04a407b4907ae29b3f
