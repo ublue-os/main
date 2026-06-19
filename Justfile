@@ -1,4 +1,5 @@
 set unstable := true
+set lists := true
 
 # Tags
 
