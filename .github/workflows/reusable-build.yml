@@ -46,6 +46,9 @@ jobs:
       - name: Setup Just
         # yamllint disable-line rule:line-length rule:comments
         uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff # v3
+        with:
+          # https://github.com/ublue-os/main/pull/2567#issuecomment-4751177123
+          just-version: '1.50.0'
 
       - name: Compare image digests to determine if build is required
         id: check
@@ -156,6 +159,9 @@ jobs:
       - name: Setup Just
         # yamllint disable-line rule:line-length rule:comments
         uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff # v3
+        with:
+          # https://github.com/ublue-os/main/pull/2567#issuecomment-4751177123
+          just-version: '1.50.0'
 
       - name: Build Image
         shell: bash
