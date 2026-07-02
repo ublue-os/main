@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0 (2026-07-02)
+
+
+### Bug Fixes
+
+* pin rpm-ostree to 2025.12-1 ([#2171](https://github.com/ublue-os/main/issues/2171)) ([72abdb5](https://github.com/ublue-os/main/commit/72abdb5157d90b84c3c2c157e37e6defdb90a5ea))
+
 ## [2.3.0](https://github.com/ublue-os/main/compare/v2.2.0...v2.3.0) (2025-04-16)
 
 
