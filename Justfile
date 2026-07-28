@@ -409,7 +409,7 @@ verify-container $container="" $registry="" $key="":
     fi
 
     # Verify Container using cosign public key
-    if ! cosign verify --key "$key" "$registry/$container" >/dev/null; then
+    if ! cosign verify --new-bundle-format=false --key "$key" "$registry/$container" >/dev/null; then
         echo '{{ style('error') }}NOTICE: Verification failed. Please ensure your public key is correct.{{ NORMAL }}' >&2
         exit 1
     fi
@@ -466,7 +466,11 @@ cosign-sign $image_name $fedora_version $variant $destination="":
 
     : "${destination:={{ IMAGE_REGISTRY }}}"
     digest="$(skopeo inspect docker://$destination/$image_name:$fedora_version --format '{{{{ .Digest }}')"
-    cosign sign -y --key env://COSIGN_PRIVATE_KEY "$destination/$image_name@$digest"
+    cosign sign -y \
+        --new-bundle-format=false \
+        --use-signing-config=false \
+        --key env://COSIGN_PRIVATE_KEY \
+        "$destination/$image_name@$digest"
 
 # Generate SBOM
 [group('CI')]
