@@ -527,7 +527,7 @@ cosign-sign $image_name $fedora_version $variant $destination="":
     # Verify the signature on the freshly signed digest before the job succeeds.
     echo '{{ style('OK') }}Verifying published signature...{{ NORMAL }}' >&2
     cosign verify --new-bundle-format=false \
-      --key https://raw.githubusercontent.com/ublue-os/main/main/cosign.pub \
+      --key {{ justfile_dir() }}/cosign.pub \
       "$destination/$image_name@$digest"
 
 # Generate SBOM
