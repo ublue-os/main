@@ -426,9 +426,10 @@ verify-source-images:
     #!/usr/bin/env bash
     set ${SET_X:+-x} -eou pipefail
 
-    if [[ "$(cosign version)" != *"GitVersion: v3.1.2"* ]]; then
+    cosign_version="$(cosign version)"
+    if [[ ! "$cosign_version" =~ GitVersion:[[:space:]]+v3\.1\.2 ]]; then
         echo "Cosign v3.1.2 is required for legacy bundle verification." >&2
-        cosign version >&2
+        echo "$cosign_version" >&2
         exit 1
     fi
 
