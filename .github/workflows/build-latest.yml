@@ -10,10 +10,33 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  verify-source-images:
+    name: Verify Source Image Signatures
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Install Cosign
+        # yamllint disable-line rule:line-length rule:comments
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+        with:
+          cosign-release: "v3.1.2"
+
+      - name: Setup Just
+        # yamllint disable-line rule:line-length rule:comments
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4
+        with:
+          just-version: '1.57.0'
+
+      - name: Verify Source Images
+        run: just verify-source-images
+
   build:
     name: build
     uses: ./.github/workflows/reusable-build.yml
     secrets: inherit
+    needs: verify-source-images
     strategy:
       fail-fast: false
       matrix:

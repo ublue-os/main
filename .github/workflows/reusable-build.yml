@@ -40,15 +40,12 @@ jobs:
           path: pr
           fetch-depth: 0
 
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@7e8b541eb2e61bf99390e1afd4be13a184e9ebc5 # v3.10.1
-
       - name: Setup Just
         # yamllint disable-line rule:line-length rule:comments
         uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4
         with:
           # https://github.com/ublue-os/main/pull/2567#issuecomment-4751177123
-          just-version: '1.50.0'
+          just-version: '1.57.0'
 
       - name: Compare image digests to determine if build is required
         id: check
@@ -154,14 +151,19 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Install Cosign
-        uses: sigstore/cosign-installer@7e8b541eb2e61bf99390e1afd4be13a184e9ebc5 # v3.10.1
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+        with:
+          # Do not float this version while consumers (containers/image, bootc,
+          # rpm-ostree) require legacy Sigstore bundle format.
+          # containers/container-libs#388, coreos/rpm-ostree#5509
+          cosign-release: "v3.1.2"
 
       - name: Setup Just
         # yamllint disable-line rule:line-length rule:comments
         uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4
         with:
           # https://github.com/ublue-os/main/pull/2567#issuecomment-4751177123
-          just-version: '1.50.0'
+          just-version: '1.57.0'
 
       - name: Build Image
         shell: bash
@@ -209,7 +211,6 @@ jobs:
         id: sign
         if: github.event_name != 'pull_request'
         env:
-          COSIGN_EXPERIMENTAL: false
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
         shell: bash
         run: |

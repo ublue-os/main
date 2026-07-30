@@ -1,4 +1,4 @@
-set unstable := true
+set unstable
 
 # Tags
 
@@ -62,13 +62,16 @@ variants := '(
 # Sudo/Podman/Just
 
 [private]
-SUDO_DISPLAY := env("DISPLAY", "") || env("WAYLAND_DISPLAY", "")
+DISPLAY := env("DISPLAY", "")
+WAYLAND_DISPLAY := env("WAYLAND_DISPLAY", "")
+SUDO_DISPLAY := if DISPLAY != "" { DISPLAY } else { WAYLAND_DISPLAY }
 [private]
-SUDOIF := if `id -u` == "0" { "" } else if SUDO_DISPLAY != "" { which("sudo") + " --askpass" } else { which("sudo") }
+SUDO := `command -v sudo`
+SUDOIF := if `id -u` == "0" { "" } else if SUDO_DISPLAY != "" { SUDO + " --askpass" } else { SUDO }
 [private]
 just := just_executable()
 [private]
-PODMAN := which("podman") || require("podman-remote")
+PODMAN := if `command -v podman 2>/dev/null || true` != "" { "podman" } else { require("podman-remote") }
 
 # Make things quieter by default
 
@@ -102,8 +105,8 @@ fedora_version="${_images[2]}"
 build-missing := '
 cmd="' + just + ' build ${image_name%-*} $fedora_version $variant"
 if ! ' + PODMAN + ' image exists "localhost/$image_name:$fedora_version"; then
-    echo "' + style('warning') + 'Warning' + NORMAL +': Container Does Not Exist..." >&2
-    echo "' + style('warning') + 'Will Run' + NORMAL +': ' + style('command') + '$cmd' + NORMAL +'" >&2
+    echo "' + style('warning') + 'Warning' + NORMAL + ': Container Does Not Exist..." >&2
+    echo "' + style('warning') + 'Will Run' + NORMAL + ': ' + style('command') + '$cmd' + NORMAL + '" >&2
     seconds=5
     while [ $seconds -gt 0 ]; do
         printf "\rTime remaining: ' + style('error') + '%d' + NORMAL + ' seconds to cancel" $seconds >&2
@@ -111,7 +114,7 @@ if ! ' + PODMAN + ' image exists "localhost/$image_name:$fedora_version"; then
         (( seconds-- ))
     done
     echo "" >&2
-    echo "'+ style('warning') +'Running'+ NORMAL+ ': '+ style('command') +'$cmd'+ NORMAL+ '" >&2
+    echo "' + style('warning') + 'Running' + NORMAL + ': ' + style('command') + '$cmd' + NORMAL + '" >&2
     $cmd
 fi
 '
@@ -126,7 +129,7 @@ function pull-retry() {
         (( retries-- ))
     done
     if ! (( retries )); then
-        echo "' + style('error') +' Unable to pull ${target/@*/}...' + NORMAL +'" >&2
+        echo "' + style('error') + ' Unable to pull ${target/@*/}...' + NORMAL + '" >&2
         exit 1
     fi
     trap - SIGINT
@@ -408,11 +411,60 @@ verify-container $container="" $registry="" $key="":
         key="https://raw.githubusercontent.com/ublue-os/main/main/cosign.pub"
     fi
 
-    # Verify Container using cosign public key
-    if ! cosign verify --key "$key" "$registry/$container" >/dev/null; then
+    # Verify Container using cosign public key (legacy simple-signing, required for
+    # compatibility with containers/image, bootc, and rpm-ostree which do not support
+    # the current Sigstore bundle format).
+    # containers/container-libs#388, coreos/rpm-ostree#5509
+    if ! cosign verify --new-bundle-format=false --key "$key" "$registry/$container" >/dev/null; then
         echo '{{ style('error') }}NOTICE: Verification failed. Please ensure your public key is correct.{{ NORMAL }}' >&2
         exit 1
     fi
+
+# Verify every pinned source image with the key for its repository.
+[group('CI')]
+verify-source-images:
+    #!/usr/bin/env bash
+    set ${SET_X:+-x} -eou pipefail
+
+    if [[ "$(cosign version)" != *"GitVersion: v3.1.2"* ]]; then
+        echo "Cosign v3.1.2 is required for legacy bundle verification." >&2
+        cosign version >&2
+        exit 1
+    fi
+
+    mapfile -t source_images < <(yq -r '.images[] | [.image, .digest] | @tsv' '{{ image-file }}')
+    if (( ${#source_images[@]} == 0 )); then
+        echo "No source images found in {{ image-file }}." >&2
+        exit 1
+    fi
+
+    for source_image in "${source_images[@]}"; do
+        IFS=$'\t' read -r image digest <<< "$source_image"
+        if [[ -z "$image" || -z "$digest" || "$digest" == "null" ]]; then
+            echo "Source image entries must include image and digest." >&2
+            exit 1
+        fi
+
+        case "$image" in
+            ghcr.io/ublue-os/*)
+                registry="ghcr.io/ublue-os"
+                container="${image#"$registry"/}@$digest"
+                key="https://raw.githubusercontent.com/ublue-os/main/main/cosign.pub"
+                ;;
+            quay.io/fedora-ostree-desktops/*)
+                registry="quay.io/fedora-ostree-desktops"
+                container="${image#"$registry"/}@$digest"
+                key="https://gitlab.com/fedora/ostree/ci-test/-/raw/main/quay.io-fedora-ostree-desktops.pub?ref_type=heads"
+                ;;
+            *)
+                echo "No trusted signing key configured for $image." >&2
+                exit 1
+                ;;
+        esac
+
+        echo "Verifying $image@$digest"
+        {{ just }} verify-container "$container" "$registry" "$key"
+    done
 
 # Removes all Tags of an image from container storage.
 [group('Utility')]
@@ -456,6 +508,9 @@ push-to-registry $image_name $fedora_version $variant $destination="" $transport
     done
 
 # Sign Images with Cosign
+# Produce legacy simple-signing format so that containers/image, bootc, and
+# rpm-ostree can enforce signature policies against the published image.
+# containers/container-libs#388, coreos/rpm-ostree#5509
 [group('CI')]
 cosign-sign $image_name $fedora_version $variant $destination="":
     #!/usr/bin/bash
@@ -466,7 +521,13 @@ cosign-sign $image_name $fedora_version $variant $destination="":
 
     : "${destination:={{ IMAGE_REGISTRY }}}"
     digest="$(skopeo inspect docker://$destination/$image_name:$fedora_version --format '{{{{ .Digest }}')"
-    cosign sign -y --key env://COSIGN_PRIVATE_KEY "$destination/$image_name@$digest"
+    cosign sign -y --new-bundle-format=false --use-signing-config=false --key env://COSIGN_PRIVATE_KEY "$destination/$image_name@$digest"
+
+    # Verify the signature on the freshly signed digest before the job succeeds.
+    echo '{{ style('OK') }}Verifying published signature...{{ NORMAL }}' >&2
+    cosign verify --new-bundle-format=false \
+      --key https://raw.githubusercontent.com/ublue-os/main/main/cosign.pub \
+      "$destination/$image_name@$digest"
 
 # Generate SBOM
 [group('CI')]
