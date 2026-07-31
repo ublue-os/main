@@ -73,9 +73,21 @@ else
     VARIANT_PKGS=""
 fi
 
+# As of 610.43.02, negativo17 merged libnvidia-cfg/libnvidia-gpucomp/libnvidia-ml
+# into nvidia-driver-common (which now Obsoletes/Provides the old package names),
+# so the legacy standalone libnvidia-ml package no longer exists on newer drivers.
+NVIDIA_DRIVER_VERSION="${NVIDIA_AKMOD_VERSION%-*}"
+if dnf5 repoquery --qf '%{version}\n' nvidia-driver-common | grep -qxF "${NVIDIA_DRIVER_VERSION}"; then
+    echo "Using nvidia-driver-common for NVIDIA ${NVIDIA_DRIVER_VERSION} (provides libnvidia-ml/libnvidia-gpucomp)"
+    NVIDIA_ML_PKGS=(nvidia-driver-common.i686)
+else
+    echo "Using legacy NVIDIA split library packages for NVIDIA ${NVIDIA_DRIVER_VERSION}"
+    NVIDIA_ML_PKGS=(libnvidia-ml.i686)
+fi
+
 dnf5 install -y \
     libnvidia-fbc \
-    libnvidia-ml.i686 \
+    "${NVIDIA_ML_PKGS[@]}" \
     libva-nvidia-driver \
     nvidia-driver \
     nvidia-driver-cuda \
