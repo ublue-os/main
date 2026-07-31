@@ -76,13 +76,20 @@ fi
 # As of 610.43.02, negativo17 merged libnvidia-cfg/libnvidia-gpucomp/libnvidia-ml
 # into nvidia-driver-common (which now Obsoletes/Provides the old package names),
 # so the legacy standalone libnvidia-ml package no longer exists on newer drivers.
+# Mirrors the version checks in ublue-os/akmods build_files/nvidia/download-nvidia-rpms.sh
 NVIDIA_DRIVER_VERSION="${NVIDIA_AKMOD_VERSION%-*}"
-if dnf5 repoquery --qf '%{version}\n' nvidia-driver-common | grep -qxF "${NVIDIA_DRIVER_VERSION}"; then
+NVIDIA_ML_PKGS=()
+if dnf5 repoquery --qf '%{version}\n' nvidia-driver-common 2>/dev/null | grep -qxF "${NVIDIA_DRIVER_VERSION}"; then
     echo "Using nvidia-driver-common for NVIDIA ${NVIDIA_DRIVER_VERSION} (provides libnvidia-ml/libnvidia-gpucomp)"
-    NVIDIA_ML_PKGS=(nvidia-driver-common.i686)
+    # nvidia-driver-cuda-libs.i686/nvidia-driver-libs.i686 already pull in a matching
+    # nvidia-driver-common.i686 transitively; only request it explicitly when a
+    # matching i686 build actually exists, in case it ever lags behind x86_64.
+    if dnf5 repoquery --qf '%{version}\n' nvidia-driver-common.i686 2>/dev/null | grep -qxF "${NVIDIA_DRIVER_VERSION}"; then
+        NVIDIA_ML_PKGS+=(nvidia-driver-common.i686)
+    fi
 else
     echo "Using legacy NVIDIA split library packages for NVIDIA ${NVIDIA_DRIVER_VERSION}"
-    NVIDIA_ML_PKGS=(libnvidia-ml.i686)
+    NVIDIA_ML_PKGS+=(libnvidia-ml.i686)
 fi
 
 dnf5 install -y \
