@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.0 (2026-08-08)
+
+
+### Bug Fixes
+
+* **justfile:** use valid style name in cosign-sign recipe ([#2688](https://github.com/ublue-os/main/issues/2688)) ([6cdbf7f](https://github.com/ublue-os/main/commit/6cdbf7fd8b00029adb6dfe696df37d827f8133ef))
+* **nvidia:** stop requesting retired libnvidia-ml.i686 on driver &gt;=610.43.02 ([#2687](https://github.com/ublue-os/main/issues/2687)) ([f8f9760](https://github.com/ublue-os/main/commit/f8f9760c883bd233c17ee1ed4f4a9fb26672906b))
+* restore legacy cosign signature verification ([#2685](https://github.com/ublue-os/main/issues/2685)) ([591adf6](https://github.com/ublue-os/main/commit/591adf60a833832ae20079d02694e01250860644))
+
 ## [2.3.0](https://github.com/ublue-os/main/compare/v2.2.0...v2.3.0) (2025-04-16)
 
 
