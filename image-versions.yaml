@@ -3,11 +3,11 @@ images:
   - name: akmods-43
     image: ghcr.io/ublue-os/akmods
     tag: main-43
-    digest: sha256:c05484009b75df09a9f0154e9e84cb87a04179b6f99cf1348944705ae04ad92c
+    digest: sha256:22c31cbff8b7100fd38547bf3f7917a32a6d4f670fc6c99bccd8bce03405982b
   - name: akmods-nvidia-open-43
     image: ghcr.io/ublue-os/akmods-nvidia-open
     tag: main-43
-    digest: sha256:b85a907f2e9ea2f8967e3f1b4b87e3260e64a8669c48bc98c287f84929fdcdbc
+    digest: sha256:7e01d1163dd55c108a3a21d8e53821d0fd417518fa140932b0c7606468d6c583
   - name: base-atomic-43
     image: quay.io/fedora-ostree-desktops/base-atomic
     tag: 43
@@ -25,11 +25,11 @@ images:
   - name: akmods-44
     image: ghcr.io/ublue-os/akmods
     tag: main-44
-    digest: sha256:75ecc90e6ababc577be98a20f6596bc73f2e3c953dbc91312798d67a548938e3
+    digest: sha256:651d0fc4b05fdafea7365eecf176b03096a62c7fba2387270fb5756faa2d38ad
   - name: akmods-nvidia-open-44
     image: ghcr.io/ublue-os/akmods-nvidia-open
     tag: main-44
-    digest: sha256:987e4a541233caac71cb6787c33305289698877ad5f0e334e87773513f7ec302
+    digest: sha256:e30b4fe918bd97ff1fd254570e01f9bdf86fa739fe3e81d27241954c130dd901
   - name: base-atomic-44
     image: quay.io/fedora-ostree-desktops/base-atomic
     tag: 44
