@@ -153,8 +153,8 @@ jobs:
       - name: Install Cosign
         uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
         with:
-          # Do not float this version while consumers (containers/image, bootc,
-          # rpm-ostree) require legacy Sigstore bundle format.
+          # Pin Cosign while consumers (containers/image, bootc, rpm-ostree) require
+          # legacy simple-signing. Updates must retain the legacy signing flags.
           # containers/container-libs#388, coreos/rpm-ostree#5509
           cosign-release: "v3.1.2"
 
