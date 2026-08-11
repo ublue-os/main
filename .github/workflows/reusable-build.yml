@@ -156,7 +156,7 @@ jobs:
           # Pin Cosign while consumers (containers/image, bootc, rpm-ostree) require
           # legacy simple-signing. Updates must retain the legacy signing flags.
           # containers/container-libs#388, coreos/rpm-ostree#5509
-          cosign-release: "v3.1.2"
+          cosign-release: "v3.1.3"
 
       - name: Setup Just
         # yamllint disable-line rule:line-length rule:comments
