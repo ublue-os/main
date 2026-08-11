@@ -426,13 +426,6 @@ verify-source-images:
     #!/usr/bin/env bash
     set ${SET_X:+-x} -eou pipefail
 
-    cosign_version="$(cosign version)"
-    if [[ ! "$cosign_version" =~ GitVersion:[[:space:]]+v3\.1\.2 ]]; then
-        echo "Cosign v3.1.2 is required for legacy bundle verification." >&2
-        echo "$cosign_version" >&2
-        exit 1
-    fi
-
     mapfile -t source_images < <(yq -r '.images[] | [.image, .digest] | @tsv' '{{ image-file }}')
     if (( ${#source_images[@]} == 0 )); then
         echo "No source images found in {{ image-file }}." >&2
