@@ -15,7 +15,7 @@ images:
   - name: silverblue-43
     image: quay.io/fedora-ostree-desktops/silverblue
     tag: 43
-    digest: sha256:ff42ea47b332b4b474441e5520d6673fed25da514143c520c440fa8a9464070d
+    digest: sha256:06f75842f41ecb1a01e53fa278c4dbabf46340dd59ee5b2476cd0071dba5c003
   - name: kinoite-43
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 43
