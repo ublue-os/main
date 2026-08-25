@@ -494,7 +494,14 @@ push-to-registry $image_name $fedora_version $variant $destination="" $transport
     : "${destination:={{ IMAGE_REGISTRY }}}"
     : "${transport:="docker://"}"
 
-    declare -a TAGS="($({{ PODMAN }} image list localhost/$image_name:$fedora_version --noheading --format 'table {{{{ .Tag }}'))"
+    mapfile -t TAGS < <({{ PODMAN }} image inspect "localhost/$image_name:$fedora_version" --format '{{{{ range .RepoTags }}{{{{ println . }}{{{{ end }}' \
+        | grep "^localhost/$image_name:" | cut -d: -f2-)
+
+    if [[ ${#TAGS[@]} -eq 0 ]]; then
+        echo '{{ style('error') }}Error{{ NORMAL }}: No local tags found for '"localhost/$image_name" >&2
+        exit 1
+    fi
+
     for tag in "${TAGS[@]}"; do
         for i in {1..5}; do
             {{ PODMAN }} push "localhost/$image_name:$fedora_version" "$transport$destination/$image_name:$tag" 2>&1 && break || sleep $((5 * i));
