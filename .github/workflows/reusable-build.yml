@@ -137,7 +137,7 @@ jobs:
 
   build_ublue:
     name: main
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: check-build-required
     if: ${{ needs.check-build-required.outputs.build_required == 'true' }}
     permissions:
