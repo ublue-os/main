@@ -7,7 +7,7 @@ images:
   - name: akmods-nvidia-open-43
     image: ghcr.io/ublue-os/akmods-nvidia-open
     tag: main-43
-    digest: sha256:c27e00e0d56325cfca9d592c07a092186ac8fee9baba064f2321fbbff75cd593
+    digest: sha256:fac9516ba6dd618672ddfa4f60b2bb168826bddb21cd4e7f78f628bd93daff7f
   - name: base-atomic-43
     image: quay.io/fedora-ostree-desktops/base-atomic
     tag: 43
