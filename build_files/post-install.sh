@@ -18,6 +18,13 @@ systemctl --global enable flatpak-user-update.timer
 # Configure staged updates for rpm-ostree
 cp /usr/share/ublue-os/update-services/etc/rpm-ostreed.conf /etc/rpm-ostreed.conf
 
+# This should not be needed anymore with fontconfig 2.18 (Fedora 45)
+# but is needed on Fedora 44 fontconfig 2.17
+# reproduce by displaying 처형박수 in discord flatpak
+if [[ "$(rpm -E %fedora)" -le 44 ]]; then
+  ln -s "/usr/share/fonts/google-noto-sans-cjk-fonts" "/usr/share/fonts/noto-cjk"
+fi
+
 # Add linuxbrew to the list of paths usable by `sudo`
 # Even though brew isn't installed as part of this image, it's fine to add it here as it's reused by multiple ublue images
 sed -Ei "s/secure_path = (.*)/secure_path = \1:\/home\/linuxbrew\/.linuxbrew\/bin/" /etc/sudoers
