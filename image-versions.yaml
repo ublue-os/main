@@ -3,11 +3,11 @@ images:
   - name: akmods-44
     image: ghcr.io/ublue-os/akmods
     tag: main-44
-    digest: sha256:28b304664342af45812e191603b33fd942e43767ee7d8754c39b69aa58b6103a
+    digest: sha256:ca504a39ad69bde38a7e07e134a2aa96e08b025df253cd8b596ab4d0d34f5abf
   - name: akmods-nvidia-open-44
     image: ghcr.io/ublue-os/akmods-nvidia-open
     tag: main-44
-    digest: sha256:28b3679a95b9675658b506b494467c8bfad7fdf620ca6d828c1186a9fde09dda
+    digest: sha256:92a798b06f63106549f72f064d59f255a468e72b13c691eab573c9eea64ac97e
   - name: base-atomic-44
     image: quay.io/fedora-ostree-desktops/base-atomic
     tag: 44
@@ -19,4 +19,4 @@ images:
   - name: kinoite-44
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 44
-    digest: sha256:de57a100fa68cd6d683a318f6c3b550bd09db5c1958eb1e03f81d52418316a48
+    digest: sha256:a341072c02203562167036bcedd972e4ea08e607a775dfbe5b52022e59f9ad44
