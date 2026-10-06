@@ -34,6 +34,7 @@ RUN --mount=type=bind,from=ctx,src=/,dst=/ctx \
     --mount=type=bind,from=akmods_nvidia,src=/rpms,dst=/tmp/akmods-nv-rpms \
     rm -f /usr/bin/chsh && \
     rm -f /usr/bin/lchsh && \
+    /ctx/bcachefs-kmod.sh && \
     /ctx/install.sh && \
     if [ "${BUILD_NVIDIA}" == "Y" ]; then \
         AKMODNV_PATH=/tmp/akmods-nv-rpms /tmp/akmods-nv-rpms/ublue-os/nvidia-install.sh \
