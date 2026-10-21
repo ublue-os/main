@@ -71,7 +71,9 @@
             "kinoite": [
                 "icoutils",
                 "kate",
-                "ksshaskpass"
+                "ksshaskpass",
+                "fcitx5-gtk",
+                "fcitx5-qt"
             ]
         },
         "exclude": {
