@@ -1,3 +1,6 @@
+# NOTICE 22 October 2026: 
+fcitx5 has been removed from the image in favor of using the more up to date flatpak. See [here](https://linux.kde.org/docs/cjkv-input/#fixing-compatibility-issues) and [here](https://flathub.org/en/apps/org.fcitx.Fcitx5) for more information.
+
 # NOTICE 15 October 2025: 
 The deprecated sway, budgie, and cosmic images have now been removed, see [#927](https://github.com/ublue-os/main/issues/927)
 
