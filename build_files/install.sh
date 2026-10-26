@@ -27,6 +27,10 @@ dnf5 -y install \
     fedora-repos-archive \
     zstd
 
+if [[ "${FEDORA_MAJOR_VERSION}" -le 44 ]]; then
+    dnf5 -y install ublue-os-udev-rules
+fi
+
 # use negativo17 for 3rd party packages with higher priority than default
 if ! grep -q fedora-multimedia <(dnf5 repolist); then
     # Enable or Install Repofile
