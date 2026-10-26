@@ -15,6 +15,10 @@ systemctl enable rpm-ostreed-automatic.timer
 systemctl enable flatpak-system-update.timer
 systemctl --global enable flatpak-user-update.timer
 
+# Regenerate CA trust and crypto policies.
+systemctl enable bootc-update-ca-trust.service
+systemctl enable bootc-update-crypto-policies.service
+
 # Configure staged updates for rpm-ostree
 cp /usr/share/ublue-os/update-services/etc/rpm-ostreed.conf /etc/rpm-ostreed.conf
 
