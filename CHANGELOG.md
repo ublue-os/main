@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.0.0 (2026-10-31)
+
+
+### Features
+
+* add egyptian hieroglyphs font ([#2980](https://github.com/ublue-os/main/issues/2980)) ([443fe93](https://github.com/ublue-os/main/commit/443fe938ad12baa592c584e8e6ac187b338893af))
+* Add Fedora 45 builds ([#2961](https://github.com/ublue-os/main/issues/2961)) ([44a0cd1](https://github.com/ublue-os/main/commit/44a0cd1e3c5db336665efd3d986f2177d85535fe))
+* Drop fcitx5 suite in favor of shipping their flatpak ([#3001](https://github.com/ublue-os/main/issues/3001)) ([f2e36c3](https://github.com/ublue-os/main/commit/f2e36c326f9ea31190cb8d5dc66d3129e1a6833a))
+
+
+### Bug Fixes
+
+* add cjk-vf font package back ([#2542](https://github.com/ublue-os/main/issues/2542)) ([ef039c5](https://github.com/ublue-os/main/commit/ef039c5ea3cda28d577acebd6277f1bd7d4ea88f))
+* **ci:** enable beta builds ([#2989](https://github.com/ublue-os/main/issues/2989)) ([c25f2b7](https://github.com/ublue-os/main/commit/c25f2b7fac94f28593ed9e9656eaa9b489feb7bd))
+* **ci:** remove exact cosign version gate ([#2721](https://github.com/ublue-os/main/issues/2721)) ([f30a6cc](https://github.com/ublue-os/main/commit/f30a6ccd48c24fe409aa4ce70291abe7a43cbe8b))
+* gts tag push was skipped by CI ([#2790](https://github.com/ublue-os/main/issues/2790)) ([2dd6cc1](https://github.com/ublue-os/main/commit/2dd6cc109992f1d2e714ca3a25f5b42e1f5f0501))
+* **justfile:** use valid style name in cosign-sign recipe ([#2688](https://github.com/ublue-os/main/issues/2688)) ([6cdbf7f](https://github.com/ublue-os/main/commit/6cdbf7fd8b00029adb6dfe696df37d827f8133ef))
+* Keep udev rule package for f44 and below ([#3033](https://github.com/ublue-os/main/issues/3033)) ([f3bd457](https://github.com/ublue-os/main/commit/f3bd4578d0e93699e98bddf7a22a1b66bea19e49))
+* **nvidia:** stop requesting retired libnvidia-ml.i686 on driver &gt;=610.43.02 ([#2687](https://github.com/ublue-os/main/issues/2687)) ([f8f9760](https://github.com/ublue-os/main/commit/f8f9760c883bd233c17ee1ed4f4a9fb26672906b))
+* **nvidia:** use installer bundled with akmods ([#2723](https://github.com/ublue-os/main/issues/2723)) ([e27046c](https://github.com/ublue-os/main/commit/e27046c83045ec41682c8ff62ce60493c8a54fc7))
+* Regenerate CA trust and crypto policies for eMudhra incident, this handles an issue where the three way /etc merge can leave a user unpatched despite having the new package ([#3029](https://github.com/ublue-os/main/issues/3029)) ([bfa213b](https://github.com/ublue-os/main/commit/bfa213b13bc967d4652a908ec457e3f1aed34d6d))
+* Remove archived package ([#3032](https://github.com/ublue-os/main/issues/3032)) ([d21080b](https://github.com/ublue-os/main/commit/d21080bd3ab860a5ec94a07670dc38b917d28125))
+* restore cjk-font symlink ([#2933](https://github.com/ublue-os/main/issues/2933)) ([51930eb](https://github.com/ublue-os/main/commit/51930ebe0a25a0c93690e8bb3a1ec2f4ff9d9fec))
+* restore legacy cosign signature verification ([#2685](https://github.com/ublue-os/main/issues/2685)) ([591adf6](https://github.com/ublue-os/main/commit/591adf60a833832ae20079d02694e01250860644))
+
 ## [2.3.0](https://github.com/ublue-os/main/compare/v2.2.0...v2.3.0) (2025-04-16)
 
 
