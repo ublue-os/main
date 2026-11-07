@@ -18,8 +18,7 @@
     {
       "matchPackageNames": [
         "quay.io/fedora-ostree-desktops/*",
-        "ghcr.io/ublue-os/akmods",
-        "ghcr.io/ublue-os/akmods-nvidia-open"
+        "ghcr.io/ublue-os/akmods"
       ],
       "groupName": "images",
       "matchUpdateTypes": [
@@ -30,8 +29,7 @@
     {
       "matchPackageNames": [
         "quay.io/fedora-ostree-desktops/*",
-        "ghcr.io/ublue-os/akmods",
-        "ghcr.io/ublue-os/akmods-nvidia-open"
+        "ghcr.io/ublue-os/akmods"
       ],
       "matchUpdateTypes": [
         "major",

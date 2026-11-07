@@ -11,7 +11,7 @@ on:
         required: true
         type: string
       image_variant:
-        description: "The variant of image to build.  E.G. main, nvidia"
+        description: "The variant of image to build. Only main is supported."
         required: false
         type: string
         default: "main"
@@ -53,7 +53,6 @@ jobs:
         env:
           IMAGE_NAME: ${{ inputs.image_name }}
           IMAGE_VERSION_ALIAS: ${{ inputs.image_version }}
-          IMAGE_VARIANT: ${{ inputs.image_variant }}
           EVENT_NAME: ${{ github.event_name }}
         run: |
           set -e
@@ -91,19 +90,6 @@ jobs:
           if [ "$OLD_AKMODS_DIGEST" != "$NEW_AKMODS_DIGEST" ]; then
             echo "Akmods digest changed."
             BUILD_REQUIRED=true
-          fi
-
-          if [ "${IMAGE_VARIANT}" == "nvidia" ]; then
-            AKMODS_NVIDIA_NAME="akmods-nvidia-open-${IMAGE_VERSION}"
-            OLD_AKMODS_NVIDIA_DIGEST=$(yq -r ".images[] | select(.name == \"${AKMODS_NVIDIA_NAME}\") | .digest" main/image-versions.yaml)
-            NEW_AKMODS_NVIDIA_DIGEST=$(yq -r ".images[] | select(.name == \"${AKMODS_NVIDIA_NAME}\") | .digest" pr/image-versions.yaml)
-
-            echo "Akmods-NVIDIA image old: ${OLD_AKMODS_NVIDIA_DIGEST}, new: ${NEW_AKMODS_NVIDIA_DIGEST}"
-
-            if [ "$OLD_AKMODS_NVIDIA_DIGEST" != "$NEW_AKMODS_NVIDIA_DIGEST" ]; then
-              echo "Akmods-NVIDIA digest changed."
-              BUILD_REQUIRED=true
-            fi
           fi
 
           # If any file other than image-versions.yaml has changed, we also need to build.

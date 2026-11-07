@@ -53,7 +53,6 @@ fedora_versions := '(
 [private]
 variants := '(
     ["main"]="main"
-    ["nvidia"]="nvidia"
 )'
 
 # Sudo/Podman/Just
@@ -160,12 +159,10 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
     {{ pull-retry }}
 
     AKMODS_DIGEST="$(yq -r ".images[] | select(.name == \"akmods-${fedora_version}\") | .digest" {{ image-file }})"
-    AKMODS_NVIDIA_DIGEST="$(yq -r ".images[] | select(.name == \"akmods-nvidia-open-${fedora_version}\") | .digest" {{ image-file }})"
     BASE_IMAGE_DIGEST="$(yq -r ".images[] | select(.name == \"${source_image_name}-${fedora_version}\") | .digest" {{ image-file }})"
 
     # Verify Source Containers
     {{ just }} verify-container "akmods@$AKMODS_DIGEST"
-    {{ just }} verify-container "akmods-nvidia-open@$AKMODS_NVIDIA_DIGEST"
     {{ just }} verify-container "$source_image_name@$BASE_IMAGE_DIGEST" "{{ source_registry }}" "https://gitlab.com/fedora/ostree/ci-test/-/raw/main/quay.io-fedora-ostree-desktops.pub?ref_type=heads"
 
     # Tags
@@ -193,11 +190,6 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
         "--label" "io.artifacthub.package.logo-url=https://avatars.githubusercontent.com/u/120078124?s=200&v=4"
     )
 
-    BUILD_NVIDIA="N"
-    if [[ "$variant" =~ nvidia ]]; then
-        BUILD_NVIDIA="Y"
-    fi
-
     # Build Arguments
     BUILD_ARGS=(
         "--build-arg" "IMAGE_NAME=${image_name%-*}"
@@ -208,13 +200,10 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
         "--build-arg" "KERNEL_VERSION=$KERNEL_VERSION"
         "--build-arg" "BASE_IMAGE_DIGEST=$BASE_IMAGE_DIGEST"
         "--build-arg" "AKMODS_DIGEST=$AKMODS_DIGEST"
-        "--build-arg" "AKMODS_NVIDIA_DIGEST=$AKMODS_NVIDIA_DIGEST"
-        "--build-arg" "BUILD_NVIDIA=$BUILD_NVIDIA"
     )
 
     # Pull Images with retry
     pull-retry "{{ IMAGE_REGISTRY }}/akmods:main-$fedora_version@$AKMODS_DIGEST"
-    pull-retry "{{ IMAGE_REGISTRY }}/akmods-nvidia-open:main-$fedora_version@$AKMODS_NVIDIA_DIGEST"
     pull-retry "{{ source_registry }}/$source_image_name:$fedora_version@$BASE_IMAGE_DIGEST"
 
     # Build Image
@@ -223,7 +212,6 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
     # CI Cleanup
     if [[ -n "${CI:-}" ]]; then
         {{ PODMAN }} rmi -f "{{ IMAGE_REGISTRY }}/akmods:main-$fedora_version@$AKMODS_DIGEST"
-        {{ PODMAN }} rmi -f "{{ IMAGE_REGISTRY }}/akmods-nvidia-open:main-$fedora_version@$AKMODS_NVIDIA_DIGEST"
         {{ PODMAN }} rmi -f "{{ source_registry }}/$source_image_name:$fedora_version@$BASE_IMAGE_DIGEST"
     fi
 
@@ -281,7 +269,7 @@ image-name-check $image_name $fedora_version $variant:
     set ${SET_X:+-x} -eou pipefail
     declare -A images={{ images }}
 
-    if [[ "$image_name" =~ -main$|-nvidia$ ]]; then
+    if [[ "$image_name" =~ -main$ ]]; then
         image_name="${image_name%-*}"
     fi
 
