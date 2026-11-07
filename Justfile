@@ -2,9 +2,9 @@ set unstable
 
 # Tags
 
-latest := "44"
+latest := "45"
 [private]
-beta := "45"
+beta := "46"
 
 # Defaults
 
