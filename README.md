@@ -1,4 +1,5 @@
-# NOTICE 7 November 2026:
+# NOTICE 7 November 2026
+
 **NVIDIA image retirement**
 This repository no longer builds or updates `base-nvidia`, `silverblue-nvidia`, or `kinoite-nvidia`, following the year-old decision in [#927](https://github.com/ublue-os/main/issues/927). Existing published tags will not receive further updates. This change does not automatically migrate installed systems.
 
