@@ -32,7 +32,7 @@ jobs:
         # yamllint disable-line rule:line-length rule:comments
         uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4
         with:
-          just-version: '1.57.0'
+          just-version: '1.59.0'
 
       - name: Verify Source Images
         run: just verify-source-images
