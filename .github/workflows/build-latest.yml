@@ -35,7 +35,7 @@ jobs:
           just-version: '1.59.0'
 
       - name: Verify Source Images
-        run: just verify-source-images
+        run: just verify-source-images latest
 
   build:
     name: build

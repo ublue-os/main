@@ -2,6 +2,8 @@ set unstable
 
 # Tags
 
+[private]
+gts := "44"
 latest := "45"
 [private]
 beta := "46"
@@ -42,6 +44,8 @@ images := '(
 
 [private]
 fedora_versions := '(
+    ["gts"]="' + gts + '"
+    ["' + gts + '"]="' + gts + '"
     ["latest"]="' + latest + '"
     ["' + latest + '"]="' + latest + '"
     ["beta"]="' + beta + '"
@@ -161,6 +165,11 @@ build-container $image_name="" $fedora_version="" $variant="" $github="":
     AKMODS_DIGEST="$(yq -r ".images[] | select(.name == \"akmods-${fedora_version}\") | .digest" {{ image-file }})"
     BASE_IMAGE_DIGEST="$(yq -r ".images[] | select(.name == \"${source_image_name}-${fedora_version}\") | .digest" {{ image-file }})"
 
+    if [[ -z "$AKMODS_DIGEST" || "$AKMODS_DIGEST" == "null" || -z "$BASE_IMAGE_DIGEST" || "$BASE_IMAGE_DIGEST" == "null" ]]; then
+        echo "Missing source image pins for $source_image_name on Fedora $fedora_version in {{ image-file }}." >&2
+        exit 1
+    fi
+
     # Verify Source Containers
     {{ just }} verify-container "akmods@$AKMODS_DIGEST"
     {{ just }} verify-container "$source_image_name@$BASE_IMAGE_DIGEST" "{{ source_registry }}" "https://gitlab.com/fedora/ostree/ci-test/-/raw/main/quay.io-fedora-ostree-desktops.pub?ref_type=heads"
@@ -246,7 +255,10 @@ gen-tags $image_name="" $fedora_version="" $variant="":
     SHA_SHORT="$(git rev-parse --short HEAD)"
 
     # Define Versions
-    if [[ "$fedora_version" -eq "{{ latest }}" ]]; then
+    if [[ "$fedora_version" -eq "{{ gts }}" ]]; then
+        COMMIT_TAGS=("$SHA_SHORT-gts")
+        BUILD_TAGS=("gts" "gts-$TIMESTAMP")
+    elif [[ "$fedora_version" -eq "{{ latest }}" ]]; then
         COMMIT_TAGS=("$SHA_SHORT-latest")
         BUILD_TAGS=("latest" "latest-$TIMESTAMP")
     elif [[ "$fedora_version" -eq "{{ beta }}" ]]; then
@@ -404,12 +416,18 @@ verify-container $container="" $registry="" $key="":
 
 # Verify every pinned source image with the key for its repository.
 [group('CI')]
-verify-source-images:
+verify-source-images $fedora_version="":
     #!/usr/bin/env bash
     set ${SET_X:+-x} -eou pipefail
 
-    mapfile -t source_images < <(yq -r '.images[] | [.image, .digest] | @tsv' '{{ image-file }}')
-    if (( ${#source_images[@]} == 0 )); then
+    version_pattern=".*"
+    if [[ -n "$fedora_version" ]]; then
+        fedora_version="$({{ just }} fedora-version-check "$fedora_version")"
+        version_pattern="-${fedora_version}$"
+    fi
+
+    mapfile -t source_images < <(yq -r ".images[] | select(.name | test(\"$version_pattern\")) | [.image, .digest] | @tsv" '{{ image-file }}')
+    if (( ${#source_images[@]} == 0 )) || [[ -z "${source_images[0]}" ]]; then
         echo "No source images found in {{ image-file }}." >&2
         exit 1
     fi

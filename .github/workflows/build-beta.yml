@@ -15,6 +15,8 @@ permissions:
 jobs:
   verify-source-images:
     name: Verify Source Image Signatures
+    # Enable after adding the beta source pins to image-versions.yaml.
+    if: ${{ vars.BUILD_BETA == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -35,10 +37,11 @@ jobs:
           just-version: '1.59.0'
 
       - name: Verify Source Images
-        run: just verify-source-images
+        run: just verify-source-images beta
 
   build:
     name: build
+    if: ${{ vars.BUILD_BETA == 'true' }}
     uses: ./.github/workflows/reusable-build.yml
     secrets: inherit
     needs: verify-source-images
