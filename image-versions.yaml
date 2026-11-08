@@ -3,33 +3,33 @@ images:
   - name: akmods-44
     image: ghcr.io/ublue-os/akmods
     tag: main-44
-    digest: sha256:2e85c8597c85587ffbf321a6da2f4ccd4274153544f35d2c47eed138d9456b88
+    digest: sha256:503454126ade14627a8ee7d5eed3d9c703404d2dbe73b07978ec64fa7dd9274f
   - name: base-atomic-44
     image: quay.io/fedora-ostree-desktops/base-atomic
     tag: 44
-    digest: sha256:6f0426ae5dcbeca9928955c3092cff4803b4b6a76b388875daea5de9f7780dc8
+    digest: sha256:5359c124eaf88717ec59fb0b280cefa7914dab25084b693845c95b02756ab5b4
   - name: silverblue-44
     image: quay.io/fedora-ostree-desktops/silverblue
     tag: 44
-    digest: sha256:d37bd206405933e8e1804af44544b51160ef3282f2fdcb06338c32d33d8874ef
+    digest: sha256:72f80278f163e07c3e5f4f6c99b4303da5431629d057c68e919efcd389ffd0da
   - name: kinoite-44
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 44
-    digest: sha256:b2115c6eda8cd28bde7a2ee4ec1753f438aa4c76332f202402a6dbc186ea520c
+    digest: sha256:a4b9db0181abe21e3fb349901817272809c704f40330bbbc9f9758fa3031d790
   # Fedora 45
   - name: akmods-45
     image: ghcr.io/ublue-os/akmods
     tag: main-45
-    digest: sha256:3a9c182969a121c561a16071ea20a2d792eec3b54680ee153fd261514b09545d
+    digest: sha256:08fa4e6376eac8a9d0afeedac3f32b063e6a97c8aa555b5787e13a409f14d7a3
   - name: base-atomic-45
     image: quay.io/fedora-ostree-desktops/base-atomic
     tag: 45
-    digest: sha256:ec050ded5b10c1949cbfbf28e91c984eaae7f5278458bb0050ebe6d5ccb7c554
+    digest: sha256:947ba3183f4d165f67f3c232f77218b6444c2b3665096a65ca4da4f82995d07d
   - name: silverblue-45
     image: quay.io/fedora-ostree-desktops/silverblue
     tag: 45
-    digest: sha256:0db15cae1ac40363b13944ca09f49b4b02efcf6a255472ca2fad552928d5f6b9
+    digest: sha256:c3b7265b19dffb9b2d217329d73f18745faaab2f0ab57e997a1a8e5614d20f3d
   - name: kinoite-45
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 45
-    digest: sha256:07f5eba4eaa793783ed4617739b6c3f55f37baed2ecb418dd341efccfdba6ba7
+    digest: sha256:08c1824237b5c09c8989bc66b9540c27eb9d499f5afa383f0e4e84bfb57431dc
