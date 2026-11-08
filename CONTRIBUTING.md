@@ -84,6 +84,17 @@ Here's an example: https://github.com/ublue-os/nvidia/pull/49
 
 ## Building Locally
 
+### Fedora release channels
+
+The `Justfile` defines `gts` as Fedora 44, `latest` as Fedora 45, and `beta` as Fedora 46. CI builds only latest by default. GTS and beta must be explicitly enabled.
+
+Use GitHub repository Actions variables to change which optional channels build:
+
+- Set `BUILD_GTS` to `true` to enable GTS builds. Leave it unset or set it to `false` to disable them.
+- Set `BUILD_BETA` to `true` to enable beta builds. Leave it unset or set it to `false` to disable them.
+
+These switches cover both source verification and image builds, including manual workflow runs. Before enabling a channel, add its source image digests to `image-versions.yaml`. Disabled channels keep their version aliases and workflow definitions for the next rollover. Each enabled workflow verifies only its own release's source images. Run `just verify-source-images` without an argument to verify all pinned sources.
+
 The minimum tools required are git and a working machine with podman enabled and configured. 
 Building locally is much faster than building in GitHub and is a good way to move fast before pushing to a remote.
 

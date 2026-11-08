@@ -3,7 +3,7 @@ on:
   workflow_call:
     inputs:
       image_version:
-        description: "The Version: latest, beta... Justfile holds value"
+        description: "The version: gts, latest, beta. Justfile holds value."
         required: true
         type: string
       image_name:
@@ -67,7 +67,9 @@ jobs:
           # Fetch version from the Justfile
           IMAGE_VERSION=$(just -f ./pr/Justfile --evaluate "${IMAGE_VERSION_ALIAS}")
 
-          BASE_NAME="${IMAGE_NAME}-${IMAGE_VERSION}"
+          IMAGE_NAMES="$(just -f ./pr/Justfile image-name-check "${IMAGE_NAME}" "${IMAGE_VERSION}" main)"
+          read -r _ SOURCE_IMAGE _ <<< "$IMAGE_NAMES"
+          BASE_NAME="${SOURCE_IMAGE}-${IMAGE_VERSION}"
           AKMODS_NAME="akmods-${IMAGE_VERSION}"
 
           OLD_BASE_DIGEST=$(yq -r ".images[] | select(.name == \"${BASE_NAME}\") | .digest" main/image-versions.yaml)
