@@ -41,6 +41,21 @@ dnf5 -y copr remove ublue-os/packages
 # This needs to be a whole organiztion change
 # dnf5 config-manager setopt fedora-multimedia.enabled=0
 
+# Hook pam_oo7 into the passwd PAM stack on GNOME images
+# passwd only hooks pam_gnome_keyring, so a password change never
+# re-encrypts the oo7 keyring. Fail the build if the hook is missing.
+if [[ ! -f /etc/pam.d/passwd ]]; then
+    echo "ERROR: pam_oo7 not hooked into /etc/pam.d/passwd"; exit 1
+fi
+if grep -q "pam_gnome_keyring" /etc/pam.d/passwd; then
+    if ! grep -q "pam_oo7" /etc/pam.d/passwd; then
+        sed -i \
+            '/pam_gnome_keyring.so use_authtok$/a -password   optional\tpam_oo7.so use_authtok' \
+            /etc/pam.d/passwd
+    fi
+    grep -q "pam_oo7" /etc/pam.d/passwd || { echo "ERROR: pam_oo7 not hooked into /etc/pam.d/passwd"; exit 1; }
+fi
+
 # Cleanup
 # Remove tmp files and everything in dirs that make bootc unhappy
 rm -rf /tmp/* || true
