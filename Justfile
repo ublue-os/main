@@ -336,9 +336,7 @@ secureboot $image_name $fedora_version $variant:
 
     # Get the Public Certificates
     curl --retry 3 -Lo /tmp/kernel-sign.der https://github.com/ublue-os/akmods/raw/main/certs/public_key.der
-    curl --retry 3 -Lo /tmp/akmods.der https://github.com/ublue-os/akmods/raw/main/certs/public_key_2.der
     openssl x509 -in /tmp/kernel-sign.der -out /tmp/kernel-sign.crt
-    openssl x509 -in /tmp/akmods.der -out /tmp/akmods.crt
 
     # Make sure we have sbverify
     CMD="$(command -v sbverify)"
@@ -348,7 +346,6 @@ secureboot $image_name $fedora_version $variant:
             --entrypoint /bin/sh \
             --volume /tmp/vmlinuz:/tmp/vmlinuz:z \
             --volume /tmp/kernel-sign.crt:/tmp/kernel-sign.crt:z \
-            --volume /tmp/akmods.crt:/tmp/akmods.crt:z \
             --name $temp_name \
             alpine:edge
         {{ PODMAN }} exec "$temp_name" apk add sbsigntool
@@ -359,7 +356,7 @@ secureboot $image_name $fedora_version $variant:
     # Confirm that Signatures Are Good
     $CMD --list /tmp/vmlinuz
     returncode=0
-    if ! $CMD --cert /tmp/kernel-sign.crt /tmp/vmlinuz || ! $CMD --cert /tmp/akmods.crt /tmp/vmlinuz; then
+    if ! $CMD --cert /tmp/kernel-sign.crt /tmp/vmlinuz; then
         echo '{{ style('error') }}Secureboot Signature Failed...{{ NORMAL }}' >&2
         returncode=1
     fi
