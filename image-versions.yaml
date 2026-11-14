@@ -3,7 +3,7 @@ images:
   - name: akmods-44
     image: ghcr.io/ublue-os/akmods
     tag: main-44
-    digest: sha256:0e71fdee33f46d7f02b2b3080f29fe5b97902d1f6ab638924869148433a39db0
+    digest: sha256:6b60f668a77ec7376e5cc7ddca919e994a3082184131ff2ee88225fe927884b8
   - name: base-atomic-44
     image: quay.io/fedora-ostree-desktops/base-atomic
     tag: 44
@@ -20,7 +20,7 @@ images:
   - name: akmods-45
     image: ghcr.io/ublue-os/akmods
     tag: main-45
-    digest: sha256:2df554a30355c91d5eb530279585dce1c139db10a2b42a27a1c8a6584f33bdc8
+    digest: sha256:886a9f200e4fd61a76b8224c9f9b492a1e74fb6f4d569bf5e9576d4ccbd2ec2f
   - name: base-atomic-45
     image: quay.io/fedora-ostree-desktops/base-atomic
     tag: 45
