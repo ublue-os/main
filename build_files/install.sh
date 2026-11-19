@@ -130,6 +130,11 @@ fi
 # run common packages script
 /ctx/packages.sh
 
+# Swap distrobox to the ublue-os/staging COPR build
+# Needs a new release, either 1.8.x (legacy) or 2.0.x (go-rewrite) to be released
+dnf5 -y swap --repo='copr:copr.fedorainfracloud.org:ublue-os:staging' distrobox distrobox
+dnf5 versionlock add distrobox
+
 ## install packages direct from github
 /ctx/github-release-install.sh sigstore/cosign x86_64
 
