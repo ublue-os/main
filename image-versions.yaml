@@ -7,15 +7,15 @@ images:
   - name: base-atomic-44
     image: quay.io/fedora-ostree-desktops/base-atomic
     tag: 44
-    digest: sha256:0b3453527488a10ec64eacf510e54367ebb1f5581eca3614e2c672ea10237011
+    digest: sha256:e016ebb18fcf251cc9e6814f74aded2e9e813ba132cf29acf7eae68cccc402fd
   - name: silverblue-44
     image: quay.io/fedora-ostree-desktops/silverblue
     tag: 44
-    digest: sha256:a27455a4b4c5e56d239ce9a444802e0f0c1ee38b50f8fa3eb17d70d830965667
+    digest: sha256:7eaf1bc4bc10a4688d21e576019114208c1173a742a82eb5a092349e96a10410
   - name: kinoite-44
     image: quay.io/fedora-ostree-desktops/kinoite
     tag: 44
-    digest: sha256:efb1114c2451ca0ac09305d5608699e349cbbfeb0ba086ff0eeb6f40738f995d
+    digest: sha256:f518b2d2c2e35f4c87389775abe07e18c8aae9697ef08e0c566100eb7f907419
   # Fedora 45
   - name: akmods-45
     image: ghcr.io/ublue-os/akmods
